@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{923FAA8D-0A18-41A7-99E3-663B61CDA069}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Xlent.Lever.Libraries2</RootNamespace>
+    <AssemblyName>Xlent.Lever.Libraries2.Core.NetFramework</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Assert\FulcrumAssert.cs" />
+    <Compile Include="Core\Assert\FulcrumValidate.cs" />
+    <Compile Include="Core\Assert\GenericAssert.cs" />
+    <Compile Include="Core\Assert\GenericContract.cs" />
+    <Compile Include="Core\Assert\InternalContract.cs" />
+    <Compile Include="Core\Assert\IValidatable.cs" />
+    <Compile Include="Core\Assert\ServiceContract.cs" />
+    <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
+    <Compile Include="Core\Context\CorrelationIdValueProvider.cs" />
+    <Compile Include="Core\Context\ICorrelationIdValueProvider.cs" />
+    <Compile Include="Core\Context\IValueProvider.cs" />
+    <Compile Include="Core\Context\SingleThreadValueProvider.cs" />
+    <Compile Include="Core\Decoupling\IFactory.cs" />
+    <Compile Include="Core\Decoupling\Model\ConceptValue.cs" />
+    <Compile Include="Core\Decoupling\Model\IConceptValue.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumAssertionFailedException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumBusinessRuleException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumConflictException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumContractException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumForbiddenAccessException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumNotFoundException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumNotImplementedException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumServiceContractException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumTryAgainException.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
+    <Compile Include="Core\Error\Model\FulcrumError.cs" />
+    <Compile Include="Core\Error\Model\IFulcrumError.cs" />
+    <Compile Include="Core\Health\Logic\ResourceHealthAggregator.cs" />
+    <Compile Include="Core\Health\Model\HealthResponse.cs" />
+    <Compile Include="Core\Health\Model\IResourceHealth.cs" />
+    <Compile Include="Core\Logging\Logic\LogHelper.cs" />
+    <Compile Include="Core\Logging\Model\IFulcrumLogger.cs" />
+    <Compile Include="Core\Logging\Model\LogSeverityLevel.cs" />
+    <Compile Include="Core\Misc\Models\IDeepCopy.cs" />
+    <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
+    <Compile Include="Core\MultiTenant\Context\TenantConfigurationValueProvider.cs" />
+    <Compile Include="Core\MultiTenant\Model\ITenant.cs" />
+    <Compile Include="Core\MultiTenant\Model\Tenant.cs" />
+    <Compile Include="Core\Platform\Authentication\AuthenticationRoleEnum.cs" />
+    <Compile Include="Core\Platform\Authentication\ClaimTypeNames.cs" />
+    <Compile Include="Core\Platform\Authentication\ICredentials.cs" />
+    <Compile Include="Core\Platform\Authentication\IJwtToken.cs" />
+    <Compile Include="Core\Platform\Authentication\ITokenRefresher.cs" />
+    <Compile Include="Core\Platform\Authentication\JwtTokenTypeEnum.cs" />
+    <Compile Include="Core\Platform\Configurations\ILeverConfiguration.cs" />
+    <Compile Include="Core\Platform\Configurations\ILeverServiceConfiguration.cs" />
+    <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
+    <Compile Include="Core\Storage\Model\ICreate.cs" />
+    <Compile Include="Core\Storage\Model\ICrud.cs" />
+    <Compile Include="Core\Storage\Model\ICrudAll.cs" />
+    <Compile Include="Core\Storage\Model\IDelete.cs" />
+    <Compile Include="Core\Storage\Model\IDeleteAll.cs" />
+    <Compile Include="Core\Storage\Model\INameProperty.cs" />
+    <Compile Include="Core\Storage\Model\IOptimisticConcurrencyControlByETag.cs" />
+    <Compile Include="Core\Storage\Model\IPageEnvelope.cs" />
+    <Compile Include="Core\Storage\Model\IRead.cs" />
+    <Compile Include="Core\Storage\Model\IReadAll.cs" />
+    <Compile Include="Core\Storage\Model\IRecommendedStorableItem.cs" />
+    <Compile Include="Core\Storage\Model\IStorableItem.cs" />
+    <Compile Include="Core\Storage\Model\ITimeStamped.cs" />
+    <Compile Include="Core\Storage\Model\IUpdate.cs" />
+    <Compile Include="Core\Storage\Model\PageEnvelope.cs" />
+    <Compile Include="Core\Storage\Model\PageInfo.cs" />
+    <Compile Include="Core\Storage\Model\StorableItem.cs" />
+    <Compile Include="Core\Storage\Test\IStorableItemForTesting.cs" />
+    <Compile Include="Core\Storage\Test\StorageTestCrud.cs" />
+    <Compile Include="Core\Storage\Test\TypeOfTestDataEnum.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

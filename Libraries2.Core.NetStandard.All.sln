@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libraries2.Core", "src\Core.NetStandard\Libraries2.Core.NetStandard.csproj", "{1AB748F0-47CE-4846-96E4-37AFF4462823}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libraries2.Core.Test", "test\Core.NetStandard.Test\Libraries2.Core.NetStandard.Test.csproj", "{ED509550-D7C1-4197-8F27-10A739ADF656}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AB748F0-47CE-4846-96E4-37AFF4462823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB748F0-47CE-4846-96E4-37AFF4462823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB748F0-47CE-4846-96E4-37AFF4462823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB748F0-47CE-4846-96E4-37AFF4462823}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED509550-D7C1-4197-8F27-10A739ADF656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED509550-D7C1-4197-8F27-10A739ADF656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED509550-D7C1-4197-8F27-10A739ADF656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED509550-D7C1-4197-8F27-10A739ADF656}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

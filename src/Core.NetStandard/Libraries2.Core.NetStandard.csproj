@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <AssemblyName>Xlent.Lever.Libraries2.Core.NetStandard</AssemblyName>
+    <RootNamespace>Xlent.Lever.Libraries2.Core</RootNamespace>
+    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard1.4\Xlent.Lever.Libraries2.Core.xml</DocumentationFile>
+  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="rd /s /q $(ProjectDir)lib\" />
+    <Exec Command="mkdir $(ProjectDir)lib\netstandard1.4\" />
+    <Exec Command="copy $(OutDir)Xlent.Lever.Libraries2.Core.* $(ProjectDir)\lib\netstandard1.4\" />
+  </Target>
+</Project>
