@@ -1,4 +1,4 @@
-rmdir /Q "src/Core.NetFramework/Core"
-rmdir /Q "test/Core.NetFramework.Test/Core"
+rmdir /s /q /Q "src/Core.NetFramework/Core"
+rmdir /s /q /Q "test/Core.NetFramework.Test/Core"
 pause
 exit /b
