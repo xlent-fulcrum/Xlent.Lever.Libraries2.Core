@@ -14,9 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Platform.Authentication
     public interface ITokenRefresher
     {
         /// <summary>
-        /// Get a cached <see cref="IJwtToken"/>. If no token is cached or the token is becoming old, a new one is returned.
+        /// Get a cached <see cref="IAuthenticationToken"/>. If no token is cached or the token is becoming old, a new one is returned.
         /// </summary>
         /// <returns></returns>
-        Task<IJwtToken> GetJwtTokenAsync();
+        Task<IAuthenticationToken> GetJwtTokenAsync();
     }
 }

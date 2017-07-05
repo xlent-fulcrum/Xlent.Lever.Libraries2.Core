@@ -8,7 +8,7 @@ echo.
 echo READ THIS
 echo.
 echo 1. Build project (dll files are automatically put in lib folder)
-echo 2. Change version number in Xlent.Lever.Libraries2.Core.nuspec
+echo 2. Change version number in Xlent.Lever.Libraries2.Core.NetStandard.nuspec
 echo.
 pause
 echo.

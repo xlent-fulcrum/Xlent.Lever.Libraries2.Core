@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Xlent.Lever.Libraries2.Core.NetFramework.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -81,8 +82,10 @@
     <Compile Include="Core\MultiTenant\Model\Tenant.cs" />
     <Compile Include="Core\Platform\Authentication\AuthenticationRoleEnum.cs" />
     <Compile Include="Core\Platform\Authentication\ClaimTypeNames.cs" />
-    <Compile Include="Core\Platform\Authentication\ICredentials.cs" />
-    <Compile Include="Core\Platform\Authentication\IJwtToken.cs" />
+    <Compile Include="Core\Platform\Authentication\AuthenticationCredentials.cs" />
+    <Compile Include="Core\Platform\Authentication\AuthenticationToken.cs" />
+    <Compile Include="Core\Platform\Authentication\IAuthenticationCredentials.cs" />
+    <Compile Include="Core\Platform\Authentication\IAuthenticationToken.cs" />
     <Compile Include="Core\Platform\Authentication\ITokenRefresher.cs" />
     <Compile Include="Core\Platform\Authentication\JwtTokenTypeEnum.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverConfiguration.cs" />
@@ -110,5 +113,16 @@
     <Compile Include="Core\Storage\Test\TypeOfTestDataEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CreateAndPublishNuGetPackage.cmd" />
+    <None Include="Xlent.Lever.Libraries2.Core.NetFramework.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rd /s /q $(ProjectDir)lib\
+mkdir $(ProjectDir)lib\net462
+copy  $(ProjectDir)$(OutDir)Xlent.Lever.Libraries2.Core.NetFramework* $(ProjectDir)lib\net462</PostBuildEvent>
+  </PropertyGroup>
 </Project>
