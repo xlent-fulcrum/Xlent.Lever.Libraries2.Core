@@ -9,14 +9,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class MemoryStorageTest
     {
-        private MemoryStorage<PersonStorableItem<Guid>> _storage;
-        private StorageTestCrud<MemoryStorage<PersonStorableItem<Guid>>, PersonStorableItem<Guid>, Guid> _testCrud;
+        private MemoryStorage<PersonStorableItem<Guid>, Guid> _storage;
+        private StorageTestCrud<MemoryStorage<PersonStorableItem<Guid>, Guid>, PersonStorableItem<Guid>, Guid> _testCrud;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryStorage<PersonStorableItem<Guid>>();
-            _testCrud = new StorageTestCrud<MemoryStorage<PersonStorableItem<Guid>>, PersonStorableItem<Guid>, Guid>(_storage);
+            _storage = new MemoryStorage<PersonStorableItem<Guid>, Guid>();
+            _testCrud = new StorageTestCrud<MemoryStorage<PersonStorableItem<Guid>, Guid>, PersonStorableItem<Guid>, Guid>(_storage);
         }
 
         [TestMethod]

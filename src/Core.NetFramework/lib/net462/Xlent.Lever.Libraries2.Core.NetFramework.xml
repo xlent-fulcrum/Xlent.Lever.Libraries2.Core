@@ -1825,34 +1825,35 @@
             <param name="tenant"></param>
             <returns></returns>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2">
             <summary>
             General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> in memory.
             </summary>
             <typeparam name="TStorableItem"></typeparam>
+            <typeparam name="TId"></typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.CreateAsync(`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateAsync(`0)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.CreateAsync(System.Guid,`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateAsync(`1,`0)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.ReadAsync(System.Guid)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAsync(`1)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.UpdateAsync(`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.UpdateAsync(`0)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.DeleteAsync(System.Guid)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.DeleteAsync(`1)">
             <inheritdoc />
             <remarks>
             Idempotent, i.e. will not throw an exception if the item does not exist.
             </remarks>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.ReadAllAsync(System.Int32,System.Int32)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAllAsync(System.Int32,System.Int32)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`1.DeleteAllAsync">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.DeleteAllAsync">
             <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2">
@@ -1898,13 +1899,12 @@
             Deletes the item uniquely identified by <paramref name="id"/> from storage.
             </summary>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll`1">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll">
             <summary>
             Delete items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
             </summary>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll`1.DeleteAllAsync">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll.DeleteAllAsync">
             <summary>
             Delete all the items from storage.
             </summary>

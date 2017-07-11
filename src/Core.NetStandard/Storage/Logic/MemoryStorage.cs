@@ -10,14 +10,19 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
-    /// General class for storing any <see cref="IStorableItem{Guid}"/> in memory.
+    /// General class for storing any <see cref="IStorableItem{TId}"/> in memory.
     /// </summary>
     /// <typeparam name="TStorableItem"></typeparam>
-    public class MemoryStorage<TStorableItem> : ICrudAll<TStorableItem, Guid>
-        where TStorableItem : class, IStorableItem<Guid>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>
+    /// <typeparam name="TId"></typeparam>
+    public class MemoryStorage<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
+        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem> 
     {
-        private static readonly string Namespace = typeof(MemoryStorage<TStorableItem>).Namespace;
-        private readonly Dictionary<Guid, TStorableItem> _memoryItems = new Dictionary<Guid, TStorableItem>();
+        private static readonly string Namespace = typeof(MemoryStorage<TStorableItem, TId>).Namespace;
+        // ReSharper disable once StaticMemberInGenericType
+        private static int _nextInteger = 1;
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly object LockObject = new object();
+        private readonly Dictionary<TId, TStorableItem> _memoryItems = new Dictionary<TId, TStorableItem>();
 
         /// <inheritdoc />
         public Task<TStorableItem> CreateAsync(TStorableItem item)
@@ -25,11 +30,34 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             InternalContract.RequireNotNull(item, nameof(item));
             InternalContract.RequireValidated(item, nameof(item));
 
-            return CreateAsync(Guid.NewGuid(), item);
+            TId id = default(TId);
+            if (typeof(TId) == typeof(Guid))
+            {
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                id = (dynamic) Guid.NewGuid();
+            }
+            else if (typeof(TId) == typeof(string))
+            {
+                // ReSharper disable once SuspiciousTypeConversion.Global
+                id = (dynamic) Guid.NewGuid().ToString();
+            }
+            else if (typeof(TId) == typeof(int))
+            {
+                lock (LockObject)
+                {
+                    // ReSharper disable once SuspiciousTypeConversion.Global
+                    id = (dynamic) _nextInteger++;
+                }
+            }
+            else
+            {
+                FulcrumAssert.Fail($"{Namespace}: 5CBE07D8-4C31-43E7-A41C-1DF0B173ABF9", $"MemoryStorage can handle Guid, string and int as type for Id, but it can't handle {typeof(TId)}.");
+            }
+            return CreateAsync(id, item);
         }
 
         /// <inheritdoc />
-        public Task<TStorableItem> CreateAsync(Guid id, TStorableItem item)
+        public Task<TStorableItem> CreateAsync(TId id, TStorableItem item)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -47,7 +75,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public Task<TStorableItem> ReadAsync(Guid id)
+        public Task<TStorableItem> ReadAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
@@ -81,7 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <remarks>
         /// Idempotent, i.e. will not throw an exception if the item does not exist.
         /// </remarks>
-        public Task DeleteAsync(Guid id)
+        public Task DeleteAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             lock (_memoryItems)
@@ -93,7 +121,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public Task<IPageEnvelope<TStorableItem, Guid>> ReadAllAsync(int offset = 0, int limit = 100)
+        public Task<IPageEnvelope<TStorableItem, TId>> ReadAllAsync(int offset = 0, int limit = 100)
         {
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
@@ -101,7 +129,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             {
                 var keys = _memoryItems.Keys.Skip(offset).Take(limit);
                 var list = keys.Select(GetMemoryItem).ToList();
-                IPageEnvelope<TStorableItem, Guid> page = new PageEnvelope<TStorableItem, Guid>
+                IPageEnvelope<TStorableItem, TId> page = new PageEnvelope<TStorableItem, TId>
                 {
                     PageInfo = new PageInfo
                     {
@@ -128,21 +156,21 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         #region private
 
-        private void ValidateNotExists(Guid id)
+        private void ValidateNotExists(TId id)
         {
             if (!_memoryItems.ContainsKey(id)) return;
             throw new FulcrumConflictException(
                 $"An item of type {typeof(TStorableItem).Name} with id {id} already exists.");
         }
 
-        private void ValidateExists(Guid id)
+        private void ValidateExists(TId id)
         {
             if (_memoryItems.ContainsKey(id)) return;
             throw new FulcrumNotFoundException(
                 $"Could not find an item of type {typeof(TStorableItem).Name} with id {id}.");
         }
 
-        private void ValidateEtag(IStorableItem<Guid> current, IStorableItem<Guid> item)
+        private void ValidateEtag(IStorableItem<TId> current, IStorableItem<TId> item)
         {
             var currentWithEtag = current as IOptimisticConcurrencyControlByETag;
             var itemWithEtag = item as IOptimisticConcurrencyControlByETag;
@@ -168,7 +196,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             _memoryItems[item.Id] = CopyItem(item);
         }
 
-        private TStorableItem GetMemoryItem(Guid id)
+        private TStorableItem GetMemoryItem(TId id)
         {
             ValidateExists(id);
             InternalContract.RequireNotDefaultValue(id, nameof(id));

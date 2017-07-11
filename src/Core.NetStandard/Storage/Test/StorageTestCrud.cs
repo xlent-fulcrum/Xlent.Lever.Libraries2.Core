@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Test
     /// Tests for testing any storage that implements <see cref="ICrud{TStorable,Guid}"/>
     /// </summary>
     public class StorageTestCrud<TStorage, TTestableItem, TId>
-        where TStorage : ICrud<TTestableItem, TId>, IDeleteAll<TId>
+        where TStorage : ICrud<TTestableItem, TId>, IDeleteAll
         where TTestableItem : IStorableItemForTesting<TTestableItem, TId>, IStorableItem<TId>, new()
     {
         /// <summary>
