@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -86,6 +89,12 @@
     <Compile Include="Core\Platform\Authentication\JwtTokenTypeEnum.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverConfiguration.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverServiceConfiguration.cs" />
+    <Compile Include="Core\Queue\Logic\MemoryQueue.cs" />
+    <Compile Include="Core\Queue\Model\ICompleteQueue.cs" />
+    <Compile Include="Core\Queue\Model\IPeekableQueue.cs" />
+    <Compile Include="Core\Queue\Model\IQueue.cs" />
+    <Compile Include="Core\Queue\Model\IReadableQueue.cs" />
+    <Compile Include="Core\Queue\Model\IWritableQueue.cs" />
     <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
     <Compile Include="Core\Storage\Model\ICreate.cs" />
     <Compile Include="Core\Storage\Model\ICrud.cs" />
@@ -98,11 +107,15 @@
     <Compile Include="Core\Storage\Model\IRead.cs" />
     <Compile Include="Core\Storage\Model\IReadAll.cs" />
     <Compile Include="Core\Storage\Model\IRecommendedStorableItem.cs" />
+    <Compile Include="Core\Storage\Model\IStorableAsByteArray.cs" />
+    <Compile Include="Core\Storage\Model\IStorableByteArray.cs" />
     <Compile Include="Core\Storage\Model\IStorableItem.cs" />
     <Compile Include="Core\Storage\Model\ITimeStamped.cs" />
     <Compile Include="Core\Storage\Model\IUpdate.cs" />
     <Compile Include="Core\Storage\Model\PageEnvelope.cs" />
     <Compile Include="Core\Storage\Model\PageInfo.cs" />
+    <Compile Include="Core\Storage\Model\StorableAsByteArray.cs" />
+    <Compile Include="Core\Storage\Model\StorableByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableItem.cs" />
     <Compile Include="Core\Storage\Test\IStorableItemForTesting.cs" />
     <Compile Include="Core\Storage\Test\StorageTestCrud.cs" />
@@ -111,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CreateAndPublishNuGetPackage.cmd" />
+    <None Include="packages.config" />
     <None Include="Xlent.Lever.Libraries2.Core.NetFramework.nuspec">
       <SubType>Designer</SubType>
     </None>

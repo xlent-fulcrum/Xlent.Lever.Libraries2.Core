@@ -1825,6 +1825,87 @@
             <param name="tenant"></param>
             <returns></returns>
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1">
+            <summary>
+            A generic interface for adding strings to a queue.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.Name">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.AddMessageAsync(`0,System.Nullable{System.TimeSpan})">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.ClearAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.GetOneMessageNoBlockAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.PeekNoBlockAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1.GetResourceHealthAsync(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant)">
+            <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Model.ICompleteQueue`1">
+            <summary>
+            A queue that has complete queue functionality.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Model.IPeekableQueue`1">
+            <summary>
+            A generic interface for reading items to a queue.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Model.IPeekableQueue`1.PeekNoBlockAsync">
+            <summary>
+            Returns the front item from the queue without removing it from the queue, or null if no items are on the queue.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Model.IBaseQueue">
+            <summary>
+            A generic interface for adding strings to a queue.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Queue.Model.IBaseQueue.Name">
+            <summary>
+            The name of the queue.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Model.IReadableQueue`1">
+            <summary>
+            A generic interface for reading items to a queue.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Model.IReadableQueue`1.ClearAsync">
+            <summary>
+            Remove all items from the queue
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Model.IReadableQueue`1.GetOneMessageNoBlockAsync">
+            <summary>
+            Returns one item from the queue, or null if no items are on the queue.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Queue.Model.IWritableQueue`1">
+            <summary>
+            A generic interface for adding items to a queue.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Queue.Model.IWritableQueue`1.AddMessageAsync(`0,System.Nullable{System.TimeSpan})">
+            <summary>
+            Add a message to the queue.
+            </summary>
+            <param name="message">The message to add</param>
+            <param name="timeSpanToWait">An optional time span to wait before the item can be taken from the queue.</param>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2">
             <summary>
             General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> in memory.
@@ -1994,6 +2075,28 @@
             </summary>
             <typeparam name="TId"></typeparam>
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableAsByteArray`2">
+            <summary>
+            Data that can be stored in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableByteArray`1"/>
+            </summary>
+            <typeparam name="TData">The type of the data.</typeparam>
+            <typeparam name="TId">The type of the unique identifier for the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableByteArray`1"/></typeparam>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableAsByteArray`2.Data">
+            <summary>
+            The Data that is stored as a byte array. This property is just a converter between the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableByteArray`1.ByteArray"/> and this data type.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableByteArray`1">
+            <summary>
+            Contains a byte array
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableByteArray`1.ByteArray">
+            <summary>
+            The content as a byte array
+            </summary>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1">
             <summary>
             Properties required to be a storable class
@@ -2088,6 +2191,36 @@
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageInfo.Validate(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.StorableAsByteArray`2">
+            <summary>
+            The headers of a request
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.StorableAsByteArray`2.Data">
+            <summary>
+            A dictionary of HTTP headers
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1">
+            <summary>
+            Contains a byte array
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1.Validate(System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1.Id">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1.ByteArray">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1.ETag">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.StorableByteArray`1.DeepCopy">
             <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.StorableItem">

@@ -1,0 +1,22 @@
+TODO
+
+Ring Peter Ekvardt om nästa helg
+
+
+SystemFacade
+
+
+Samtliga
+* Inför ResourceHealth
+* Ta bort företagsnamnet i solution-filens namn
+* Uppdatera wikin
+* Uppdatera README.md, referera wikin
+* Kan man ta bort Dal-referensen i Bll?
+* Skapa en skiss
+* Inför ConceptKey i Bll
+* Inför Local/CI/INT/VER/PRD?
+
+
+General
+* Vi borde alltid ha en Application_Error i Global.asax som loggar fel som vi inte upptäckt.
+* Kolla testtäckning i Standard-biblioteket
