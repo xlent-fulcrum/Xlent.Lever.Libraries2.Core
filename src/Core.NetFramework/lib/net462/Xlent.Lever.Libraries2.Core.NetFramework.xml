@@ -1469,22 +1469,11 @@
             A convenience class for logging.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Logic.LogHelper.Log(Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger,Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String,System.Exception)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Logic.LogHelper.LogAsync(Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String,System.Exception)">
             <summary>
             Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
             </summary>
             <param name="logger">The logger to use for publishing the message.</param>
-            <param name="tenant">Current tenant.</param>
-            <param name="severityLevel">The severity level for this log.</param>
-            <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-            <param name="exception">Optional exception</param>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Logic.LogHelper.LogAsync(Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger,Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String,System.Exception)">
-            <summary>
-            Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
-            </summary>
-            <param name="logger">The logger to use for publishing the message.</param>
-            <param name="tenant">Current tenant.</param>
             <param name="severityLevel">The severity level for this log.</param>
             <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
             <param name="exception">Optional exception</param>
@@ -1511,17 +1500,10 @@
             Interface for basic logging
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String)">
             <summary>
-            Log <paramref name="message"/> for <paramref name="tenant"/> with level <paramref name="logSeverityLevel"/>.
+            Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.
             </summary>
-            <remarks>Same as <see cref="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.Log(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String)"/>, but asynchronous.</remarks>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.Log(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String)">
-            <summary>
-            Log <paramref name="message"/> for <paramref name="tenant"/> with level <paramref name="logSeverityLevel"/>.
-            </summary>
-            <remarks>Same as <see cref="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant,Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel,System.String)"/>, but synchronous.</remarks>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel">
             <summary>

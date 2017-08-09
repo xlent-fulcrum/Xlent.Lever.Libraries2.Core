@@ -49,9 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
-    <Compile Include="Core\obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
-    <Compile Include="Core\obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
-    <Compile Include="Core\obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="Core\Storage\MemoryStorageTest.cs" />
     <Compile Include="Core\Storage\PersonStorableItem.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
@@ -63,30 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\obj\Debug\CoreCompileInputs.cache" />
-    <None Include="Core\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="Core\obj\Debug\Libraries2.Core.Test.csprojResolveAssemblyReference.cache" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Core\bin\Debug\Libraries2.Core.Test.dll" />
-    <Content Include="Core\bin\Debug\Libraries2.Core.Test.pdb" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml" />
-    <Content Include="Core\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml" />
-    <Content Include="Core\bin\Debug\Xlent.Lever.Libraries2.Core.NetFramework.dll" />
-    <Content Include="Core\bin\Debug\Xlent.Lever.Libraries2.Core.NetFramework.pdb" />
-    <Content Include="Core\obj\Debug\Libraries2.Core.Test.csproj.FileListAbsolute.txt" />
-    <Content Include="Core\obj\Debug\Libraries2.Core.Test.dll" />
-    <Content Include="Core\obj\Debug\Libraries2.Core.Test.pdb" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\obj\Debug\TempPE\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core.NetFramework\Libraries2.Core.NetFramework.csproj">
       <Project>{923faa8d-0a18-41a7-99e3-663b61cda069}</Project>
