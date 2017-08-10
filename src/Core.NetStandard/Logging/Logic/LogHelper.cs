@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Logging.Model;
-using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Logging.Logic
 {
@@ -16,43 +15,16 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
         /// </summary>
         /// <param name="logger">The logger to use for publishing the message.</param>
-        /// <param name="tenant">Current tenant.</param>
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        public static void Log(IFulcrumLogger logger, ITenant tenant, LogSeverityLevel severityLevel, string message, Exception exception = null)
+        public static async Task LogAsync(IFulcrumLogger logger, LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             try
             {
                 InternalContract.RequireNotNull(logger, nameof(logger));
-                InternalContract.RequireNotNull(tenant, nameof(tenant));
                 var formattedMessage = FormatMessage(message, exception);
-                logger.Log(tenant, severityLevel, formattedMessage);
-            }
-            catch (Exception)
-            {
-                // TODO: Log somewhere
-                //var formattedMessage = FormatMessage(message, e);
-                //SafeLogger.Instance.Log(tenant, SeverityLevel.Critical, formattedMessage);
-            }
-        }
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
-        /// </summary>
-        /// <param name="logger">The logger to use for publishing the message.</param>
-        /// <param name="tenant">Current tenant.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        public static async Task LogAsync(IFulcrumLogger logger, ITenant tenant, LogSeverityLevel severityLevel, string message, Exception exception = null)
-        {
-            try
-            {
-                InternalContract.RequireNotNull(logger, nameof(logger));
-                InternalContract.RequireNotNull(tenant, nameof(tenant));
-                var formattedMessage = FormatMessage(message, exception);
-                await logger.LogAsync(tenant, severityLevel, formattedMessage);
+                await logger.LogAsync(severityLevel, formattedMessage);
             }
             catch (Exception)
             {
