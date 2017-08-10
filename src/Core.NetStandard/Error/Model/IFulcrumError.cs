@@ -86,6 +86,6 @@ namespace Xlent.Lever.Libraries2.Core.Error.Model
         /// <summary>
         /// Copies all fields from <paramref name="fulcrumError"/>.
         /// </summary>
-        void CopyFrom(IFulcrumError fulcrumError);
+        IFulcrumError CopyFrom(IFulcrumError fulcrumError);
     }
 }
