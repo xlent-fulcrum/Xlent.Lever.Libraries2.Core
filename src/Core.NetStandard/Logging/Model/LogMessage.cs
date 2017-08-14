@@ -43,6 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         {
             FulcrumValidate.IsNotNullOrWhiteSpace(Originator, nameof(Originator), errorLocation);
             FulcrumValidate.IsNotNull(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
+            FulcrumValidate.IsNotDefaultValue(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
             FulcrumValidate.IsNotNull(SeverityLevel, nameof(SeverityLevel), errorLocation);
         }
     }
