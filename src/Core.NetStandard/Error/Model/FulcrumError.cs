@@ -52,7 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Model
         public FulcrumError InnerError { get; set; }
 
         /// <inheritdoc />
-        public void CopyFrom(IFulcrumError fulcrumError)
+        public IFulcrumError CopyFrom(IFulcrumError fulcrumError)
         {
             TechnicalMessage = fulcrumError.TechnicalMessage;
             FriendlyMessage = fulcrumError.FriendlyMessage;
@@ -65,6 +65,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Model
             ErrorLocation = fulcrumError.ErrorLocation;
             Type = fulcrumError.Type;
             CorrelationId = fulcrumError.CorrelationId;
+            return this;
         }
 
         /// <inheritdoc />

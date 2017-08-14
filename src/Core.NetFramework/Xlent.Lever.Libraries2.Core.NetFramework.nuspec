@@ -12,6 +12,7 @@
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
       0.6.0 Added "CallingClientName" to ITenantConfigurationValueProvider
+      0.5.1 BUG: *.RequireGreaterThanOrEqal compared &lt;= instead of &gt;=
       0.5.0 Removed Tenant from IFulcrumLogger
       0.4.0 Added more storage and queue models and functionality.
       0.3.1 MemoryStorage now handled Guid, string and int for Id.

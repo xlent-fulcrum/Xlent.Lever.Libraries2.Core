@@ -129,7 +129,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             InternalContract.RequireNotNull(lesserOrEqualValue, nameof(lesserOrEqualValue));
             InternalContract.RequireNotNull(actualValue, nameof(actualValue));
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
-            GenericAssert<FulcrumAssertionFailedException>.IsLessThanOrEqualTo(lesserOrEqualValue, actualValue, errorLocation, customMessage);
+            GenericAssert<FulcrumAssertionFailedException>.IsGreaterThanOrEqualTo(lesserOrEqualValue, actualValue, errorLocation, customMessage);
         }
 
         /// <summary>

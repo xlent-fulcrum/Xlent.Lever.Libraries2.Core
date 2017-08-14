@@ -186,7 +186,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             RequireNotNull(lesserOrEqualValue, nameof(lesserOrEqualValue));
             RequireNotNull(parameterValue, nameof(parameterValue));
             RequireNotNull(parameterName, nameof(parameterName));
-            GenericContract<FulcrumContractException>.RequireLessThanOrEqualTo(lesserOrEqualValue, parameterValue, parameterName, customMessage);
+            GenericContract<FulcrumContractException>.RequireGreaterThanOrEqualTo(lesserOrEqualValue, parameterValue, parameterName, customMessage);
         }
 
         /// <summary>

@@ -91,7 +91,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         }
 
         /// <inheritdoc />
-        public void CopyFrom(IFulcrumError fulcrumError)
+        public IFulcrumError CopyFrom(IFulcrumError fulcrumError)
         {
             TechnicalMessage = fulcrumError.TechnicalMessage;
             FriendlyMessage = fulcrumError.FriendlyMessage;
@@ -103,6 +103,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             Code = fulcrumError.Code;
             Type = fulcrumError.Type;
             CorrelationId = fulcrumError.CorrelationId;
+            return this;
         }
 
         /// <summary>

@@ -189,7 +189,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             InternalContract.RequireNotNull(lesserOrEqualValue, nameof(lesserOrEqualValue));
             InternalContract.RequireNotNull(parameterValue, nameof(parameterValue));
             InternalContract.RequireNotNull(parameterName, nameof(parameterName));
-            GenericContract<FulcrumServiceContractException>.RequireLessThanOrEqualTo(lesserOrEqualValue, parameterValue, parameterName, customMessage);
+            GenericContract<FulcrumServiceContractException>.RequireGreaterThanOrEqualTo(lesserOrEqualValue, parameterValue, parameterName, customMessage);
         }
 
         /// <summary>
