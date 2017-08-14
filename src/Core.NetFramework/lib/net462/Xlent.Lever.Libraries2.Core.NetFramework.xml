@@ -1545,6 +1545,9 @@
             The logged message in plain text
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.Validate(System.String,System.String)">
+            <inheritdoc />
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel">
             <summary>
             The severity level for a log message.

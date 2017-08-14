@@ -1,11 +1,12 @@
 ﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Logging.Model
 {
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>
-    public class LogMessage
+    public class LogMessage : IValidatable
     {
         /// <summary>
         /// The name of the service that the logging is done from
@@ -36,5 +37,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// The logged message in plain text
         /// </summary>
         public string Message { get; set; }
+
+        /// <inheritdoc />
+        public void Validate(string errorLocation, string propertyPath = "")
+        {
+            FulcrumValidate.IsNotNullOrWhiteSpace(Originator, nameof(Originator), errorLocation);
+            FulcrumValidate.IsNotNull(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
+            FulcrumValidate.IsNotNull(SeverityLevel, nameof(SeverityLevel), errorLocation);
+        }
     }
 }
