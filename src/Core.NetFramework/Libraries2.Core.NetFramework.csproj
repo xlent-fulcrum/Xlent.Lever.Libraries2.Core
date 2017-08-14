@@ -73,6 +73,7 @@
     <Compile Include="Core\Health\Model\IResourceHealth.cs" />
     <Compile Include="Core\Logging\Logic\LogHelper.cs" />
     <Compile Include="Core\Logging\Model\IFulcrumLogger.cs" />
+    <Compile Include="Core\Logging\Model\LogMessage.cs" />
     <Compile Include="Core\Logging\Model\LogSeverityLevel.cs" />
     <Compile Include="Core\Misc\Models\IDeepCopy.cs" />
     <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
