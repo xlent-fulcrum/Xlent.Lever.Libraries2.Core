@@ -12,6 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
     {
         private const string TenantIdKey = "TenantId";
         private const string LeverConfigurationIdKey = "LeverConfigurationId";
+        private const string CallingClientNameKey = "CallingClientName";
 
         /// <summary>
         /// An instances based on <see cref="AsyncLocalValueProvider"/>.
@@ -44,6 +45,13 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         {
             get => ValueProvider.GetValue<ILeverConfiguration>(LeverConfigurationIdKey);
             set => ValueProvider.SetValue(LeverConfigurationIdKey, value);
+        }
+
+        /// <inheritdoc />
+        public string CallingClientName
+        {
+            get => ValueProvider.GetValue<string>(CallingClientNameKey);
+            set => ValueProvider.SetValue(CallingClientNameKey, value);
         }
     }
 }

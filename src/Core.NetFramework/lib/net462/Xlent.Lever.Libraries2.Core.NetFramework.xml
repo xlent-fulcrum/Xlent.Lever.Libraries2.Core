@@ -1566,6 +1566,11 @@
             The current configuration.
             </summary>
         </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.ITenantConfigurationValueProvider.CallingClientName">
+            <summary>
+            Gets the calling client name, provided that it has been setup, e.g. by Xlent.Lever.Authentication.Sdk.Handlers.TokenValidationHandler
+            </summary>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider">
             <summary>
             Stores values in the execution context which is unaffected by asynchronous code that switches threads or context. 
@@ -1592,6 +1597,9 @@
             <inheritdoc />
         </member>
         <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider.LeverConfiguration">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider.CallingClientName">
             <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant">
