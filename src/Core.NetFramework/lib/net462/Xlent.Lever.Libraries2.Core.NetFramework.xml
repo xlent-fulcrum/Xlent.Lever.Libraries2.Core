@@ -1505,6 +1505,11 @@
             Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(System.Exception)">
+            <summary>
+            Log <paramref name="exception"/>.
+            </summary>
+        </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage)">
             <summary>
             Log <paramref name="message"/>.
