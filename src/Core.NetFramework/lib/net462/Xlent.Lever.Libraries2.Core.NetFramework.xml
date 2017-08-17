@@ -1505,6 +1505,54 @@
             Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(System.Exception)">
+            <summary>
+            Log <paramref name="exception"/>.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.IFulcrumLogger.LogAsync(Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage)">
+            <summary>
+            Log <paramref name="message"/>.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage">
+            <summary>
+            Represents a log message with properties such as correlation id, calling client, severity and the text message.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.Originator">
+            <summary>
+            The name of the service that the logging is done from
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.CallingClientName">
+            <summary>
+            The name of the calling system
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.CorrelationId">
+            <summary>
+            A correlation id that ties this log message together in different systems
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.UtcDateTimeOffset">
+            <summary>
+            Timestamp in UTC when the log message was created
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.SeverityLevel">
+            <summary>
+            The <see cref="T:Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel"/> of the log message
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.Message">
+            <summary>
+            The logged message in plain text
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Logging.Model.LogMessage.Validate(System.String,System.String)">
+            <inheritdoc />
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Logging.Model.LogSeverityLevel">
             <summary>
             The severity level for a log message.
@@ -1566,6 +1614,11 @@
             The current configuration.
             </summary>
         </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.ITenantConfigurationValueProvider.CallingClientName">
+            <summary>
+            Gets the calling client name, provided that it has been setup, e.g. by Xlent.Lever.Authentication.Sdk.Handlers.TokenValidationHandler
+            </summary>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider">
             <summary>
             Stores values in the execution context which is unaffected by asynchronous code that switches threads or context. 
@@ -1592,6 +1645,9 @@
             <inheritdoc />
         </member>
         <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider.LeverConfiguration">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.MultiTenant.Context.TenantConfigurationValueProvider.CallingClientName">
             <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant">

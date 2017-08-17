@@ -18,5 +18,10 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// The current configuration.
         /// </summary>
         ILeverConfiguration LeverConfiguration { get; set; }
+
+        /// <summary>
+        /// Gets the calling client name, provided that it has been setup, e.g. by Xlent.Lever.Authentication.Sdk.Handlers.TokenValidationHandler
+        /// </summary>
+        string CallingClientName { get; set; }
     }
 }
