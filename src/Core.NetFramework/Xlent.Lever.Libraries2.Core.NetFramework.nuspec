@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      0.5.2 Bump
       0.5.1 BUG: *.RequireGreaterThanOrEqal compared &lt;= instead of &gt;=
       0.5.0 Removed Tenant from IFulcrumLogger
       0.4.0 Added more storage and queue models and functionality.
