@@ -19,6 +19,10 @@
         /// </summary>
         ExternalSystemUser,
         /// <summary>
+        /// An organization admin
+        /// </summary>
+        OrganizationAdmin,
+        /// <summary>
         /// A human administrator
         /// </summary>
         Administrator

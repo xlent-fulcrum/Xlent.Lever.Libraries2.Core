@@ -1717,6 +1717,11 @@
             An external system (belonging to the organization)
             </summary>
         </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.OrganizationAdmin">
+            <summary>
+            An organization admin
+            </summary>
+        </member>
         <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.Administrator">
             <summary>
             A human administrator
