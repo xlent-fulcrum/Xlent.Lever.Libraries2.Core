@@ -313,7 +313,7 @@ namespace Xlent.Lever.Libraries2.Core.TestAssert
             const string parameterName = "parameterName";
             try
             {
-                InternalContract.RequireGreaterThanOrEqualTo(1, 2, parameterName);
+                InternalContract.RequireGreaterThanOrEqualTo(2, 1, parameterName);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
             catch (FulcrumContractException fulcrumException)
