@@ -14,6 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         /// <param name="errorLocation">A unique errorLocation for this exact assertion.</param>
         /// <param name="message">A message that documents/explains this failure. This message should normally start with "Expected ...".</param>
+        [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -24,6 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is true.
         /// </summary>
+        [StackTraceHidden]
         public static void IsTrue(bool value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -33,6 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNull(object value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -42,6 +45,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null.
         /// </summary>
+        
+        [StackTraceHidden]
         public static void IsNotNull(object value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -51,6 +56,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not the default value for that type.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotDefaultValue<T>(T value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -60,6 +66,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null, not empty and contains other characters than white space.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotNullOrWhiteSpace(string value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -69,6 +76,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is equal to <paramref name="expectedValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void AreEqual(object expectedValue, object actualValue, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -78,6 +86,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is not equal to <paramref name="expectedValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void AreNotEqual(object expectedValue, object actualValue, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -87,6 +96,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is less than to <paramref name="greaterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsLessThan<T>(T greaterValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -99,6 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is less than or equal to <paramref name="greaterOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsLessThanOrEqualTo<T>(T greaterOrEqualValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -111,6 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThan<T>(T lesserValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -123,6 +135,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -135,6 +148,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
@@ -145,6 +159,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null or not matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
@@ -156,6 +171,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="value"/> is not null, then call the Validate() method of that type.
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
+        [StackTraceHidden]
         public static void IsValidatedOrNull(IValidatable value, string errorLocation)
         {
             value?.Validate(errorLocation);
@@ -165,6 +181,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="values"/> is not null, then call the Validate() method for every object in the collection.
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
+        [StackTraceHidden]
         public static void IsValidatedOrNull(IEnumerable<IValidatable> values, string errorLocation)
         {
             if (values == null) return;
@@ -178,6 +195,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="value"/> is not null and also call the Validate() method of that type.
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
+        [StackTraceHidden]
         public static void IsValidatedAndNotNull(IValidatable value, string errorLocation)
         {
             IsNotNull(value, errorLocation);
@@ -188,6 +206,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="values"/> is not null and also call the Validate() method for every object in the collection.
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
+        [StackTraceHidden]
         public static void IsValidatedAndNotNull(IEnumerable<IValidatable> values, string errorLocation)
         {
             IsNotNull(values, errorLocation);
@@ -197,6 +216,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Call the Validate() method for <paramref name="value"/>
         /// </summary>
+        [StackTraceHidden]
         public static void IsValidated(IValidatable value, string errorLocation)
         {
             value?.Validate(errorLocation);
@@ -205,6 +225,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Call the Validate() method for each item in <paramref name="values"/>
         /// </summary>
+        [StackTraceHidden]
         public static void IsValidated(IEnumerable<IValidatable> values, string errorLocation)
         {
             if (values == null) return;

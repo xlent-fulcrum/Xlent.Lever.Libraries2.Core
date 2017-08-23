@@ -16,6 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         /// <param name="errorLocation">A unique errorLocation for this exact assertion.</param>
         /// <param name="message">A message that documents/explains this failure. This message should normally start with "Expected ...".</param>
+        [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -26,6 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is true.
         /// </summary>
+        [StackTraceHidden]
         public static void IsTrue(bool value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -37,6 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that the result of <paramref name="expression"/> is true.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void IsTrue(Expression<Func<bool>> expression, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -48,6 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNull(object value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -59,6 +63,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that the result of <paramref name="expression"/> is null.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void IsNull(Expression<Func<object>> expression, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -70,6 +75,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotNull(object value, string errorLocation, string customMessage = null)
         {
             if (value != null) return;
@@ -80,6 +86,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that the result of <paramref name="expression"/> is null.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void IsNotNull(Expression<Func<object>> expression, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(expression, nameof(expression));
@@ -91,6 +98,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not the default value for that type.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotDefaultValue<T>(T value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -101,6 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null, not empty and has other characters than white space.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotNullOrWhiteSpace(string value, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -112,6 +121,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that the result of <paramref name="expression"/> is not null, not empty and contains other characters than white space.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void IsNotNullOrWhiteSpace(Expression<Func<string>> expression, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -123,6 +133,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is equal to <paramref name="expectedValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void AreEqual(object expectedValue, object actualValue, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -133,6 +144,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is not equal to <paramref name="expectedValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void AreNotEqual(object expectedValue, object actualValue, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -144,6 +156,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that the result of <paramref name="expression"/> is equal to <paramref name="expectedValue"/>.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void AreEqual(object expectedValue, Expression<Func<string>> expression, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -181,6 +194,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThan<T>(T lesserValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -194,6 +208,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="actualValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T actualValue, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -207,6 +222,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             if (value == null) return;
@@ -219,6 +235,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             if (value == null) return;
@@ -228,6 +245,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             IsTrue(!Regex.IsMatch(value, regularExpression), errorLocation, message);
         }
 
+        [StackTraceHidden]
         private static void ThrowException(string errorLocation, string message)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));

@@ -14,6 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         /// <param name="errorLocation">A unique errorLocation for the part of errorLocation where the validation didn't hold.</param>
         /// <param name="message">A message that documents/explains this failure. This message should normally start with "Expected ...".</param>
+        [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
             InternalContract.RequireNotNull(message, nameof(message));
@@ -27,6 +28,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <param name="mustBeTrue">The value that must be true.</param>
         /// <param name="message">A message that documents/explains this failure. This message should normally start with "Expected ...".</param>
         /// <param name="errorLocation">A unique errorLocation for the part of errorLocation where the validation didn't hold.</param>
+        [StackTraceHidden]
         public static void IsTrue(bool mustBeTrue, string errorLocation, string message)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -37,6 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotNull(object value, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -48,6 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not the default mustBeTrue for that type.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotDefaultValue<T>(T value, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -59,6 +63,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null, not empty and contains other characters than white space.
         /// </summary>
+        [StackTraceHidden]
         public static void IsNotNullOrWhiteSpace(string value, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -70,6 +75,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Call the Validate() method for <paramref name="value"/>
         /// </summary>
+        [StackTraceHidden]
         public static void IsValidated(IValidatable value, string propertyPath, string propertyName, string errorLocation, string customMessage = null)
         {
             value?.Validate(errorLocation, $"{propertyPath}.{propertyName}");
@@ -78,6 +84,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Call the Validate() method for each item in <paramref name="values"/>
         /// </summary>
+        [StackTraceHidden]
         public static void IsValidated(IEnumerable<IValidatable> values, string propertyPath, string propertyName, string errorLocation, string customMessage = null)
         {
             if (values == null) return;
@@ -90,6 +97,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is equal to <paramref name="expectedValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void AreEqual(object expectedValue, object propertyValue, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
@@ -101,6 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is less than <paramref name="greaterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsLessThan<T>(T greaterValue, T propertyValue, string propertyName, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -113,6 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is less than or equal to <paramref name="greaterOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsLessThanOrEqualTo<T>(T greaterOrEqualValue, T propertyValue, string propertyName, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -125,6 +135,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThan<T>(T lesserValue, T propertyValue, string propertyName, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -137,6 +148,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void IsGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T propertyValue, string propertyName, string errorLocation, string customMessage = null)
             where T : IComparable<T>
         {
@@ -149,6 +161,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string propertyValue, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
@@ -160,6 +173,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="propertyValue"/> is null or not matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string propertyValue, string propertyName, string errorLocation, string customMessage = null)
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Model;
 
@@ -125,6 +127,21 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FulcrumValidate.IsNotNullOrWhiteSpace(TechnicalMessage, nameof(TechnicalMessage), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(Type, nameof(Type), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(InstanceId, nameof(InstanceId), errorLocation);
+        }
+
+        /// <inheritdoc />
+        public override string StackTrace
+        {
+            get
+            {
+                var strings = new StackTrace(this, true)
+                    .GetFrames()
+                    .Where(frame => !frame.GetMethod().IsDefined(typeof(StackTraceHiddenAttribute), true))
+                    .Select(frame => new StackTrace(frame).ToString())
+                    .ToArray();
+                return string.Concat(
+                    strings);
+            }
         }
     }
 }

@@ -261,3 +261,4 @@ lib/Libraries2.Core/*.xml
 /src/Libraries2.Core/lib/netstandard1.4/*.xml
 /src/Core.NetFramework/Core
 /test/Core.NetFramework.Test/Core
+/src/Core.NetFramework/lib/net462/*.xml

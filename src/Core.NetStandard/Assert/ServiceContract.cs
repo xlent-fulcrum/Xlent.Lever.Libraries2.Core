@@ -14,6 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void Require<TParameter>(TParameter parameterValue,
             Expression<Func<TParameter, bool>> expression, string parameterName)
         {
@@ -23,6 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotNull(object parameterValue, string parameterName, string customMessage = null)
         {
             GenericContract<FulcrumServiceContractException>.RequireNotNull(parameterValue, parameterName, customMessage);
@@ -31,6 +33,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not the default value for this type.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotDefaultValue<TParameter>(TParameter parameterValue, string parameterName, string customMessage = null)
         {
             GenericContract<FulcrumServiceContractException>.RequireNotDefaultValue(parameterValue, parameterName, customMessage);
@@ -39,6 +42,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null)
         {
             GenericContract<FulcrumServiceContractException>.RequireNotNullOrWhitespace(parameterValue, parameterName, customMessage);
@@ -48,6 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
+        [StackTraceHidden]
         public static void RequireValidatedOrNull(IValidatable parameterValue, string parameterName, string customMessage = null)
         {
             if (parameterValue == null) return;
@@ -65,6 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValues"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
+        [StackTraceHidden]
         public static void RequireValidatedOrNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
         {
             if (parameterValues == null) return;
@@ -78,6 +84,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is not null and also call the FulcrumValidate() method of that type.
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
+        [StackTraceHidden]
         public static void RequireValidatedAndNotNull(IValidatable parameterValue, string parameterName, string customMessage = null)
         {
             RequireNotNull(parameterValue, parameterName);
@@ -88,6 +95,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValues"/> is not null and also call the FulcrumValidate() method of that type.
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
+        [StackTraceHidden]
         public static void RequireValidatedAndNotNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
         {
             RequireNotNull(parameterValues, parameterName);
@@ -100,6 +108,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
         {
             if (parameterValue == null) return;
@@ -116,6 +125,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// If <paramref name="parameterValues"/> is not null, then call the Validate() method of that type.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireValidated(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
         {
             if (parameterValues == null) return;
@@ -129,6 +139,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="expression"/> returns a true value.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void Require(Expression<Func<bool>> expression, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -138,6 +149,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="mustBeTrue"/> really is true.
         /// </summary>
+        [StackTraceHidden]
         public static void Require(bool mustBeTrue, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -147,6 +159,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is less than to <paramref name="greaterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireLessThan<T>(T greaterValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -159,6 +172,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is less than or equal to <paramref name="greaterOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireLessThanOrEqualTo<T>(T greaterOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -171,6 +185,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireGreaterThan<T>(T lesserValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -183,6 +198,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -195,6 +211,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null)
         {
             RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
@@ -205,6 +222,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is null or not matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
@@ -215,6 +233,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Always fail, with the given <paramref name="message"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void Fail(string message)
         {
             RequireNotNull(message, nameof(message));

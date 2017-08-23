@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Assert
 {
@@ -14,6 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void Require<TParameter>(TParameter parameterValue,
             Expression<Func<TParameter, bool>> expression, string parameterName)
         {
@@ -24,6 +26,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotNull<TParameter>(TParameter parameterValue, string parameterName, string customMessage = null)
         {
             var message = GetErrorMessageIfNull(parameterValue, parameterName, customMessage);
@@ -33,6 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not the default value for this type.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotDefaultValue<TParameter>(TParameter parameterValue, string parameterName, string customMessage = null)
         {
             var message = GetErrorMessageIfDefaultValue(parameterValue, parameterName, customMessage);
@@ -42,6 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null)
         {
             var message = GetErrorMessageIfNullOrWhitespace(parameterValue, parameterName, customMessage);
@@ -52,6 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="expression"/> returns a true value.
         /// </summary>
         [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
+        [StackTraceHidden]
         public static void Require(Expression<Func<bool>> expression, string customMessage = null)
         {
             var message = GetErrorMessageIfFalse(expression, customMessage);
@@ -61,6 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="mustBeTrue"/> really is true.
         /// </summary>
+        [StackTraceHidden]
         public static void Require(bool mustBeTrue, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -71,6 +78,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Always fail, with the given <paramref name="message"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void Fail(string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
@@ -80,6 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is less than to <paramref name="greaterValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireLessThan<T>(T greaterValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -93,6 +102,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is less than or equal to <paramref name="greaterOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireLessThanOrEqualTo<T>(T greaterOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -106,6 +116,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireGreaterThan<T>(T lesserValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -119,6 +130,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
             where T : IComparable<T>
         {
@@ -132,6 +144,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireMatchesRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null)
         {
             InternalContract.RequireNotNull(regularExpression, nameof(regularExpression));
@@ -144,6 +157,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
+        [StackTraceHidden]
         public static void RequireMatchesNotRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null)
         {
             InternalContract.RequireNotNull(regularExpression, nameof(regularExpression));
@@ -195,13 +209,15 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             return mustBeTrue ? null : message;
         }
 
-        private static void MaybeThrowException(string message)
+        [StackTraceHidden]
+        public static void MaybeThrowException(string message)
         {
             if (message == null) return;
             ThrowException(message);
         }
 
-        private static void ThrowException(string message)
+        [StackTraceHidden]
+        public static void ThrowException(string message)
         {
             var exception = (TException)Activator.CreateInstance(typeof(TException), message);
             throw exception;
