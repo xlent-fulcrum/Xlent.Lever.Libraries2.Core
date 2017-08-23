@@ -4,9 +4,9 @@ using Xlent.Lever.Libraries2.Core.Assert;
 namespace Xlent.Lever.Libraries2.Core.Context
 {
     /// <summary>
-    /// Stores values in the execution context which is unaffected by asynchronous code that switches threads or context. 
+    /// Stores values in a class variable. All references to the same class, same thread or not, will share the same values.
     /// </summary>
-    /// <remarks>Updating values in a thread will not affect the value in parent/sibling threads</remarks>
+    /// <remarks></remarks>
     public class SingleThreadValueProvider : IValueProvider
     {
         private static readonly Dictionary<string, object> Dictionary = new Dictionary<string, object>();
