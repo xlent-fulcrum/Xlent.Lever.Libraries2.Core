@@ -66,7 +66,7 @@
     <Compile Include="Core\Error\Logic\FulcrumServiceContractException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumTryAgainException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
-    <Compile Include="Core\Error\Logic\StackTraceHiddenAttribute.cs" />
+    <Compile Include="Core\Misc\StackTraceHiddenAttribute.cs" />
     <Compile Include="Core\Error\Model\FulcrumError.cs" />
     <Compile Include="Core\Error\Model\IFulcrumError.cs" />
     <Compile Include="Core\Health\Logic\ResourceHealthAggregator.cs" />

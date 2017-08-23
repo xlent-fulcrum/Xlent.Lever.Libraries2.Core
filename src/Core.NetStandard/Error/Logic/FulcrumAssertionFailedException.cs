@@ -39,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        public FulcrumAssertionFailedException(string message, string errorLocation) : this(message, (Exception) null)
+        public FulcrumAssertionFailedException(string message, string errorLocation) : this(message, (Exception)null)
         {
             ErrorLocation = errorLocation;
         }
@@ -58,15 +58,16 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <inheritdoc />
         public override string Type => ExceptionType;
 
+        /// <inheritdoc />
+        public override string FriendlyMessage =>
+            "An assertion made by the programmer proved to be wrong and the request couldn't be properly fulfilled."
+            + "\rPlease report the following:"
+            + $"\rCorrelationId: {CorrelationId}"
+            + $"\rInstanceId: {InstanceId}"
+            + $"\rErrorLocation: {ErrorLocation ?? StackTrace}";
+
         private void SetProperties()
         {
-
-            FriendlyMessage =
-                "An assertion made by the programmer proved to be wrong and the request couldn't be properly fulfilled.";
-            FriendlyMessage += "Please report the following:";
-            FriendlyMessage += $"\rCorrelactionId: {CorrelationId}";
-            FriendlyMessage += $"\rInstanceId: {InstanceId}";
-
             MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#AssertFailedException";
         }
     }

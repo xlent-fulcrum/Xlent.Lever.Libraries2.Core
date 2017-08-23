@@ -23,12 +23,20 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        public FulcrumContractException() : this(null, null) { }
+        public FulcrumContractException() : this(null, (Exception)null) { }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public FulcrumContractException(string message) : this(message, null) { }
+        public FulcrumContractException(string message) : this(message, (Exception)null) { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public FulcrumContractException(string message, string errorLocation) : this(message, (Exception) null)
+        {
+            ErrorLocation = errorLocation;
+        }
 
         /// <summary>
         /// Constructor
@@ -44,15 +52,16 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <inheritdoc />
         public override string Type => ExceptionType;
 
+        /// <inheritdoc />
+        public override string FriendlyMessage =>
+            "A programmer's code calls another part of the program in a bad way. An end user is never supposed to see this error as it should be converted on the way."
+            + "\rPlease report the following:"
+            + $"\rCorrelationId: {CorrelationId}"
+            + $"\rInstanceId: {InstanceId}"
+            + $"\rErrorLocation: {ErrorLocation ?? StackTrace}";
+
         private void SetProperties()
         {
-
-            FriendlyMessage =
-                "A programmer's code calls another part of the program in a bad way. An end user is never supposed to see this error as it should be converted on the way.";
-            FriendlyMessage += " Please report the following:";
-            FriendlyMessage += $"\rCorrelactionId: {CorrelationId}";
-            FriendlyMessage += $"\rInstanceId: {InstanceId}";
-
             MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumContractException";
         }
     }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Misc;
 
 namespace Xlent.Lever.Libraries2.Core.Assert
 {

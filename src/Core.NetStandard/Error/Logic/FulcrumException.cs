@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Model;
+using Xlent.Lever.Libraries2.Core.Misc;
 
 namespace Xlent.Lever.Libraries2.Core.Error.Logic
 {
@@ -33,7 +34,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         public string TechnicalMessage { get; set; }
 
         /// <inheritdoc />
-        public string FriendlyMessage { get; set; }
+        public virtual string FriendlyMessage { get; set; }
 
         /// <inheritdoc />
         public string MoreInfoUrl { get; set; }
