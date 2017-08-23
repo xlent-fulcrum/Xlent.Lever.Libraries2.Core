@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Context;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Platform.Configurations;
 
@@ -17,6 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// <summary>
         /// An instances based on <see cref="AsyncLocalValueProvider"/>.
         /// </summary>
+        [Obsolete("The AsyncLocalValueProvider does not work fully, so a HttpContextValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.Context.SaveValuesProvider")]
         public new static ITenantConfigurationValueProvider AsyncLocalInstance { get; } = new TenantConfigurationValueProvider(new AsyncLocalValueProvider());
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace Xlent.Lever.Libraries2.Core.Context
+﻿using System;
+
+namespace Xlent.Lever.Libraries2.Core.Context
 {
     /// <summary>
     /// Stores values in the execution context which is unaffected by asynchronous code that switches threads or context. 
@@ -14,6 +16,7 @@
         /// <summary>
         /// An instance that uses <see cref="AsyncLocalValueProvider"/> as a getter and setter.
         /// </summary>
+        [Obsolete("The AsyncLocalValueProvider does not work fully, so a HttpContextValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.Context.SaveValuesProvider")]
         public static ICorrelationIdValueProvider AsyncLocalInstance { get; } = new CorrelationIdValueProvider(new AsyncLocalValueProvider());
 
         /// <summary>
