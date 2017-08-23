@@ -81,6 +81,25 @@ namespace Xlent.Lever.Libraries2.Core.TestAssert
         }
 
         [TestMethod]
+        public void IsNotNullAssertionFailNoLocation()
+        {
+            const string message = "A random message";
+            try
+            {
+                FulcrumAssert.IsNotNull(null, null, message);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
+            }
+            catch (FulcrumAssertionFailedException fulcrumException)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage.Contains(message));
+            }
+            catch (Exception e)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected a specific FulcrumException but got {e.GetType().FullName}.");
+            }
+        }
+
+        [TestMethod]
         public void IsNotNullOrWhitespaceAssertionOk()
         {
             FulcrumAssert.IsNotNullOrWhiteSpace("NotEmpty", $"{Namespace}: 5CA88FE7-BD6D-4FC8-82CE-2EDBC6517F0C", "311F3E2E-748B-4EB1-8420-09938D8A8AA7");
