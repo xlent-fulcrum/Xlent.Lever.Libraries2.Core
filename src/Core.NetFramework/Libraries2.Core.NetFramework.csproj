@@ -50,6 +50,7 @@
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
     <Compile Include="Core\Context\CorrelationIdValueProvider.cs" />
     <Compile Include="Core\Context\ICorrelationIdValueProvider.cs" />
+    <Compile Include="Core\Context\IHasValueProvider.cs" />
     <Compile Include="Core\Context\IValueProvider.cs" />
     <Compile Include="Core\Context\SingleThreadValueProvider.cs" />
     <Compile Include="Core\Decoupling\IFactory.cs" />

@@ -16,12 +16,13 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <summary>
         /// An instance that uses <see cref="AsyncLocalValueProvider"/> as a getter and setter.
         /// </summary>
-        [Obsolete("The AsyncLocalValueProvider does not work fully, so a HttpContextValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.Context.SaveValuesProvider")]
+        [Obsolete("Create your own instance", true)]
         public static ICorrelationIdValueProvider AsyncLocalInstance { get; } = new CorrelationIdValueProvider(new AsyncLocalValueProvider());
 
         /// <summary>
         /// An instance that uses <see cref="SingleThreadValueProvider"/> as a getter and setter.
         /// </summary>
+        [Obsolete("Create your own instance", true)]
         public static ICorrelationIdValueProvider MemoryCacheInstance { get; } = new CorrelationIdValueProvider(new SingleThreadValueProvider());
 
         /// <summary>

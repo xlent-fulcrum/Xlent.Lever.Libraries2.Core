@@ -9,7 +9,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
     /// Stores values in the execution context which is unaffected by asynchronous code that switches threads or context. 
     /// </summary>
     /// <remarks>Updating values in a thread will not affect the value in parent/sibling threads</remarks>
-    public class TenantConfigurationValueProvider : CorrelationIdValueProvider, ITenantConfigurationValueProvider
+    public class TenantConfigurationValueProvider : ITenantConfigurationValueProvider
     {
         private const string TenantIdKey = "TenantId";
         private const string LeverConfigurationIdKey = "LeverConfigurationId";
@@ -18,22 +18,26 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// <summary>
         /// An instances based on <see cref="AsyncLocalValueProvider"/>.
         /// </summary>
-        [Obsolete("The AsyncLocalValueProvider does not work fully, so a HttpContextValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.Context.SaveValuesProvider")]
-        public new static ITenantConfigurationValueProvider AsyncLocalInstance { get; } = new TenantConfigurationValueProvider(new AsyncLocalValueProvider());
+        [Obsolete("Create your own instance", true)]
+        public static ITenantConfigurationValueProvider AsyncLocalInstance { get; } = new TenantConfigurationValueProvider(new AsyncLocalValueProvider());
 
         /// <summary>
         /// An instances based on <see cref="SingleThreadValueProvider"/>.
         /// </summary>
-        public new static ITenantConfigurationValueProvider MemoryCacheInstance { get; } = new TenantConfigurationValueProvider(new SingleThreadValueProvider());
+        [Obsolete("Create your own instance", true)]
+        public static ITenantConfigurationValueProvider MemoryCacheInstance { get; } = new TenantConfigurationValueProvider(new SingleThreadValueProvider());
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="valueProvider">The value provider to use for getting and setting.</param>
         public TenantConfigurationValueProvider(IValueProvider valueProvider)
-            : base(valueProvider)
         {
+            ValueProvider = valueProvider;
         }
+
+        /// <inheritdoc />
+        public IValueProvider ValueProvider { get; }
 
         /// <inheritdoc />
         public ITenant Tenant

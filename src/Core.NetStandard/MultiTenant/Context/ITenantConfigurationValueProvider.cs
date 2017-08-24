@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
     /// <summary>
     /// Adds Tenant and LeverConfiguration to what <see cref="ICorrelationIdValueProvider"/> provides.
     /// </summary>
-    public interface ITenantConfigurationValueProvider : ICorrelationIdValueProvider
+    public interface ITenantConfigurationValueProvider : IHasValueProvider
     {
         /// <summary>
         /// The current Tenant.
