@@ -1,5 +1,6 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Logging.Model
 {
@@ -8,6 +9,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
     /// </summary>
     public class LogMessage : IValidatable
     {
+        /// <summary>
+        /// The name of the service that the logging is done from
+        /// </summary>
+        public ITenant Tenant { get; set; }
+
         /// <summary>
         /// The name of the service that the logging is done from
         /// </summary>
@@ -41,6 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {
+            FulcrumValidate.IsNotNull(Tenant, nameof(Tenant), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(Originator, nameof(Originator), errorLocation);
             FulcrumValidate.IsNotNull(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
             FulcrumValidate.IsNotDefaultValue(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
