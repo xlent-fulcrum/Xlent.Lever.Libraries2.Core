@@ -48,6 +48,7 @@
     <Compile Include="Core\Assert\IValidatable.cs" />
     <Compile Include="Core\Assert\ServiceContract.cs" />
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
+    <Compile Include="Core\Context\ContextValueProvider.cs" />
     <Compile Include="Core\Context\CorrelationIdValueProvider.cs" />
     <Compile Include="Core\Context\ICorrelationIdValueProvider.cs" />
     <Compile Include="Core\Context\IHasValueProvider.cs" />
