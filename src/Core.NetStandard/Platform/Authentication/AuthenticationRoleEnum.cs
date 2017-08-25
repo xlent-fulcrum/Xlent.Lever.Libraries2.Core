@@ -21,6 +21,10 @@
         /// <summary>
         /// A human administrator
         /// </summary>
-        Administrator
+        Administrator,
+        /// <summary>
+        /// A human administrator, having rights to make changes to whole organization
+        /// </summary>
+        OrganizationAdmin
     }
 }
