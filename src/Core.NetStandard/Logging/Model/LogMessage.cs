@@ -52,8 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {
-            FulcrumValidate.IsNotNullOrWhiteSpace(Organization, nameof(Organization), errorLocation);
-            FulcrumValidate.IsNotNullOrWhiteSpace(Environment, nameof(Environment), errorLocation);
+            // Note! Don't check Org/Env here, since they can be null for yet-to-be-discovered reasons
             FulcrumValidate.IsNotNullOrWhiteSpace(Originator, nameof(Originator), errorLocation);
             FulcrumValidate.IsNotNull(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
             FulcrumValidate.IsNotDefaultValue(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
