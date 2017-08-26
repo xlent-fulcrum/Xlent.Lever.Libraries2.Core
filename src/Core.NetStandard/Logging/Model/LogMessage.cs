@@ -10,9 +10,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
     public class LogMessage : IValidatable
     {
         /// <summary>
-        /// The name of the service that the logging is done from
+        /// Tenant.Organization
         /// </summary>
-        public ITenant Tenant { get; set; }
+        public string Organization { get; set; }
+
+        /// <summary>
+        /// Tenant.Environment
+        /// </summary>
+        public string Environment { get; set; }
 
         /// <summary>
         /// The name of the service that the logging is done from
@@ -47,7 +52,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {
-            FulcrumValidate.IsNotNull(Tenant, nameof(Tenant), errorLocation);
+            FulcrumValidate.IsNotNullOrWhiteSpace(Organization, nameof(Organization), errorLocation);
+            FulcrumValidate.IsNotNullOrWhiteSpace(Environment, nameof(Environment), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(Originator, nameof(Originator), errorLocation);
             FulcrumValidate.IsNotNull(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
             FulcrumValidate.IsNotDefaultValue(UtcDateTimeOffset, nameof(UtcDateTimeOffset), errorLocation);
