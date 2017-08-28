@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
+    <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Storage\MemoryStorageTest.cs" />
     <Compile Include="Core\Storage\PersonStorableItem.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />

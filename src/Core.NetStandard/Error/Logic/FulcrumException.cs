@@ -136,12 +136,11 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             get
             {
                 var strings = new StackTrace(this, true)
-                    .GetFrames()
+                    .GetFrames()?
                     .Where(frame => !frame.GetMethod().IsDefined(typeof(StackTraceHiddenAttribute), true))
                     .Select(frame => new StackTrace(frame).ToString())
                     .ToArray();
-                return string.Concat(
-                    strings);
+                return strings != null ? string.Concat(strings) : "";
             }
         }
     }
