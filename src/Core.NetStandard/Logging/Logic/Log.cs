@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
@@ -16,26 +17,19 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
+        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
+        [Obsolete("Use ApplicationSetup.Logger", true)]
         private static IFulcrumLogger _chosenLogger;
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
+        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
+        [Obsolete("Use ApplicationSetup.Logger", true)]
         public static IFulcrumLogger LoggerForApplication
         {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_chosenLogger, null, $"The application must at startup set {nameof(LoggerForApplication)} to the appropriate {nameof(IFulcrumLogger)}.");
-                return _chosenLogger;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                _chosenLogger = value;
-            }
+            get => ApplicationSetup.Logger;
+            set => ApplicationSetup.Logger = value;
         }
 
         /// <summary>
@@ -115,7 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             try
             {
                 var formattedMessage = FormatMessage(message, exception);
-                LoggerForApplication.Log(severityLevel, formattedMessage);
+                ApplicationSetup.Logger.Log(severityLevel, formattedMessage);
             }
             catch (Exception e1)
             {

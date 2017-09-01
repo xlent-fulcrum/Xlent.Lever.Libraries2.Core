@@ -1,4 +1,6 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Context
 {
@@ -10,26 +12,19 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
+        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
+        [Obsolete("Use ApplicationSetup.ContextValueProvider", true)]
         protected static IValueProvider Chosen;
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
+        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
+        [Obsolete("Use ApplicationSetup.ContextValueProvider", true)]
         public static IValueProvider ContextForApplication
         {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(Chosen, null, $"The application must at startup set {nameof(ContextForApplication)} to the appropriate {nameof(IValueProvider)}.");
-                return Chosen;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                Chosen = value;
-            }
+            get => ApplicationSetup.ContextValueProvider;
+            set => ApplicationSetup.ContextValueProvider = value;
         }
 
         /// <summary>

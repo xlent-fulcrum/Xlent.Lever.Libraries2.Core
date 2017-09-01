@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>0.12.0</version>
+    <version>0.12.1</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      0.12.1 Collected application setups into ApplicationSetup.
       0.12.0 Added background thread helper.
       0.11.0 Refactored logging.
       0.10.10 Added CallbackRespsonse in Platform.BusinessEvents
@@ -20,7 +21,7 @@
       0.10.1 Re-added auth role OrganizationAdmin
       0.10.0 Deprecated static instances of value providers
       0.9.0 FulcrumExceptions now skips frames in stack trace. ErrorLocation is now optional. A stack trace will be provided if ErrorLocation is null for Assert and Contract exceptions.
-      0.8.2 Deprecation: The AsyncLocalValueProvider does not work fully, so a HttpContextValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.Context.SaveValueProvider
+      0.8.2 Deprecation: The AsyncLocalValueProvider does not work fully, so a HttpContextValueProviderValueProvider is preferred, by using Xlent.Lever.Libraries2.WebApi.ContextValueProvider.SaveValueProvider
       0.8.1 Bump
       0.8.0 IFulcrumLogger can log exceptions
       0.7.2 LogMessage : IValidatable
