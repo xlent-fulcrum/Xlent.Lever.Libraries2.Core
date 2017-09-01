@@ -1,14 +1,10 @@
-﻿using System;
-
-namespace Xlent.Lever.Libraries2.Core.Platform.BusinessEvents
+﻿namespace Xlent.Lever.Libraries2.Core.Platform.BusinessEvents
 {
-    // TODO: Remove after the next Fulcrum repository clean up.
     /// <summary>
     /// The payload that Business Events sends when it gets the response from an event it sent.
     /// </summary>
     /// <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
-    [Obsolete("Name correction. Use CallbackResponse.")]
-    public class CallbackRespsonse
+    public class CallbackResponse
     {
         /// <summary>
         /// The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
