@@ -18,5 +18,14 @@ namespace Xlent.Lever.Libraries2.Core.Application
             ApplicationSetup.Logger = Log.RecommendedForNetFramework;
             ApplicationSetup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
         }
+        /// <summary>
+        /// Sets the recommended application setup for .NET Framework.
+        /// </summary>
+        public static void UnitTestSetup()
+        {
+            ApplicationSetup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
+            ApplicationSetup.Logger = Log.RecommendedForNetFramework;
+            ApplicationSetup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
+        }
     }
 }
