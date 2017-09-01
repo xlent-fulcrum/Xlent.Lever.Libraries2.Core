@@ -1,12 +1,12 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Logging.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Logging.Model
+namespace Xlent.Lever.Libraries2.Core.Platform.Logging
 {
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>
-    [Obsolete("Namespace change. Use Xlent.Lever.Libraries2.Core.Platform.Logging.LogMessage")]
     public class LogMessage : IValidatable
     {
         /// <summary>
@@ -34,6 +34,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// </summary>
         public string CorrelationId { get; set; }
 
+        // TODO: No need to be specific about that it is UTC? Name change?
         /// <summary>
         /// Timestamp in UTC when the log message was created
         /// </summary>

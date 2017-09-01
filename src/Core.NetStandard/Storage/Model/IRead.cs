@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// </summary>
     /// <typeparam name="TStorable">The type of objects to read from persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/> property.</typeparam>
-    public interface IRead<TStorable, TId>
+    public interface IRead<TStorable, in TId>
         where TStorable : IStorableItem<TId>
     {
         /// <summary>

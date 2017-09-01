@@ -196,7 +196,7 @@ namespace Xlent.Lever.Libraries2.Core.TestAssert
             }
             catch (FulcrumContractException fulcrumException)
             {
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException?.TechnicalMessage);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Validation failed"));
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.Contains("Property Name"));
             }

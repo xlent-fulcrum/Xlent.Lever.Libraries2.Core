@@ -11,24 +11,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Model
         /// <summary>
         /// Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.
         /// </summary>
-        [Obsolete("Use the synchronous version")]
         Task LogAsync(LogSeverityLevel logSeverityLevel, string message);
 
+        // TODO: Remove after next update of all Fulcrum repositories.
         /// <summary>
         /// Log <paramref name="exception"/>.
         /// </summary>
-        [Obsolete("Use Log(LogSeverityLevel, string).")]
+        [Obsolete("Use LogAsync(LogSeverityLevel, string).", true)]
         Task LogAsync(Exception exception);
 
+        // TODO: Remove after next update of all Fulcrum repositories.
         /// <summary>
         /// Log <paramref name="message"/>.
         /// </summary>
-        [Obsolete("Use Log(LogSeverityLevel, string).")]
+        [Obsolete("Use LogAsync(LogSeverityLevel, string).", true)]
         Task LogAsync(LogMessage message);
-
-        /// <summary>
-        /// Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.
-        /// </summary>
-        void Log(LogSeverityLevel logSeverityLevel, string message);
     }
 }

@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
-using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Logging.Model;
 
@@ -11,55 +10,28 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
     /// <summary>
     /// A convenience class for logging.
     /// </summary>
-    public static class LogHelper
+    public class TraceSourceLogger : IFulcrumLogger
     {
-        /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
-        /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
-        private static IFulcrumLogger _chosenLogger;
+        private static readonly TraceSource TraceSource = new TraceSource("Xlent.Lever.Libraries2.Core.Logging.Logic.LogHelper");
 
         /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
+        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
         /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
-        public static IFulcrumLogger LoggerForApplication
-        {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_chosenLogger, null, $"The application must at startup set {nameof(LoggerForApplication)} to the appropriate {nameof(IFulcrumLogger)}.");
-                return _chosenLogger;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                _chosenLogger = value;
-            }
-        }
-
-        /// <summary>
-        /// Recommended <see cref="IFulcrumLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
-        /// </summary>
-        public static IFulcrumLogger RecommendedForDevelopment { get; } = new TraceSourceLogger();
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
-        /// </summary>
+        /// <param name="logger">The logger to use for publishing the message.</param>
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        public static async Task LogAsync(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        public async Task LogAsync(IFulcrumLogger logger, LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             try
             {
+                InternalContract.RequireNotNull(logger, nameof(logger));
                 var formattedMessage = FormatMessage(message, exception);
-                await LoggerForApplication.LogAsync(severityLevel, formattedMessage);
+                await logger.LogAsync(severityLevel, formattedMessage);
             }
             catch (Exception e)
             {
-                FallbackLoggingWhenAllElseFails(e.Message);
-                FallbackLoggingWhenAllElseFails(message);
+                FallbackLoggingWhenAllElseFails(e.Message, message);
             }
         }
 
@@ -110,20 +82,78 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
 
         
         /// <summary>
-        /// Use this method to log when the original logging method fails.
+        /// Use this method to log when all other logging methods fails.
         /// </summary>
+        /// <param name="reason">The reason the previous attempts failed.</param>
         /// <param name="message">The original message to log.</param>
-        private static void FallbackLoggingWhenAllElseFails(string message)
+        public static void FallbackLoggingWhenAllElseFails(string reason, string message)
         {
             try
             {
-                Debug.WriteLine(message);
-                RecommendedForDevelopment.LogAsync(LogSeverityLevel.Critical, message);
+                var errorMessage = $"Logger SDK failed ({reason}): {message}";
+                Debug.WriteLine(errorMessage);
+                TraceSource.TraceEvent(TraceEventType.Critical, 0, errorMessage);
             }
             catch (Exception)
             {
                 // This method must never fail.
             }
+        }
+
+        /// <inheritdoc />
+        public async Task LogAsync(LogSeverityLevel logSeverityLevel, string message)
+        {
+            try
+            {
+                if (logSeverityLevel == LogSeverityLevel.None) return;
+                TraceEventType eventType;
+                switch (logSeverityLevel)
+                {
+                    case LogSeverityLevel.Verbose:
+                        eventType = TraceEventType.Verbose;
+                        break;
+                    case LogSeverityLevel.Information:
+                        eventType = TraceEventType.Information;
+                        break;
+                    case LogSeverityLevel.Warning:
+                        eventType = TraceEventType.Warning;
+                        break;
+                    case LogSeverityLevel.Error:
+                        eventType = TraceEventType.Error;
+                        break;
+                    case LogSeverityLevel.Critical:
+                        eventType = TraceEventType.Critical;
+                        break;
+                    // ReSharper disable once RedundantCaseLabel
+                    case LogSeverityLevel.None:
+                    default:
+                        TraceSource.TraceEvent(TraceEventType.Critical, 0,
+                            $"Unexpected {nameof(logSeverityLevel)} ({logSeverityLevel}) for message: {message}.");
+                        return;
+                }
+                TraceSource.TraceEvent(eventType, 0, message);
+            }
+            catch (Exception)
+            {
+                // This method must never fail.
+            }
+            await Task.Yield();
+        }
+
+        // TODO: Remove method
+        /// <inheritdoc />
+        public Task LogAsync(Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+
+        // TODO: Remove method
+        /// <inheritdoc />
+#pragma warning disable 618
+        public Task LogAsync(LogMessage message)
+#pragma warning restore 618
+        {
+            throw new NotImplementedException();
         }
     }
 }

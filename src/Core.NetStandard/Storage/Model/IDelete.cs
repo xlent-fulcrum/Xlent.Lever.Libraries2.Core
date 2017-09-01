@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
