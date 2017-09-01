@@ -43,9 +43,6 @@ namespace Xlent.Lever.Libraries2.Core.Decoupling.Model
                 if (result.Count != 1) return false;
                 var groups = result[0].Groups;
                 if (groups.Count != 4) return false;
-                if (groups[1]?.Value == null) return false;
-                if (groups[2]?.Value == null) return false;
-                if (groups[3]?.Value == null) return false;
                 conceptValue = new ConceptValue
                 {
                     ConceptName = groups[1].Value,

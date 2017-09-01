@@ -140,7 +140,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Require(Expression<Func<bool>> expression, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            RequireNotNullOrWhitespace(message, nameof(message));
             GenericContract<FulcrumContractException>.Require(expression, message);
         }
 
@@ -150,7 +150,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Require(bool mustBeTrue, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            RequireNotNullOrWhitespace(message, nameof(message));
             GenericContract<FulcrumContractException>.Require(mustBeTrue, message);
         }
 

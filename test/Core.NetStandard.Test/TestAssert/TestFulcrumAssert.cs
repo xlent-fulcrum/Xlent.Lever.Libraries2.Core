@@ -170,7 +170,7 @@ namespace Xlent.Lever.Libraries2.Core.TestAssert
             }
             catch (FulcrumAssertionFailedException fulcrumException)
             {
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException?.TechnicalMessage);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Property Name"));
             }
             catch (Exception e)

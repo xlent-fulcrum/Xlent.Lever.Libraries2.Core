@@ -140,14 +140,18 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             await Task.Yield();
         }
 
+        // TODO: Remove method
         /// <inheritdoc />
         public Task LogAsync(Exception exception)
         {
             throw new NotImplementedException();
         }
 
+        // TODO: Remove method
         /// <inheritdoc />
+#pragma warning disable 618
         public Task LogAsync(LogMessage message)
+#pragma warning restore 618
         {
             throw new NotImplementedException();
         }

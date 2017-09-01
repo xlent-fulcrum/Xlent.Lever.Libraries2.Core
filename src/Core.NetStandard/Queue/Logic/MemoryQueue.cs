@@ -7,6 +7,8 @@ using Xlent.Lever.Libraries2.Core.Health.Model;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Queue.Model;
 
+// ReSharper disable RedundantExtendsListEntry
+
 namespace Xlent.Lever.Libraries2.Core.Queue.Logic
 {
     /// <summary>
@@ -86,6 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         }
     }
 
+   
     public partial class MemoryQueue<T> : IResourceHealth
     {
 
