@@ -19,7 +19,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
         [Obsolete("Use ApplicationSetup.Logger", true)]
+#pragma warning disable 169
         private static IFulcrumLogger _chosenLogger;
+#pragma warning restore 169
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.

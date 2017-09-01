@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>0.12.1</version>
+    <version>0.12.2</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      0.12.1 Collected application setups into ApplicationSetup.
+      0.12.2 Collected application setups into ApplicationSetup.
       0.12.0 Added background thread helper.
       0.11.0 Refactored logging.
       0.10.10 Added CallbackRespsonse in Platform.BusinessEvents

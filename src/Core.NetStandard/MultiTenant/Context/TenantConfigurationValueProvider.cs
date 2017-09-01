@@ -1,4 +1,5 @@
 ﻿using System;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Platform.Configurations;
@@ -31,9 +32,17 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// Constructor
         /// </summary>
         /// <param name="valueProvider">The value provider to use for getting and setting.</param>
-        public TenantConfigurationValueProvider(IValueProvider valueProvider)
+        [Obsolete("Use the empty constructor.")]
+        public TenantConfigurationValueProvider(IValueProvider valueProvider) : this()
         {
-            ValueProvider = valueProvider;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public TenantConfigurationValueProvider()
+        {
+            ValueProvider = ApplicationSetup.ContextValueProvider;
         }
 
         /// <inheritdoc />

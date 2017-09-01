@@ -1,4 +1,5 @@
 ﻿using System;
+using Xlent.Lever.Libraries2.Core.Application;
 
 namespace Xlent.Lever.Libraries2.Core.Context
 {
@@ -29,9 +30,18 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// Constructor
         /// </summary>
         /// <param name="valueProvider">The <see cref="IValueProvider"/> to use as a getter and setter.</param>
-        public CorrelationIdValueProvider(IValueProvider valueProvider)
+        [Obsolete("Use the empty constructor.")]
+        // ReSharper disable once UnusedParameter.Local
+        public CorrelationIdValueProvider(IValueProvider valueProvider) : this()
         {
-            ValueProvider = valueProvider;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public CorrelationIdValueProvider()
+        {
+            ValueProvider = ApplicationSetup.ContextValueProvider;
         }
 
         /// <inheritdoc />
