@@ -13,13 +13,13 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Will always fail. Used in parts of the errorLocation where we should never end up. E.g. a default case in a switch statement where all cases should be covered, so we should never end up in the default case.
         /// </summary>
-        /// <param name="errorLocation">A unique errorLocation for this exact assertion.</param>
+        /// <param name="errorLocation">A unique errorLocation for this exact assertion. </param>
         /// <param name="message">A message that documents/explains this failure. This message should normally start with "Expected ...".</param>
         [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
+            InternalContract.RequireNotNullOrWhitespace(errorLocation, nameof(errorLocation));
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
-            InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
             GenericAssert<FulcrumAssertionFailedException>.Fail(errorLocation, message);
         }
         /// <summary>

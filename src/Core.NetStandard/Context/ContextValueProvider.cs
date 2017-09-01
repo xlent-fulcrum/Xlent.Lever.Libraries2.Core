@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.Context.</remarks>
-        protected static IValueProvider _chosen;
+        protected static IValueProvider Chosen;
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
@@ -22,13 +22,13 @@ namespace Xlent.Lever.Libraries2.Core.Context
             get
             {
                 // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_chosen, null, "The application must at startup set this to the appropriate IValueProvider.");
-                return _chosen;
+                FulcrumAssert.IsNotNull(Chosen, null, $"The application must at startup set {nameof(ContextForApplication)} to the appropriate {nameof(IValueProvider)}.");
+                return Chosen;
             }
             set
             {
                 InternalContract.RequireNotNull(value, nameof(value));
-                _chosen = value;
+                Chosen = value;
             }
         }
 

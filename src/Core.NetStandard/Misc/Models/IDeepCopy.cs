@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Xlent.Lever.Libraries2.Core.Misc.Models
+﻿namespace Xlent.Lever.Libraries2.Core.Misc.Models
 {
     /// <summary>
     /// Copy an object with deep copying

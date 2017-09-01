@@ -68,6 +68,7 @@
     <Compile Include="Core\Error\Logic\FulcrumServiceContractException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumTryAgainException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
+    <Compile Include="Core\Logging\Logic\TraceSourceLogger.cs" />
     <Compile Include="Core\Misc\StackTraceHiddenAttribute.cs" />
     <Compile Include="Core\Error\Model\FulcrumError.cs" />
     <Compile Include="Core\Error\Model\IFulcrumError.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Core\Platform\BusinessEvents\CallbackRespsonse.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverConfiguration.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverServiceConfiguration.cs" />
+    <Compile Include="Core\Platform\Logging\LogMessage.cs" />
     <Compile Include="Core\Queue\Logic\MemoryQueue.cs" />
     <Compile Include="Core\Queue\Model\ICompleteQueue.cs" />
     <Compile Include="Core\Queue\Model\IPeekableQueue.cs" />
