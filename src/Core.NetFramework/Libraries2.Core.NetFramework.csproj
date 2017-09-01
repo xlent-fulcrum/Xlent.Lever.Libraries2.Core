@@ -91,6 +91,7 @@
     <Compile Include="Core\Platform\Authentication\IAuthenticationToken.cs" />
     <Compile Include="Core\Platform\Authentication\ITokenRefresher.cs" />
     <Compile Include="Core\Platform\Authentication\JwtTokenTypeEnum.cs" />
+    <Compile Include="Core\Platform\BusinessEvents\CallbackRespsonse.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverConfiguration.cs" />
     <Compile Include="Core\Platform\Configurations\ILeverServiceConfiguration.cs" />
     <Compile Include="Core\Queue\Logic\MemoryQueue.cs" />
