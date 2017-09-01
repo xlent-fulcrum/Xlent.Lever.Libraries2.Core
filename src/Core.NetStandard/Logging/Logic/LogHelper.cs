@@ -21,27 +21,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        [Obsolete("Use the synchronous version.")]
         public static async Task LogAsync(IFulcrumLogger logger, LogSeverityLevel severityLevel, string message, Exception exception = null)
-        {
-            Log(logger, severityLevel, message, exception);
-            await Task.Yield();
-        }
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
-        /// </summary>
-        /// <param name="logger">The logger to use for publishing the message.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        public static void Log(IFulcrumLogger logger, LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             try
             {
                 InternalContract.RequireNotNull(logger, nameof(logger));
                 var formattedMessage = FormatMessage(message, exception);
-                logger.Log(severityLevel, formattedMessage);
+                await logger.LogAsync(severityLevel, formattedMessage);
             }
             catch (Exception e)
             {
@@ -104,7 +90,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         {
             try
             {
-                TraceSource.TraceEvent(TraceEventType.Critical, 0, $"Logger SDK failed ({reason}): {message}");
+                var errorMessage = $"Logger SDK failed ({reason}): {message}";
+                Debug.WriteLine(errorMessage);
+                TraceSource.TraceEvent(TraceEventType.Critical, 0, errorMessage);
             }
             catch (Exception)
             {
