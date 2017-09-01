@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
     /// </summary>
     public class TraceSourceLogger : IFulcrumLogger
     {
-        private static readonly TraceSource TraceSource = new TraceSource("Xlent.Lever.Libraries2.Core.Logging.Logic.LogHelper");
+        private static readonly TraceSource TraceSource = new TraceSource("Xlent.Lever.Libraries2.Core.Logging.Logic.Log");
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
@@ -101,7 +101,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         }
 
         /// <inheritdoc />
+        [Obsolete("Use the synchronous method.")]
         public async Task LogAsync(LogSeverityLevel logSeverityLevel, string message)
+        {
+            Log(logSeverityLevel, message);
+            await Task.Yield();
+        }
+
+        /// <inheritdoc />
+        public void Log(LogSeverityLevel logSeverityLevel, string message)
         {
             try
             {
@@ -137,7 +145,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             {
                 // This method must never fail.
             }
-            await Task.Yield();
         }
 
         // TODO: Remove method

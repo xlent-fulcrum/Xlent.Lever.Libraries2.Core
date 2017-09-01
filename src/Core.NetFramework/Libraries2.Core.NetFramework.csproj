@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Application\ApplicationSetup.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />
     <Compile Include="Core\Assert\FulcrumValidate.cs" />
     <Compile Include="Core\Assert\GenericAssert.cs" />
@@ -68,6 +69,9 @@
     <Compile Include="Core\Error\Logic\FulcrumServiceContractException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumTryAgainException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
+    <Compile Include="Core\Threads\BasicThreadHandler.cs" />
+    <Compile Include="Core\Threads\IThreadHandler.cs" />
+    <Compile Include="Core\Threads\ThreadHelper.cs" />
     <Compile Include="Core\Logging\Logic\TraceSourceLogger.cs" />
     <Compile Include="Core\Misc\StackTraceHiddenAttribute.cs" />
     <Compile Include="Core\Error\Model\FulcrumError.cs" />
@@ -75,7 +79,7 @@
     <Compile Include="Core\Health\Logic\ResourceHealthAggregator.cs" />
     <Compile Include="Core\Health\Model\HealthResponse.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth.cs" />
-    <Compile Include="Core\Logging\Logic\LogHelper.cs" />
+    <Compile Include="Core\Logging\Logic\Log.cs" />
     <Compile Include="Core\Logging\Model\IFulcrumLogger.cs" />
     <Compile Include="Core\Logging\Model\LogMessage.cs" />
     <Compile Include="Core\Logging\Model\LogSeverityLevel.cs" />

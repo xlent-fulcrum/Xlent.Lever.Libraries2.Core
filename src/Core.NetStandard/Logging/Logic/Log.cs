@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Logging.Model;
+using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Logging.Logic
 {
     /// <summary>
     /// A convenience class for logging.
     /// </summary>
-    public static class LogHelper
+    public static class Log
     {
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
@@ -41,7 +41,57 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// <summary>
         /// Recommended <see cref="IFulcrumLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
         /// </summary>
-        public static IFulcrumLogger RecommendedForDevelopment { get; } = new TraceSourceLogger();
+        public static IFulcrumLogger RecommendedForNetFramework { get; } = new TraceSourceLogger();
+
+        /// <summary>
+        /// Verbose logging of <paramref name="message"/> and optional <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogVerbose(string message, Exception exception = null)
+        {
+            LogInBackground(LogSeverityLevel.Verbose, message, exception);
+        }
+
+        /// <summary>
+        /// Information logging of <paramref name="message"/> and optional <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogInformation(string message, Exception exception = null)
+        {
+            LogInBackground(LogSeverityLevel.Information, message, exception);
+        }
+
+        /// <summary>
+        /// Warning logging of <paramref name="message"/> and optional <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogWarning(string message, Exception exception = null)
+        {
+            LogInBackground(LogSeverityLevel.Warning, message, exception);
+        }
+
+        /// <summary>
+        /// Error logging of <paramref name="message"/> and optional <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogError(string message, Exception exception = null)
+        {
+            LogInBackground(LogSeverityLevel.Error, message, exception);
+        }
+
+        /// <summary>
+        /// Critical logging of <paramref name="message"/> and optional <paramref name="exception"/>.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogCritical(string message, Exception exception = null)
+        {
+            LogInBackground(LogSeverityLevel.Critical, message, exception);
+        }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
@@ -49,17 +99,41 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        public static async Task LogAsync(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        private static void LogInBackground(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        {
+            ThreadHelper.FireAndForget(() => SafeLog(severityLevel, message, exception));
+        }
+
+        /// <summary>
+        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// </summary>
+        /// <param name="severityLevel">The severity level for this log.</param>
+        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
+        /// <param name="exception">Optional exception</param>
+        private static void SafeLog(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             try
             {
                 var formattedMessage = FormatMessage(message, exception);
-                await LoggerForApplication.LogAsync(severityLevel, formattedMessage);
+                LoggerForApplication.Log(severityLevel, formattedMessage);
             }
-            catch (Exception e)
+            catch (Exception e1)
             {
-                FallbackLoggingWhenAllElseFails(e.Message);
-                FallbackLoggingWhenAllElseFails(message);
+                try
+                {
+                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{message}");
+                }
+                catch (Exception e2)
+                {
+                    try
+                    {
+                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{message}");
+                    }
+                    catch (Exception)
+                    {
+                        // We give up
+                    }
+                }
             }
         }
 
@@ -108,7 +182,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             return formatted;
         }
 
-        
+
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
@@ -117,8 +191,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         {
             try
             {
-                Debug.WriteLine(message);
-                RecommendedForDevelopment.LogAsync(LogSeverityLevel.Critical, message);
+                RecommendedForNetFramework.LogAsync(LogSeverityLevel.Critical, message);
             }
             catch (Exception)
             {

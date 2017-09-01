@@ -33,6 +33,11 @@ namespace Xlent.Lever.Libraries2.Core.Context
         }
 
         /// <summary>
+        /// Default <see cref="IValueProvider"/> for .NET Framework.
+        /// </summary>
+        public static IValueProvider RecommendedForNetFramework { get; } = new AsyncLocalValueProvider();
+
+        /// <summary>
         /// Default <see cref="IValueProvider"/> for .NET Core.
         /// </summary>
         public static IValueProvider RecommendedForNetCore { get; } = new AsyncLocalValueProvider();
