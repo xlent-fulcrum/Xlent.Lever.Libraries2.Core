@@ -19,6 +19,11 @@ namespace Xlent.Lever.Libraries2.Core.Application
         public static readonly ApplicationSetup Setup = new ApplicationSetup();
 
         /// <summary>
+        /// Use this to get application settings.
+        /// </summary>
+        public static AppSettings AppSettings { get; set; }
+
+        /// <summary>
         /// Initialize <see cref="Setup"/>.
         /// </summary>
         /// <param name="name">The name of the application.</param>

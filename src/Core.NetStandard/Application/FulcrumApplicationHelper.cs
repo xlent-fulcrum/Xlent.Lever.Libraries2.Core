@@ -24,6 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
+            FulcrumApplication.AppSettings = new AppSettings(new ConfigurationManagerAppSettings());
         }
 
         /// <summary>
@@ -39,6 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             var tenant = appSettings.GetTenant("Organization", "Environment", true);
             var runTimeLevel = appSettings.GetEnum<RunTimeLevelEnum>("RunTimeLevel", true);
             NetFrameworkSetup(name, tenant, runTimeLevel);
+            FulcrumApplication.AppSettings = new AppSettings(appSettingGetter);
         }
 
         /// <summary>
