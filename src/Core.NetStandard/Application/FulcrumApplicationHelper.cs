@@ -24,14 +24,12 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
         }
         /// <summary>
-        /// Sets the recommended application setup for .NET Framework.
+        /// Sets the recommended application setup for unit testing.
         /// </summary>
         /// <param name="name">The name of the application.</param>
-        /// <param name="tenant">The tenant that the application itself runs in.</param>
-        /// <param name="level">The run time level for the application itself.</param>
-        public static void UnitTestSetup(string name, ITenant tenant, RunTimeLevelEnum level)
+        public static void UnitTestSetup(string name)
         {
-            FulcrumApplication.Initialize(name, tenant, level);
+            FulcrumApplication.Initialize(name, new Tenant("unknown", "local"), RunTimeLevelEnum.Development);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
