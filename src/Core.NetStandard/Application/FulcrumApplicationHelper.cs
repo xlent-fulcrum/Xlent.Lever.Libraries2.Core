@@ -1,4 +1,6 @@
-﻿using Xlent.Lever.Libraries2.Core.Context;
+﻿using System.Configuration;
+using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging.Logic;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
@@ -15,14 +17,29 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// </summary>
         /// <param name="name">The name of the application.</param>
         /// <param name="tenant">The tenant that the application itself runs in.</param>
-        /// <param name="level">The run time level for the application itself.</param>
-        public static void NetFrameworkSetup(string name, ITenant tenant, RunTimeLevelEnum level)
+        /// <param name="runTimeLevel">The <see cref="RunTimeLevelEnum"/> for the application itself.</param>
+        public static void NetFrameworkSetup(string name, ITenant tenant, RunTimeLevelEnum runTimeLevel)
         {
-            FulcrumApplication.Initialize(name, tenant, level);
+            FulcrumApplication.Initialize(name, tenant, runTimeLevel);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
         }
+
+        /// <summary>
+        /// Sets the recommended application setup for .NET Framework.
+        /// </summary>
+        /// <paramref name="appSettingGetter"/>How to get app settings for <see cref="ApplicationSetup.Name"/>, <see cref="ApplicationSetup.Tenant"/>, <see cref="ApplicationSetup.RunTimeLevel"/>
+        public static void NetFrameworkSetup(IAppSettingGetter appSettingGetter)
+        {
+            InternalContract.RequireNotNull(appSettingGetter, nameof(appSettingGetter));
+            var appSettings = new AppSettings(appSettingGetter);
+            var name = appSettings.GetString("ApplicationName", true);
+            var tenant = appSettings.GetTenant("Organization", "Environment", true);
+            var runTimeLevel = appSettings.GetEnum<RunTimeLevelEnum>("RunTimeLevel", true);
+            NetFrameworkSetup(name, tenant, runTimeLevel);
+        }
+
         /// <summary>
         /// Sets the recommended application setup for unit testing.
         /// </summary>
@@ -34,5 +51,6 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
         }
+
     }
 }

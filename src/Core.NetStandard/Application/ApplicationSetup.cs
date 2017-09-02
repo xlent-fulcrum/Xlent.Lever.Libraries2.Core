@@ -17,10 +17,10 @@ namespace Xlent.Lever.Libraries2.Core.Application
         public string Name { get; set; }
 
         /// <summary>
-        /// The current <see cref="RuntTimeLevel"/> of the application. Affects logging, testing, etc.
+        /// The current <see cref="RunTimeLevel"/> of the application. Affects logging, testing, etc.
         /// </summary>
         /// <remarks>For a multi tenant application, this is the run time level for the application itself, not it's tenants.</remarks>
-        public RunTimeLevelEnum RuntTimeLevel { get; set; }
+        public RunTimeLevelEnum RunTimeLevel { get; set; }
 
         /// <summary>
         /// The tenant for the application. For a multi-tenant application, this is the application tenant not any caller tenant.
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         public void Validate(string errorLocation, string propertyPath = "")
         {
             FulcrumValidate.IsNotNullOrWhiteSpace(Name, nameof(Name), errorLocation);
-            FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RuntTimeLevel, nameof(RuntTimeLevel), errorLocation);
+            FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RunTimeLevel, nameof(RunTimeLevel), errorLocation);
             FulcrumValidate.IsValidated(Tenant, propertyPath, nameof(Tenant), errorLocation);
             FulcrumValidate.IsNotNull(ThreadHandler, nameof(ThreadHandler), errorLocation);
             FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
@@ -56,7 +56,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{Tenant} {Name} ({RuntTimeLevel})";
+            return $"{Tenant} {Name} ({RunTimeLevel})";
         }
     }
 }

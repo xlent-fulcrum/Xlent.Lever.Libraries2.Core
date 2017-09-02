@@ -36,12 +36,16 @@
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Application\AppSettings.cs" />
+    <Compile Include="Core\Application\ConfigurationManagerAppSettings.cs" />
     <Compile Include="Core\Application\FulcrumApplicationHelper.cs" />
     <Compile Include="Core\Application\FulcrumApplication.cs" />
+    <Compile Include="Core\Application\IAppSettingGetter.cs" />
     <Compile Include="Core\Application\RunTimeLevelEnum.cs" />
     <Compile Include="Core\Application\ApplicationSetup.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />

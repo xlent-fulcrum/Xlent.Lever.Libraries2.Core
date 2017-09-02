@@ -1,4 +1,6 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using System.Configuration;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging.Logic;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
@@ -31,7 +33,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
 
             Setup.Name = name;
             Setup.Tenant = tenant;
-            Setup.RuntTimeLevel = level;
+            Setup.RunTimeLevel = level;
 
             Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             Setup.Logger = Log.RecommendedForNetFramework;
@@ -52,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// </summary>
         public static void ValidateButNotInProduction()
         {
-            if (Setup.RuntTimeLevel == RunTimeLevelEnum.ProductionOrProductionLike) return;
+            if (Setup.RunTimeLevel == RunTimeLevelEnum.ProductionOrProductionLike) return;
             Validate();
         }
     }
