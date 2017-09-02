@@ -18,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.Logger", true)]
+        [Obsolete("Use FulcrumApplication.Setup.Logger", true)]
 #pragma warning disable 169
         private static IFulcrumLogger _chosenLogger;
 #pragma warning restore 169
@@ -27,11 +27,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.Logger", true)]
+        [Obsolete("Use FulcrumApplication.Setup.Logger", true)]
         public static IFulcrumLogger LoggerForApplication
         {
-            get => ApplicationSetup.Logger;
-            set => ApplicationSetup.Logger = value;
+            get => FulcrumApplication.Setup.Logger;
+            set => FulcrumApplication.Setup.Logger = value;
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             try
             {
                 var formattedMessage = FormatMessage(message, exception);
-                ApplicationSetup.Logger.Log(severityLevel, formattedMessage);
+                FulcrumApplication.Setup.Logger.Log(severityLevel, formattedMessage);
             }
             catch (Exception e1)
             {

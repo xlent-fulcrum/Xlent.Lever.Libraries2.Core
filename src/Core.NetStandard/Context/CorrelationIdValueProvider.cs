@@ -1,5 +1,6 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Context
 {
@@ -41,7 +42,8 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// </summary>
         public CorrelationIdValueProvider()
         {
-            ValueProvider = ApplicationSetup.ContextValueProvider;
+            FulcrumApplication.Validate();
+            ValueProvider = FulcrumApplication.Setup.ContextValueProvider;
         }
 
         /// <inheritdoc />

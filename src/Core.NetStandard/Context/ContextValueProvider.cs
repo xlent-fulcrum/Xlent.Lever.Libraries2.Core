@@ -1,6 +1,5 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Application;
-using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Context
 {
@@ -13,18 +12,18 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.ContextValueProvider", true)]
+        [Obsolete("Use FulcrumApplication.Setup.ContextValueProvider", true)]
         protected static IValueProvider Chosen;
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.ContextValueProvider", true)]
+        [Obsolete("Use FulcrumApplication.Setup.ContextValueProvider", true)]
         public static IValueProvider ContextForApplication
         {
-            get => ApplicationSetup.ContextValueProvider;
-            set => ApplicationSetup.ContextValueProvider = value;
+            get => FulcrumApplication.Setup.ContextValueProvider;
+            set => FulcrumApplication.Setup.ContextValueProvider = value;
         }
 
         /// <summary>

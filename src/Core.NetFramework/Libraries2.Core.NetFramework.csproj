@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Application\ApplicationSetupHelper.cs" />
+    <Compile Include="Core\Application\FulcrumApplicationHelper.cs" />
+    <Compile Include="Core\Application\FulcrumApplication.cs" />
+    <Compile Include="Core\Application\RunTimeLevelEnum.cs" />
     <Compile Include="Core\Application\ApplicationSetup.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />
     <Compile Include="Core\Assert\FulcrumValidate.cs" />

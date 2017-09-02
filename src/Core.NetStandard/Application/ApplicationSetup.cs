@@ -1,73 +1,62 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging.Model;
+using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Application
 {
     /// <summary>
-    /// Help class to setup your application
+    /// A class with settings that are expected from in an application that uses Fulcrum libraries.
     /// </summary>
-    public static class ApplicationSetup
+    public class ApplicationSetup : IValidatable
     {
-        private static IThreadHandler _threadHandler;
+        /// <summary>
+        /// The name of the application.
+        /// </summary>
+        public string Name { get; set; }
 
         /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
+        /// The current <see cref="RuntTimeLevel"/> of the application. Affects logging, testing, etc.
         /// </summary>
-        public static IThreadHandler ThreadHandler
+        /// <remarks>For a multi tenant application, this is the run time level for the application itself, not it's tenants.</remarks>
+        public RunTimeLevelEnum RuntTimeLevel { get; set; }
+
+        /// <summary>
+        /// The tenant for the application. For a multi-tenant application, this is the application tenant not any caller tenant.
+        /// </summary>
+        public ITenant Tenant { get; set; }
+
+        /// <summary>
+        /// How to deal with background threads.
+        /// </summary>
+        public IThreadHandler ThreadHandler { get; set; }
+
+        /// <summary>
+        /// The logger to use for logging for the entire application.
+        /// </summary>
+        public IFulcrumLogger Logger { get; set; }
+
+        /// <summary>
+        /// The context value provider that will be used all over the application.
+        /// </summary>
+        public IValueProvider ContextValueProvider { get; set; }
+
+        /// <inheritdoc />
+        public void Validate(string errorLocation, string propertyPath = "")
         {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_threadHandler, null, $"The application must at startup set {nameof(ThreadHandler)} to the appropriate {nameof(IThreadHandler)}.");
-                return _threadHandler;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                _threadHandler = value;
-            }
+            FulcrumValidate.IsNotNullOrWhiteSpace(Name, nameof(Name), errorLocation);
+            FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RuntTimeLevel, nameof(RuntTimeLevel), errorLocation);
+            FulcrumValidate.IsValidated(Tenant, propertyPath, nameof(Tenant), errorLocation);
+            FulcrumValidate.IsNotNull(ThreadHandler, nameof(ThreadHandler), errorLocation);
+            FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
+            FulcrumValidate.IsNotNull(ContextValueProvider, nameof(ContextValueProvider), errorLocation);
         }
-        
-        private static IFulcrumLogger _logger;
 
-        /// <summary>
-        /// The chosen <see cref="IFulcrumLogger"/> to use.
-        /// </summary>
-        public static IFulcrumLogger Logger
+        /// <inheritdoc />
+        public override string ToString()
         {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_logger, null, $"The application must at startup set {nameof(Logger)} to the appropriate {nameof(IFulcrumLogger)}.");
-                return _logger;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                _logger = value;
-            }
-        }
-
-        private static IValueProvider _context;
-
-        /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
-        /// </summary>
-        public static IValueProvider ContextValueProvider
-        {
-            get
-            {
-                // TODO: Link to Lever WIKI
-                FulcrumAssert.IsNotNull(_context, null, $"The application must at startup set {nameof(ContextValueProvider)} to the appropriate {nameof(IValueProvider)}.");
-                return _context;
-            }
-            set
-            {
-                InternalContract.RequireNotNull(value, nameof(value));
-                _context = value;
-            }
+            return $"{Tenant} {Name} ({RuntTimeLevel})";
         }
     }
 }

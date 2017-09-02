@@ -4,6 +4,7 @@ using Xlent.Lever.Libraries2.Core.Logging.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Platform.Logging
 {
+    // TODO: Isn't it enough if this is a class internal to the Loger? No one outside the logger is using this class?
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Xlent.Lever.Libraries2.Core.Application;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 
 namespace Xlent.Lever.Libraries2.Core.Threads
@@ -15,18 +14,18 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// The chosen <see cref="IThreadHandler"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.ThreadHandler", true)]
+        [Obsolete("Use FulcrumApplication.Setup.ThreadHandler", true)]
         protected static IThreadHandler ChosenThreadHandler;
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
         /// </summary>
         /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use ApplicationSetup.ThreadHandler", true)]
+        [Obsolete("Use FulcrumApplication.Setup.ThreadHandler", true)]
         public static IThreadHandler ThreadHandlerForApplication
         {
-            get => ApplicationSetup.ThreadHandler;
-            set => ApplicationSetup.ThreadHandler = value;
+            get => FulcrumApplication.Setup.ThreadHandler;
+            set => FulcrumApplication.Setup.ThreadHandler = value;
         }
         /// <summary>
         /// Execute an <paramref name="action"/> in the background.
@@ -34,7 +33,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// <param name="action">The action to run in the background.</param>
         public static void FireAndForget(Action action)
         {
-            ApplicationSetup.ThreadHandler.FireAndForget(cancellationToken => action());
+            FulcrumApplication.ValidateButNotInProduction();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => action());
         }
 
         /// <summary>
@@ -43,7 +43,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// <param name="action">The action to run in the background.</param>
         public static void FireAndForget(Action<CancellationToken> action)
         {
-            ApplicationSetup.ThreadHandler.FireAndForget(action);
+            FulcrumApplication.ValidateButNotInProduction();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(action);
         }
 
         /// <summary>

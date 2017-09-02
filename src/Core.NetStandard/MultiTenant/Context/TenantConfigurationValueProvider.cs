@@ -42,7 +42,8 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// </summary>
         public TenantConfigurationValueProvider()
         {
-            ValueProvider = ApplicationSetup.ContextValueProvider;
+            FulcrumApplication.Validate();
+            ValueProvider = FulcrumApplication.Setup.ContextValueProvider;
         }
 
         /// <inheritdoc />
