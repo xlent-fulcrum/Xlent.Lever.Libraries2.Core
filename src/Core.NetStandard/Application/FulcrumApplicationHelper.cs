@@ -30,6 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// Sets the recommended application setup for .NET Framework.
         /// </summary>
         /// <paramref name="appSettingGetter"/>How to get app settings for <see cref="ApplicationSetup.Name"/>, <see cref="ApplicationSetup.Tenant"/>, <see cref="ApplicationSetup.RunTimeLevel"/>
+        /// <remarks>If you want to use <see cref="ConfigurationManager"/> for retreiving app settings, you can use <see cref="ConfigurationManagerAppSettings"/> as the <paramref name="appSettingGetter"/>.</remarks>
         public static void NetFrameworkSetup(IAppSettingGetter appSettingGetter)
         {
             InternalContract.RequireNotNull(appSettingGetter, nameof(appSettingGetter));
