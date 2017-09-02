@@ -25,6 +25,10 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <remarks>Will setup all mandatory fields for <see cref="Setup"/>, but you might want to override those values when this method returns."/></remarks>
         public static void Initialize(string name, ITenant tenant, RunTimeLevelEnum level)
         {
+            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            InternalContract.RequireValidated(tenant, nameof(tenant));
+            InternalContract.Require(level != RunTimeLevelEnum.None, $"{nameof(level)} ({level}) must be set to something else than {RunTimeLevelEnum.None}");
+
             Setup.Name = name;
             Setup.Tenant = tenant;
             Setup.RuntTimeLevel = level;
