@@ -1,4 +1,4 @@
-﻿namespace Xlent.Lever.Libraries2.Core.Logging.Model
+﻿namespace Xlent.Lever.Libraries2.Core.Logging
 {
     /// <summary>
     /// The severity level for a log message.

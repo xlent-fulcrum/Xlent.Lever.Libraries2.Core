@@ -3,9 +3,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Logging.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Logging.Logic
+namespace Xlent.Lever.Libraries2.Core.Logging
 {
     /// <summary>
     /// A convenience class for logging.
@@ -13,28 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
     public class TraceSourceLogger : IFulcrumLogger
     {
         private static readonly TraceSource TraceSource = new TraceSource("Xlent.Lever.Libraries2.Core.Logging.Logic.Log");
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made, a fallback log will be created.
-        /// </summary>
-        /// <param name="logger">The logger to use for publishing the message.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        public async Task LogAsync(IFulcrumLogger logger, LogSeverityLevel severityLevel, string message, Exception exception = null)
-        {
-            try
-            {
-                InternalContract.RequireNotNull(logger, nameof(logger));
-                var formattedMessage = FormatMessage(message, exception);
-                await logger.LogAsync(severityLevel, formattedMessage);
-            }
-            catch (Exception e)
-            {
-                FallbackLoggingWhenAllElseFails(e.Message, message);
-            }
-        }
-
+        
         /// <summary>
         /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
         /// </summary>
@@ -145,22 +123,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
             {
                 // This method must never fail.
             }
-        }
-
-        // TODO: Remove method
-        /// <inheritdoc />
-        public Task LogAsync(Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
-        // TODO: Remove method
-        /// <inheritdoc />
-#pragma warning disable 618
-        public Task LogAsync(LogMessage message)
-#pragma warning restore 618
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -4,10 +4,9 @@ using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Logging.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
 
-namespace Xlent.Lever.Libraries2.Core.Logging.Logic
+namespace Xlent.Lever.Libraries2.Core.Logging
 {
     /// <summary>
     /// A convenience class for logging.
@@ -187,7 +186,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging.Logic
         {
             try
             {
-                RecommendedForNetFramework.LogAsync(LogSeverityLevel.Critical, message);
+                RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
             }
             catch (Exception)
             {
