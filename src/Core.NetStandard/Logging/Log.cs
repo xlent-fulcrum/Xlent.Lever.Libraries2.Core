@@ -4,6 +4,7 @@ using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
@@ -45,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
         public static void LogVerbose(string message, Exception exception = null)
         {
-            LogInBackground(LogSeverityLevel.Verbose, message, exception);
+            LogOnLevel(LogSeverityLevel.Verbose, message, exception);
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
         public static void LogInformation(string message, Exception exception = null)
         {
-            LogInBackground(LogSeverityLevel.Information, message, exception);
+            LogOnLevel(LogSeverityLevel.Information, message, exception);
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
         public static void LogWarning(string message, Exception exception = null)
         {
-            LogInBackground(LogSeverityLevel.Warning, message, exception);
+            LogOnLevel(LogSeverityLevel.Warning, message, exception);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
         public static void LogError(string message, Exception exception = null)
         {
-            LogInBackground(LogSeverityLevel.Error, message, exception);
+            LogOnLevel(LogSeverityLevel.Error, message, exception);
         }
 
         /// <summary>
@@ -85,15 +86,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
         public static void LogCritical(string message, Exception exception = null)
         {
-            LogInBackground(LogSeverityLevel.Critical, message, exception);
+            LogOnLevel(LogSeverityLevel.Critical, message, exception);
         }
 
         /// <summary>
-        /// Logs of <paramref name="message"/> and optional <paramref name="exception"/> marked with <paramref name="severityLevel"/>.
+        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to print.</param>
-        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
+        /// <param name="exception">Optional exception</param>
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             LogInBackground(severityLevel, message, exception);
@@ -122,7 +123,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 var formattedMessage = FormatMessage(message, exception);
                 FulcrumApplication.Setup.Logger.Log(severityLevel, formattedMessage);
-                AlosLogWithTraceSourceInDevelopment(severityLevel, formattedMessage);
+                AlsoLogWithTraceSourceInDevelopment(severityLevel, formattedMessage);
             }
             catch (Exception e1)
             {
@@ -144,7 +145,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
         }
 
-        private static void AlosLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
+        private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
             if (!FulcrumApplication.IsInDevelopment) return;
             if (FulcrumApplication.Setup.Logger.GetType() == typeof(TraceSourceLogger)) return;
@@ -164,7 +165,24 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            return exception != null ? FormatMessage(exception) : message;
+            var contextInformation = GetContextInformation();
+            if (!string.IsNullOrWhiteSpace(contextInformation)) contextInformation += "\r";
+            var exceptionInformation = exception == null ? "" : $"\r{FormatMessage(exception)}";
+            return $"{contextInformation}{message}{exceptionInformation}";
+        }
+
+        private static string GetContextInformation()
+        {
+            if (FulcrumApplication.Setup == null) return "";
+            var result = FulcrumApplication.Setup.ToString();
+            if (FulcrumApplication.Setup.ContextValueProvider == null) return result;
+            var correlationIdProvider = new CorrelationIdValueProvider();
+            var correlationId = correlationIdProvider.CorrelationId;
+            result += string.IsNullOrWhiteSpace(correlationId) ? "" : $" CorrelationId {correlationId}";
+            var tenantProvider = new TenantConfigurationValueProvider();
+            var tenant = tenantProvider.Tenant;
+            result += tenant == null ? "" : $" Tenant {tenant}";
+            return $"result";
         }
 
         /// <summary>
