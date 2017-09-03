@@ -22,6 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 #pragma warning disable 169
         private static IFulcrumLogger _chosenLogger;
 #pragma warning restore 169
+        private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
@@ -37,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Recommended <see cref="IFulcrumLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
         /// </summary>
-        public static IFulcrumLogger RecommendedForNetFramework { get; } = new TraceSourceLogger();
+        public static IFulcrumLogger RecommendedForNetFramework { get; } = TraceSourceLogger;
 
         /// <summary>
         /// Verbose logging of <paramref name="message"/> and optional <paramref name="exception"/>.
@@ -151,7 +152,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             if (!FulcrumApplication.IsInDevelopment) return;
             if (FulcrumApplication.Setup.Logger.GetType() == typeof(TraceSourceLogger)) return;
-            new TraceSourceLogger().Log(severityLevel, formattedMessage);
+            TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
         /// <summary>
@@ -170,9 +171,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 throw new ArgumentNullException(nameof(message));
             }
             var contextInformation = GetContextInformation();
-            if (!string.IsNullOrWhiteSpace(contextInformation)) contextInformation += "\r";
             var exceptionInformation = exception == null ? "" : $"\r{FormatMessage(exception)}";
-            return $"{timeStamp} {severityLevel} {contextInformation}{message}{exceptionInformation}";
+            return $"--- {timeStamp} {severityLevel} {contextInformation}\r{message}{exceptionInformation}";
         }
 
         private static string GetContextInformation()
