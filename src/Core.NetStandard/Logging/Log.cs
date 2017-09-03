@@ -97,31 +97,33 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
-            LogInBackground(severityLevel, message, exception);
+            LogInBackground(DateTimeOffset.Now, severityLevel, message, exception);
         }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
+        /// <param name="timeStamp">The time when Log was called.</param>
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        private static void LogInBackground(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        private static void LogInBackground(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
-            ThreadHelper.FireAndForget(() => SafeLog(severityLevel, message, exception));
+            ThreadHelper.FireAndForget(() => SafeLog(timeStamp, severityLevel, message, exception));
         }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
+        /// <param name="timeStamp">The time when Log was called.</param>
         /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
         /// <param name="exception">Optional exception</param>
-        private static void SafeLog(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        private static void SafeLog(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             try
             {
-                var formattedMessage = FormatMessage(message, exception);
+                var formattedMessage = FormatMessage(timeStamp, severityLevel, message, exception);
                 FulcrumApplication.Setup.Logger.Log(severityLevel, formattedMessage);
                 AlsoLogWithTraceSourceInDevelopment(severityLevel, formattedMessage);
             }
@@ -155,11 +157,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
         /// </summary>
+        /// <param name="timeStamp">The time when Log was called.</param>
+        /// <param name="severityLevel">The severity level for this log.</param>
         /// <param name="message">The message. Can be null or empty if exception is not null.</param>
         /// <param name="exception">Optional exception</param>
         /// <returns>A formatted message, never null or empty</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception"/> is null AND <paramref name="message"/> is null or empty.</exception>
-        public static string FormatMessage(string message, Exception exception)
+        public static string FormatMessage(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception)
         {
             if (exception == null && string.IsNullOrWhiteSpace(message))
             {
@@ -168,7 +172,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var contextInformation = GetContextInformation();
             if (!string.IsNullOrWhiteSpace(contextInformation)) contextInformation += "\r";
             var exceptionInformation = exception == null ? "" : $"\r{FormatMessage(exception)}";
-            return $"{contextInformation}{message}{exceptionInformation}";
+            return $"{timeStamp} {severityLevel} {contextInformation}{message}{exceptionInformation}";
         }
 
         private static string GetContextInformation()
