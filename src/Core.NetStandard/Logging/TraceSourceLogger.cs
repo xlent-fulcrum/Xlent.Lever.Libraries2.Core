@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public class TraceSourceLogger : IFulcrumLogger
     {
-        private static readonly TraceSource TraceSource = new TraceSource("Xlent.Lever.Libraries2.Core.Logging.Logic.Log");
+        private static readonly TraceSource TraceSource = new TraceSource("FulcrumTraceSource");
         
         /// <summary>
         /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
