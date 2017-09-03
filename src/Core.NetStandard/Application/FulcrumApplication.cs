@@ -55,11 +55,31 @@ namespace Xlent.Lever.Libraries2.Core.Application
         }
 
         /// <summary>
+        /// Checks if the run time environment is in development stage.
+        /// </summary>
+        public static bool IsInDevelopment => Setup.RunTimeLevel == RunTimeLevelEnum.Development;
+
+        /// <summary>
+        /// Checks if the run time environment is in test stage.
+        /// </summary>
+        public static bool IsInTest => Setup.RunTimeLevel == RunTimeLevelEnum.Test;
+
+        /// <summary>
+        /// Checks if the run time environment is in production simulation stage.
+        /// </summary>
+        public static bool IsInProductionSimulation => Setup.RunTimeLevel == RunTimeLevelEnum.ProductionSimulation;
+
+        /// <summary>
+        /// Checks if the run time environment is in production stage.
+        /// </summary>
+        public static bool IsInProduction => Setup.RunTimeLevel == RunTimeLevelEnum.Production;
+
+        /// <summary>
         /// If we are in production, this method does nothing. Otherwise it calls <see cref="Validate"/>.
         /// </summary>
         public static void ValidateButNotInProduction()
         {
-            if (Setup.RunTimeLevel == RunTimeLevelEnum.ProductionOrProductionLike) return;
+            if (Setup.RunTimeLevel == RunTimeLevelEnum.Production) return;
             Validate();
         }
     }

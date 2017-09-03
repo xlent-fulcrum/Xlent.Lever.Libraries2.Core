@@ -89,6 +89,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
+        /// Logs of <paramref name="message"/> and optional <paramref name="exception"/> marked with <paramref name="severityLevel"/>.
+        /// </summary>
+        /// <param name="severityLevel">The severity level for this log.</param>
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        {
+            LogInBackground(severityLevel, message, exception);
+        }
+
+        /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="severityLevel">The severity level for this log.</param>
@@ -111,6 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 var formattedMessage = FormatMessage(message, exception);
                 FulcrumApplication.Setup.Logger.Log(severityLevel, formattedMessage);
+                AlosLogWithTraceSourceInDevelopment(severityLevel, formattedMessage);
             }
             catch (Exception e1)
             {
@@ -130,6 +142,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     }
                 }
             }
+        }
+
+        private static void AlosLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
+        {
+            if (!FulcrumApplication.IsInDevelopment) return;
+            if (FulcrumApplication.Setup.Logger.GetType() == typeof(TraceSourceLogger)) return;
+            new TraceSourceLogger().Log(severityLevel, formattedMessage);
         }
 
         /// <summary>
