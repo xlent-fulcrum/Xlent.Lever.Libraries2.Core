@@ -108,6 +108,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     ApplicationName = FulcrumApplication.Setup.Name,
                     ApplicationTenant = FulcrumApplication.Setup.Tenant,
+                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
                     ClientName = tenantValueProvider.CallingClientName,
                     ClientTenant = tenantValueProvider.Tenant,
                     CorrelationId = correlationValueProvider.CorrelationId,
