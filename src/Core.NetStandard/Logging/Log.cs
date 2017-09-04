@@ -124,6 +124,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     ApplicationName = FulcrumApplication.Setup.Name,
                     ApplicationTenant = FulcrumApplication.Setup.Tenant,
+                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
                     TimeStamp = DateTimeOffset.Now,
                     SeverityLevel = LogSeverityLevel.Critical,
                     Message = "Logging failed.",
