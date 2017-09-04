@@ -74,7 +74,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             FulcrumValidate.IsNotNullOrWhiteSpace(ApplicationName, nameof(ApplicationName), errorLocation);
             FulcrumValidate.IsNotNull(ApplicationTenant, nameof(ApplicationTenant), errorLocation);
             FulcrumValidate.IsValidated(ApplicationTenant, propertyPath, nameof(ApplicationTenant), errorLocation);
-            FulcrumValidate.IsNotNullOrWhiteSpace(ClientName, nameof(ClientName), errorLocation);
+            if (ClientName != null) FulcrumValidate.IsNotNullOrWhiteSpace(ClientName, nameof(ClientName), errorLocation);
             if (ClientTenant != null) FulcrumValidate.IsValidated(ClientTenant, propertyPath, nameof(ClientTenant), errorLocation);
             FulcrumValidate.IsNotDefaultValue(TimeStamp, nameof(TimeStamp), errorLocation);
             FulcrumValidate.IsLessThanOrEqualTo(DateTimeOffset.Now, TimeStamp, nameof(TimeStamp), errorLocation);
