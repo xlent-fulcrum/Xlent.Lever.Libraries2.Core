@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Remoting.Channels;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -98,47 +99,80 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
-            LogInBackground(DateTimeOffset.Now, severityLevel, message, exception);
-        }
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
-        /// </summary>
-        /// <param name="timeStamp">The time when Log was called.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        private static void LogInBackground(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception = null)
-        {
-            ThreadHelper.FireAndForget(() => SafeLog(timeStamp, severityLevel, message, exception));
-        }
-
-        /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
-        /// </summary>
-        /// <param name="timeStamp">The time when Log was called.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        private static void SafeLog(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception = null)
-        {
+            LogMessage logMessage;
             try
             {
-                var formattedMessage = FormatMessage(timeStamp, severityLevel, message, exception);
-                FulcrumApplication.Setup.Logger.Log(severityLevel, formattedMessage);
-                AlsoLogWithTraceSourceInDevelopment(severityLevel, formattedMessage);
+                var tenantValueProvider = new TenantConfigurationValueProvider();
+                var correlationValueProvider = new CorrelationIdValueProvider();
+                logMessage = new LogMessage
+                {
+                    ApplicationName = FulcrumApplication.Setup.Name,
+                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
+                    ClientName = tenantValueProvider.CallingClientName,
+                    ClientTenant = tenantValueProvider.Tenant,
+                    CorrelationId = correlationValueProvider.CorrelationId,
+                    TimeStamp = DateTimeOffset.Now,
+                    SeverityLevel = severityLevel,
+                    Message = message,
+                    Exception = exception
+                };
+            }
+            catch (Exception e)
+            {
+                logMessage = new LogMessage
+                {
+                    ApplicationName = FulcrumApplication.Setup.Name,
+                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
+                    TimeStamp = DateTimeOffset.Now,
+                    SeverityLevel = LogSeverityLevel.Critical,
+                    Message = "Logging failed.",
+                    Exception = e
+                };
+            }
+            LogInBackground(logMessage);
+        }
+
+        /// <summary>
+        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// </summary>
+        /// <param name="logMessage">Information about the logging.</param>
+        private static void LogInBackground(LogMessage logMessage)
+        {
+            ThreadHelper.FireAndForget(() => SafeLog(logMessage));
+        }
+
+        /// <summary>
+        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// </summary>
+        /// <param name="logMessage">Information about the logging.</param>
+        private static void SafeLog(LogMessage logMessage)
+        {
+            var formattedMessage = SafeFormatMessage(logMessage);
+            try
+            {
+                var logger = FulcrumApplication.Setup.Logger;
+                var fullLogger = logger as IFulcrumFullLogger;
+                if (fullLogger != null)
+                {
+                    fullLogger.Log(logMessage);
+                }
+                else
+                {
+                    logger.Log(logMessage.SeverityLevel, formattedMessage);
+                }
+                AlsoLogWithTraceSourceInDevelopment(logMessage.SeverityLevel, formattedMessage);
             }
             catch (Exception e1)
             {
                 try
                 {
-                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{message}");
+                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{formattedMessage}");
                 }
                 catch (Exception e2)
                 {
                     try
                     {
-                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{message}");
+                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{formattedMessage}");
                     }
                     catch (Exception)
                     {
@@ -164,7 +198,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         /// <returns>A formatted message, never null or empty</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception"/> is null AND <paramref name="message"/> is null or empty.</exception>
-        public static string FormatMessage(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception)
+        public static string SafeFormatMessage(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception)
         {
             if (exception == null && string.IsNullOrWhiteSpace(message))
             {
@@ -173,6 +207,41 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var contextInformation = GetContextInformation();
             var exceptionInformation = exception == null ? "" : $"\r{FormatMessage(exception)}";
             return $"--- {timeStamp} {severityLevel} {contextInformation}\r{message}{exceptionInformation}";
+        }
+
+        /// <summary>
+        /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
+        /// </summary>
+        /// <param name="logMessage">Information about the logging.</param>
+        /// <returns>A formatted message, never null or empty</returns>
+        public static string SafeFormatMessage(LogMessage logMessage)
+        {
+            try
+            {
+                var correlation = string.IsNullOrWhiteSpace(logMessage.CorrelationId)
+                    ? ""
+                    : $" {logMessage.CorrelationId}";
+                var detailsLine =
+                    $"{logMessage.TimeStamp}{correlation} {logMessage.SeverityLevel} {logMessage.ApplicationTenant} {logMessage.ApplicationName} ({logMessage.RunTimeLevel}) ";
+                if (!string.IsNullOrWhiteSpace(logMessage.ClientName) || logMessage.ApplicationTenant != null)
+                {
+                    detailsLine += " client:";
+                }
+                if (!string.IsNullOrWhiteSpace(logMessage.ClientName))
+                {
+                    detailsLine += $" {logMessage.ClientName}";
+                }
+                if (logMessage.ApplicationTenant != null)
+                {
+                    detailsLine += $" {logMessage.ClientTenant}";
+                }
+                var exceptionLine = logMessage.Exception == null ? "" : $"\r{FormatMessage(logMessage.Exception)}";
+                return $"{detailsLine}\r{logMessage.Message}{exceptionLine}";
+            }
+            catch (Exception e)
+            {
+                return $"Formatting message failed ({e.Message}): {logMessage.Message}";
+            }
         }
 
         private static string GetContextInformation()
