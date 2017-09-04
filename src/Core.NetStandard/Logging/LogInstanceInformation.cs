@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>
-    public class LogMessage : IValidatable
+    public class LogInstanceInformation : IValidatable
     {
         /// <summary>
         /// The name of the application that was executing when the log message was created.
