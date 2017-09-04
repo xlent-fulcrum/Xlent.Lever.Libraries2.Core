@@ -151,6 +151,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var formattedMessage = SafeFormatMessage(logInstanceInformation);
             try
             {
+                // ReSharper disable once ObjectCreationAsStatement
+                new TenantConfigurationValueProvider
+                {
+                    Tenant = logInstanceInformation.ClientTenant,
+                    CallingClientName = logInstanceInformation.ClientName
+                };
+                // ReSharper disable once ObjectCreationAsStatement
+                new CorrelationIdValueProvider
+                {
+                    CorrelationId = logInstanceInformation.CorrelationId
+                };
                 var logger = FulcrumApplication.Setup.Logger;
                 var fullLogger = logger as IFulcrumFullLogger;
                 if (fullLogger != null)

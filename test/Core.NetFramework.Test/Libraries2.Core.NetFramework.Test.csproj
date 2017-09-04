@@ -58,6 +58,7 @@
     <Compile Include="Core\TestAssert\TestInternalContract.cs" />
     <Compile Include="Core\TestAssert\TestServiceContract.cs" />
     <Compile Include="Core\TestDecoupling\TestConceptValue.cs" />
+    <Compile Include="Core\Threads\TestThreadHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

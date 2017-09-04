@@ -27,6 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             get => FulcrumApplication.Setup.ThreadHandler;
             set => FulcrumApplication.Setup.ThreadHandler = value;
         }
+
         /// <summary>
         /// Execute an <paramref name="action"/> in the background.
         /// </summary>
@@ -46,6 +47,30 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             FulcrumApplication.ValidateButNotInProduction();
             FulcrumApplication.Setup.ThreadHandler.FireAndForget(action);
         }
+
+        /*
+        /// <summary>
+        /// Execute an <paramref name="action"/> in the background.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        public static void FireAndForgetPreserveContext(Action action)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.PreserveContext(action));
+        }
+
+        /// <summary>
+        /// Execute an <paramref name="action"/> in the background.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        public static void FireAndForgetPreserveContext(Action<CancellationToken> action)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.PreserveContext(action, cancellationToken));
+        }
+        */
 
         /// <summary>
         /// Default <see cref="IValueProvider"/> for .NET Framework.
