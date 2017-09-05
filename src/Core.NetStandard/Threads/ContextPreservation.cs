@@ -34,8 +34,10 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             lock (ClassLock)
             {
                 _callDepth = _threadCallDepth;
-                var list = new List<string>();
-                list.Add(Environment.StackTrace);
+                var list = new List<string>
+                {
+                    Environment.StackTrace
+                };
                 if (_threadStackTraces != null) list.AddRange(_threadStackTraces);
                 _stackTraces = list.ToArray();
             }
@@ -100,7 +102,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             {
                 if (_threadStackTraces == null) return message;
                 message = _threadStackTraces
-                    .Aggregate(message, (current, stackTrace) => current + $"\r{stackTrace}");
+                    .Aggregate(message, (current, stackTrace) => current + $"\r\r{stackTrace}");
             }
             return message;
         }
