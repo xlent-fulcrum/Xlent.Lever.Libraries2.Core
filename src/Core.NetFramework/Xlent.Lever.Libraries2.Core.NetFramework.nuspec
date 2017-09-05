@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.4.17</version>
+    <version>1.4.19</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,9 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.4.17 Added StackTrace for logging problems, even when we have no exception.
+      1.4.19 Introduced ILoggable.
+      1.4.18 Added a limit for MaxDepthForBackgroundThreads. Now accepts recursive logs.
+      1.4.1 Added StackTrace for logging problems, even when we have no exception.
       1.4.16 Added newline after TraceSourceMessages.
       1.4.15 Better messages for exceptions.
       1.4.14 Tries to stop logging in logging in logging in ...
