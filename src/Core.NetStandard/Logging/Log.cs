@@ -150,7 +150,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     if (_loggingInProgress)
                     {
-                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                        FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
                         return;
                     }
                 }
@@ -159,7 +159,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             catch (Exception e)
             {
-                LogExceptionDuringLoggingFailSafe("Failed to start background job for logging.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe("Failed to start background job for logging.", logInstanceInformation, e);
             }
         }
 
@@ -175,7 +175,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     if (_loggingInProgress)
                     {
-                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                        FallbackToSimpleLoggingFailSafe("Log was is already in progress", logInstanceInformation);
                         return;
                     }
                     _loggingInProgress = true;
@@ -197,7 +197,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             catch (Exception e)
             {
-                LogExceptionDuringLoggingFailSafe($"{nameof(LogFailSafe)} caught an exception.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafe)} caught an exception.", logInstanceInformation, e);
             }
         }
 
@@ -219,7 +219,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             catch (Exception e)
             {
-                LogExceptionDuringLoggingFailSafe(
+                FallbackToSimpleLoggingFailSafe(
                     $"{nameof(LogFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
             }
@@ -342,8 +342,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     detailsLine += $" {logInstanceInformation.ClientTenant}";
                 }
-                var exceptionLine = logInstanceInformation.Exception == null ? "" : $"\r{FormatMessageFailSafe(logInstanceInformation.Exception)}";
-                var stackTraceLine = logInstanceInformation.StackTrace == null ? "" : $"\r{logInstanceInformation.StackTrace}";
+                var exceptionLine = "";
+                var stackTraceLine = "";
+                if (logInstanceInformation.Exception != null) exceptionLine = $"\r{FormatMessageFailSafe(logInstanceInformation.Exception)}";
+                if (logInstanceInformation.StackTrace != null && (logInstanceInformation.Exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error)))
+                {
+                    stackTraceLine = $"\r{logInstanceInformation.StackTrace}";
+                }
                 return $"{detailsLine}\r{logInstanceInformation.Message}{exceptionLine}{stackTraceLine}";
             }
             catch (Exception e)
@@ -371,14 +376,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             return formatted;
         }
 
-
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
         /// <param name="message">What went wrong with logging</param>
         /// <param name="logInstanceInformation">The message to log.</param>
         /// <param name="exception">If what went wrong had an exception</param>
-        private static void LogExceptionDuringLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
+        private static void FallbackToSimpleLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
         {
             try
             {
@@ -408,7 +412,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 }
                 try
                 {
-                    RecommendedForNetFramework.Log(LogSeverityLevel.Critical, totalMessage);
+                    // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
+                    var severityLevel = IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
+                    RecommendedForNetFramework.Log(severityLevel, totalMessage);
                 }
                 catch (Exception e)
                 {
@@ -420,6 +426,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 // We give up
             }
+        }
+
+        private static bool IsLevelEqualOrGreaterThan(LogInstanceInformation logInstanceInformation, LogSeverityLevel severityLevel)
+        {
+            return (int) logInstanceInformation.SeverityLevel >= (int) severityLevel;
         }
     }
 }
