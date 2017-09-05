@@ -2,6 +2,7 @@
 using System.Threading;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.Logging;
 
 namespace Xlent.Lever.Libraries2.Core.Threads
 {
@@ -27,6 +28,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             get => FulcrumApplication.Setup.ThreadHandler;
             set => FulcrumApplication.Setup.ThreadHandler = value;
         }
+
         /// <summary>
         /// Execute an <paramref name="action"/> in the background.
         /// </summary>
@@ -34,7 +36,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         public static void FireAndForget(Action action)
         {
             FulcrumApplication.ValidateButNotInProduction();
-            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => action());
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.ExecuteActionFailSafe(token => action(), CancellationToken.None));
         }
 
         /// <summary>
@@ -44,8 +47,10 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         public static void FireAndForget(Action<CancellationToken> action)
         {
             FulcrumApplication.ValidateButNotInProduction();
-            FulcrumApplication.Setup.ThreadHandler.FireAndForget(action);
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.ExecuteActionFailSafe(action, cancellationToken));
         }
+        
 
         /// <summary>
         /// Default <see cref="IValueProvider"/> for .NET Framework.

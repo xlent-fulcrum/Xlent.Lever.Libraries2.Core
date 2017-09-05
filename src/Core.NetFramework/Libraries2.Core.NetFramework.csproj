@@ -80,6 +80,7 @@
     <Compile Include="Core\Logging\LogInstanceInformation.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
+    <Compile Include="Core\Threads\ContextPreservation.cs" />
     <Compile Include="Core\Threads\ThreadHelper.cs" />
     <Compile Include="Core\Logging\TraceSourceLogger.cs" />
     <Compile Include="Core\Misc\StackTraceHiddenAttribute.cs" />

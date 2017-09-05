@@ -56,7 +56,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{Tenant} {Name} ({RunTimeLevel})";
+            return $"{Name} {Tenant} ({RunTimeLevel})";
         }
     }
 }

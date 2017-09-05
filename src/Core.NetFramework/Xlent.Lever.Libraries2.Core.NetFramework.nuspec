@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.4.8</version>
+    <version>1.4.10</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,8 +11,9 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.4.8 IFulcrumFullLogger is async
-      1.4.7 Now supports IFulcrumFullLogger.
+      1.4.10 Introduced failsafe Threading.
+      1.4.9 Fills in Tenant, CorrelationId, etc when 
+      1.4.8 Now supports IFulcrumFullLogger.
       1.4.4 Cosmetic changes for logging.
       1.4.3 Better logging messages.
       1.4.1 Updated the SourceTrace name to "FulcrumTraceSource".
