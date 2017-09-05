@@ -146,14 +146,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                //lock (ClassLock)
-                //{
-                //    if (_loggingInProgress)
-                //    {
-                //        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
-                //        return;
-                //    }
-                //}
+                lock (ClassLock)
+                {
+                    if (_loggingInProgress)
+                    {
+                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                        return;
+                    }
+                }
                 logInstanceInformation.StackTrace = Environment.StackTrace;
                 ThreadHelper.FireAndForget(() => LogFailSafe(logInstanceInformation));
             }
@@ -171,16 +171,16 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                //lock (ClassLock)
-                //{
-                //    if (_loggingInProgress)
-                //    {
-                //        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
-                //        return;
-                //    }
-                //    _loggingInProgress = true;
-                //}
-                // ReSharper disable once ObjectCreationAsStatement
+                lock (ClassLock)
+                {
+                    if (_loggingInProgress)
+                    {
+                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                        return;
+                    }
+                    _loggingInProgress = true;
+                }
+                //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
                     Tenant = logInstanceInformation.ClientTenant,

@@ -149,7 +149,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <inheritdoc />
         public string ToLogString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }
