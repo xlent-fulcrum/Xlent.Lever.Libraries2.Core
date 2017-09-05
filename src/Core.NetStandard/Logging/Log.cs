@@ -24,6 +24,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static IFulcrumLogger _chosenLogger;
 #pragma warning restore 169
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
+        [ThreadStatic]
+        private static bool _loggingInProgress;
+        private static object _classLock = new Object();
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
@@ -120,6 +123,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             catch (Exception e)
             {
+                var newMessage = message;
+                if (exception != null) newMessage += $"\r{exception.Message}";
                 logInstanceInformation = new LogInstanceInformation
                 {
                     ApplicationName = FulcrumApplication.Setup.Name,
@@ -127,7 +132,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
                     TimeStamp = DateTimeOffset.Now,
                     SeverityLevel = LogSeverityLevel.Critical,
-                    Message = "Logging failed.",
+                    Message = $"Logging failed when logging this:\r{newMessage}",
                     Exception = e
                 };
             }
@@ -140,7 +145,39 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="logInstanceInformation">Information about the logging.</param>
         private static void LogInBackground(LogInstanceInformation logInstanceInformation)
         {
-            ThreadHelper.FireAndForget(() => SafeLog(logInstanceInformation));
+            try
+            {
+                lock (_classLock)
+                {
+                    if (_loggingInProgress)
+                    {
+                        var formattedMessage = SafeFormatMessage(logInstanceInformation);
+                        FallbackLoggingWhenAllElseFails($"Log was is already in progress:\r{formattedMessage}");
+                        return;
+                    }
+                }
+                ThreadHelper.FireAndForget(() => SafeLog(logInstanceInformation));
+            }
+            catch (Exception e1)
+            {
+                try
+                {
+                    var formattedMessage = SafeFormatMessage(logInstanceInformation);
+                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{formattedMessage}");
+                }
+                catch (Exception e2)
+                {
+                    try
+                    {
+                        var formattedMessage = SafeFormatMessage(logInstanceInformation);
+                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{formattedMessage}");
+                    }
+                    catch (Exception)
+                    {
+                        // We give up
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -152,6 +189,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var formattedMessage = SafeFormatMessage(logInstanceInformation);
             try
             {
+                lock (_classLock)
+                {
+                    if (_loggingInProgress)
+                    {
+                        FallbackLoggingWhenAllElseFails($"Log was is already in progress:\r{formattedMessage}");
+                        return;
+                    }
+                    _loggingInProgress = true;
+                }
                 // ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
@@ -223,7 +269,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
-        /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
+        /// Create a formatted message based on <paramref name="logInstanceInformation"/>.
         /// </summary>
         /// <param name="logInstanceInformation">Information about the logging.</param>
         /// <returns>A formatted message, never null or empty</returns>
