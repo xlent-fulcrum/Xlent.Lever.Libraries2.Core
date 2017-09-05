@@ -387,35 +387,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 var totalMessage = message == null ? "" : $"{message}\r";
-                try
+                totalMessage += FormatMessageFailSafe(logInstanceInformation);
+                if (exception != null)
                 {
-                    totalMessage += FormatMessageFailSafe(logInstanceInformation);
+                    totalMessage += $"\r\r{FormatMessageFailSafe(exception)}";
                 }
-                catch (Exception)
+                if (exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error))
                 {
-                    // Ignore if we don't succeed
-                }
-                try
-                {
-                    if (exception != null)
-                    {
-                        totalMessage += $"\r\r{FormatMessageFailSafe(exception)}";
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore if we don't succeed
-                }
-                try
-                {
-                    if (exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error))
-                    {
-                        totalMessage += $"\r\r{Environment.StackTrace}";
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore if we don't succeed
+                    totalMessage += $"\r\r{Environment.StackTrace}";
                 }
                 try
                 {
@@ -437,7 +416,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         private static bool IsLevelEqualOrGreaterThan(LogInstanceInformation logInstanceInformation, LogSeverityLevel severityLevel)
         {
-            return (int) logInstanceInformation.SeverityLevel >= (int) severityLevel;
+            return (int)logInstanceInformation.SeverityLevel >= (int)severityLevel;
         }
     }
 }
