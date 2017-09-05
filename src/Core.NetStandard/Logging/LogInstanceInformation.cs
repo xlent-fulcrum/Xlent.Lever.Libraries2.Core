@@ -67,6 +67,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         public RunTimeLevelEnum RunTimeLevel { get; set; }
 
+        /// <summary>
+        /// The call stack for the moment when the logging was turned into it's own thread.
+        /// </summary>
+        public string StackTrace { get; set; }
+
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {

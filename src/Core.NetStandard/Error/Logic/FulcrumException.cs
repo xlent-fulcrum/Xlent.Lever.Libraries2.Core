@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Model;
+using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.Misc;
 
 namespace Xlent.Lever.Libraries2.Core.Error.Logic
@@ -10,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
     /// <summary>
     /// The base class for all Fulcrum exceptions
     /// </summary>
-    public abstract class FulcrumException : Exception, IFulcrumError
+    public abstract class FulcrumException : Exception, IFulcrumError, ILoggable
     {
         /// <summary>
         /// The current servent name. Can be set by calling <see cref="Initialize"/>.
@@ -142,6 +144,12 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
                     .ToArray();
                 return strings != null ? string.Concat(strings) : "";
             }
+        }
+
+        /// <inheritdoc />
+        public string ToLogString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

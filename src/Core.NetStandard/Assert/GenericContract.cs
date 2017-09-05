@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.Misc;
 
 namespace Xlent.Lever.Libraries2.Core.Assert
@@ -10,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
     /// A generic class for verifying method contracts. Generic in the meaning that a parameter says what exception that should be thrown when a requirement doesn't hold.
     /// </summary>
     internal static class GenericContract<TException>
-        where TException : Exception
+        where TException : FulcrumException
     {
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
@@ -220,6 +222,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void ThrowException(string message)
         {
             var exception = (TException)Activator.CreateInstance(typeof(TException), message);
+            exception.ErrorLocation = Environment.StackTrace;
+            Log.LogError(message, exception);
             throw exception;
         }
     }

@@ -146,14 +146,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                lock (ClassLock)
-                {
-                    if (_loggingInProgress)
-                    {
-                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
-                        return;
-                    }
-                }
+                //lock (ClassLock)
+                //{
+                //    if (_loggingInProgress)
+                //    {
+                //        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                //        return;
+                //    }
+                //}
+                logInstanceInformation.StackTrace = Environment.StackTrace;
                 ThreadHelper.FireAndForget(() => LogFailSafe(logInstanceInformation));
             }
             catch (Exception e)
@@ -170,15 +171,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                lock (ClassLock)
-                {
-                    if (_loggingInProgress)
-                    {
-                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
-                        return;
-                    }
-                    _loggingInProgress = true;
-                }
+                //lock (ClassLock)
+                //{
+                //    if (_loggingInProgress)
+                //    {
+                //        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                //        return;
+                //    }
+                //    _loggingInProgress = true;
+                //}
                 // ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
@@ -190,7 +191,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     CorrelationId = logInstanceInformation.CorrelationId
                 };
-                var formattedMessage = SafeFormatMessage(logInstanceInformation);
+                var formattedMessage = FormatMessageFailSafe(logInstanceInformation);
                 AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
                 LogWithConfiguredLoggerFailSafe(logInstanceInformation, formattedMessage);
             }
@@ -231,6 +232,57 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
+        private static string GetContextInformation()
+        {
+            if (FulcrumApplication.Setup == null) return "";
+            var result = FulcrumApplication.ToLogString();
+            if (FulcrumApplication.Setup.ContextValueProvider == null) return result;
+            var correlationIdProvider = new CorrelationIdValueProvider();
+            var correlationId = correlationIdProvider.CorrelationId;
+            result += string.IsNullOrWhiteSpace(correlationId) ? "" : $" CorrelationId {correlationId}";
+            var tenantProvider = new TenantConfigurationValueProvider();
+            var tenant = tenantProvider.Tenant;
+            result += tenant == null ? "" : $" Tenant {tenant}";
+            return $"{result}";
+        }
+
+        /// <summary>
+        /// Create a formatted message based on <paramref name="exception"/>
+        /// </summary>
+        /// <param name="exception">The exception that we will create a log message for.</param>
+        /// <returns>A formatted message, never null or empty.</returns>
+        /// <remarks>This method should never throw an exception. If </remarks>
+        [Obsolete("Use FormatMessageFailSafe.", true)]
+        public static string FormatMessage(Exception exception)
+        {
+            return FormatMessageFailSafe(exception);
+        }
+
+        /// <summary>
+        /// Create a formatted message based on <paramref name="exception"/>
+        /// </summary>
+        /// <param name="exception">The exception that we will create a log message for.</param>
+        /// <returns>A formatted message, never null or empty.</returns>
+        /// <remarks>This method should never throw an exception. If </remarks>
+        public static string FormatMessageFailSafe(Exception exception)
+        {
+            if (exception == null) return "";
+            try
+            {
+                var formatted = $"Exception type: {exception.GetType().FullName}";
+                var fulcrumException = exception as FulcrumException;
+                if (fulcrumException != null) formatted += $"\r{fulcrumException.ToLogString()}";
+                formatted += $"\rException message: {exception.Message}";
+                formatted += $"\r{exception.StackTrace}";
+                formatted += AddInnerExceptions(exception);
+                return formatted;
+            }
+            catch (Exception)
+            {
+                return exception.Message;
+            }
+        }
+
         /// <summary>
         /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
         /// </summary>
@@ -257,7 +309,19 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="logInstanceInformation">Information about the logging.</param>
         /// <returns>A formatted message, never null or empty</returns>
+        [Obsolete("Use FormatMessageFailSafe", true)]
         public static string SafeFormatMessage(LogInstanceInformation logInstanceInformation)
+        {
+            return FormatMessageFailSafe(logInstanceInformation);
+        }
+
+
+        /// <summary>
+        /// Create a formatted message based on <paramref name="logInstanceInformation"/>.
+        /// </summary>
+        /// <param name="logInstanceInformation">Information about the logging.</param>
+        /// <returns>A formatted message, never null or empty</returns>
+        public static string FormatMessageFailSafe(LogInstanceInformation logInstanceInformation)
         {
             try
             {
@@ -278,52 +342,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     detailsLine += $" {logInstanceInformation.ClientTenant}";
                 }
-                var exceptionLine = logInstanceInformation.Exception == null ? "" : $"\r{FormatMessage(logInstanceInformation.Exception)}";
-                return $"{detailsLine}\r{logInstanceInformation.Message}{exceptionLine}";
+                var exceptionLine = logInstanceInformation.Exception == null ? "" : $"\r{FormatMessageFailSafe(logInstanceInformation.Exception)}";
+                var stackTraceLine = logInstanceInformation.StackTrace == null ? "" : $"\r{logInstanceInformation.StackTrace}";
+                return $"{detailsLine}\r{logInstanceInformation.Message}{exceptionLine}{stackTraceLine}";
             }
             catch (Exception e)
             {
                 return $"Formatting message failed ({e.Message}): {logInstanceInformation.Message}";
-            }
-        }
-
-        private static string GetContextInformation()
-        {
-            if (FulcrumApplication.Setup == null) return "";
-            var result = FulcrumApplication.ToLogString();
-            if (FulcrumApplication.Setup.ContextValueProvider == null) return result;
-            var correlationIdProvider = new CorrelationIdValueProvider();
-            var correlationId = correlationIdProvider.CorrelationId;
-            result += string.IsNullOrWhiteSpace(correlationId) ? "" : $" CorrelationId {correlationId}";
-            var tenantProvider = new TenantConfigurationValueProvider();
-            var tenant = tenantProvider.Tenant;
-            result += tenant == null ? "" : $" Tenant {tenant}";
-            return $"{result}";
-        }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="exception"/>
-        /// </summary>
-        /// <param name="exception">The exception that we will create a log message for.</param>
-        /// <returns>A formatted message, never null or empty.</returns>
-        /// <remarks>This method should never throw an exception. If </remarks>
-        public static string FormatMessage(Exception exception)
-        {
-            if (exception == null) return "";
-            try
-            {
-
-                var formatted = $"Exception type: {exception.GetType().FullName}";
-                var fulcrumException = exception as FulcrumException;
-                if (fulcrumException != null) formatted += $"\r{fulcrumException}";
-                formatted += $"\rException message: {exception.Message}";
-                formatted += $"\r{exception.StackTrace}";
-                formatted += AddInnerExceptions(exception);
-                return formatted;
-            }
-            catch (Exception)
-            {
-                return exception.Message;
             }
         }
 
@@ -337,11 +362,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 formatted = aggregateException
                     .Flatten()
                     .InnerExceptions
-                    .Aggregate(formatted, (current, innerException) => current + $"\r{FormatMessage(innerException)}");
+                    .Aggregate(formatted, (current, innerException) => current + $"\r{FormatMessageFailSafe(innerException)}");
             }
             if (exception.InnerException != null)
             {
-                formatted += $"\r--Inner exception--\r{FormatMessage(exception.InnerException)}";
+                formatted += $"\r--Inner exception--\r{FormatMessageFailSafe(exception.InnerException)}";
             }
             return formatted;
         }
@@ -360,7 +385,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 var totalMessage = message == null ? "" : $"{message}\r";
                 try
                 {
-                    totalMessage += SafeFormatMessage(logInstanceInformation);
+                    totalMessage += FormatMessageFailSafe(logInstanceInformation);
                 }
                 catch (Exception)
                 {
@@ -374,7 +399,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     }
                     else
                     {
-                        totalMessage += $"\r{FormatMessage(exception)}";
+                        totalMessage += $"\r{FormatMessageFailSafe(exception)}";
                     }
                 }
                 catch (Exception)
@@ -387,7 +412,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r{FormatMessage(e)}";
+                    totalMessage += $"\r{FormatMessageFailSafe(e)}";
                     Debug.WriteLine($"{totalMessage}");
                 }
             }

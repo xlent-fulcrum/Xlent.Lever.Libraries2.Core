@@ -53,7 +53,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <inheritdoc />
         public async Task LogAsync(LogInstanceInformation logInformation)
         {
-            Log(logInformation.SeverityLevel, Logging.Log.SafeFormatMessage(logInformation));
+            Log(logInformation.SeverityLevel, Logging.Log.FormatMessageFailSafe(logInformation));
             await Task.Yield();
         }
     }
