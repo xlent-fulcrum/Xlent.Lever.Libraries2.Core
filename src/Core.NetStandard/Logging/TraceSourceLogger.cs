@@ -42,7 +42,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                             $"Unexpected {nameof(logSeverityLevel)} ({logSeverityLevel}) for message: {message}.");
                         return;
                 }
-                TraceSource.TraceEvent(eventType, 0, message);
+                TraceSource.TraceEvent(eventType, 0, message+"\r");
             }
             catch (Exception)
             {
