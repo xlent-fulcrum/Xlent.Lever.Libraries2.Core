@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -11,6 +10,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Log <paramref name="message"/>.
         /// </summary>
-        void Log(LogInstanceInformation message);
+        Task LogAsync(LogInstanceInformation message);
     }
 }

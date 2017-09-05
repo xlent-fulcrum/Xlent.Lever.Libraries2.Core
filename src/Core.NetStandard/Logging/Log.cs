@@ -156,7 +156,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 var fullLogger = logger as IFulcrumFullLogger;
                 if (fullLogger != null)
                 {
-                    fullLogger.Log(logInstanceInformation);
+                    fullLogger.LogAsync(logInstanceInformation).Wait();
                 }
                 else
                 {

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
     /// <summary>
     /// Interface for basic logging
     /// </summary>
+    [Obsolete("Use IFulcrumFullLogger")]
     public interface IFulcrumLogger
     {
         /// <summary>
