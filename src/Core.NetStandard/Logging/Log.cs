@@ -358,10 +358,28 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 var totalMessage = message == null ? "" : $"{message}\r";
-                totalMessage += SafeFormatMessage(logInstanceInformation);
-                if (exception != null)
+                try
                 {
-                    totalMessage += $"\r{FormatMessage(exception)}";
+                    totalMessage += SafeFormatMessage(logInstanceInformation);
+                }
+                catch (Exception)
+                {
+                    // Ignore if we don't succeed
+                }
+                try
+                {
+                    if (exception == null)
+                    {
+                        totalMessage += $"\r{Environment.StackTrace}";
+                    }
+                    else
+                    {
+                        totalMessage += $"\r{FormatMessage(exception)}";
+                    }
+                }
+                catch (Exception)
+                {
+                    // Ignore if we don't succeed
                 }
                 try
                 {
