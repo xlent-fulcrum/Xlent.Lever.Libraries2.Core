@@ -2,7 +2,6 @@
 using System.Threading;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
-using Xlent.Lever.Libraries2.Core.Logging;
 
 namespace Xlent.Lever.Libraries2.Core.Threads
 {

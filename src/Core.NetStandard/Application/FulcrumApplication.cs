@@ -1,6 +1,4 @@
-﻿using System;
-using System.Configuration;
-using Xlent.Lever.Libraries2.Core.Assert;
+﻿using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
