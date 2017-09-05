@@ -397,13 +397,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 }
                 try
                 {
-                    if (exception == null)
+                    if (exception != null)
                     {
-                        totalMessage += $"\r{Environment.StackTrace}";
+                        totalMessage += $"\r\r{FormatMessageFailSafe(exception)}";
                     }
-                    else
+                }
+                catch (Exception)
+                {
+                    // Ignore if we don't succeed
+                }
+                try
+                {
+                    if (exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error))
                     {
-                        totalMessage += $"\r{FormatMessageFailSafe(exception)}";
+                        totalMessage += $"\r\r{Environment.StackTrace}";
                     }
                 }
                 catch (Exception)
