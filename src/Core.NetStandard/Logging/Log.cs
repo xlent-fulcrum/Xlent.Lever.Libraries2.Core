@@ -151,32 +151,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     if (_loggingInProgress)
                     {
-                        var formattedMessage = SafeFormatMessage(logInstanceInformation);
-                        FallbackLoggingWhenAllElseFails($"Log was is already in progress:\r{formattedMessage}");
+                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
                         return;
                     }
                 }
                 ThreadHelper.FireAndForget(() => SafeLog(logInstanceInformation));
             }
-            catch (Exception e1)
+            catch (Exception e)
             {
-                try
-                {
-                    var formattedMessage = SafeFormatMessage(logInstanceInformation);
-                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{formattedMessage}");
-                }
-                catch (Exception e2)
-                {
-                    try
-                    {
-                        var formattedMessage = SafeFormatMessage(logInstanceInformation);
-                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{formattedMessage}");
-                    }
-                    catch (Exception)
-                    {
-                        // We give up
-                    }
-                }
+                LogExceptionDuringLoggingFailSafe("Failed to start background job for logging.", logInstanceInformation, e);
             }
         }
 
@@ -186,14 +169,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="logInstanceInformation">Information about the logging.</param>
         private static void SafeLog(LogInstanceInformation logInstanceInformation)
         {
-            var formattedMessage = SafeFormatMessage(logInstanceInformation);
             try
             {
                 lock (_classLock)
                 {
                     if (_loggingInProgress)
                     {
-                        FallbackLoggingWhenAllElseFails($"Log was is already in progress:\r{formattedMessage}");
+                        LogExceptionDuringLoggingFailSafe("Log was is already in progress", logInstanceInformation);
                         return;
                     }
                     _loggingInProgress = true;
@@ -209,6 +191,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     CorrelationId = logInstanceInformation.CorrelationId
                 };
+                var formattedMessage = SafeFormatMessage(logInstanceInformation);
+                AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
                 var logger = FulcrumApplication.Setup.Logger;
                 var fullLogger = logger as IFulcrumFullLogger;
                 if (fullLogger != null)
@@ -219,25 +203,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
                 }
-                AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
             }
-            catch (Exception e1)
+            catch (Exception e)
             {
-                try
-                {
-                    FallbackLoggingWhenAllElseFails($"{e1.Message}\r{formattedMessage}");
-                }
-                catch (Exception e2)
-                {
-                    try
-                    {
-                        Debug.WriteLine($"{e2.Message}\r{e1.Message}\r{formattedMessage}");
-                    }
-                    catch (Exception)
-                    {
-                        // We give up
-                    }
-                }
+                LogExceptionDuringLoggingFailSafe("", logInstanceInformation, e);
             }
         }
 
@@ -350,16 +319,30 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
-        /// <param name="message">The original message to log.</param>
-        private static void FallbackLoggingWhenAllElseFails(string message)
+        /// <param name="logInstanceInformation">The message to log.</param>
+        private static void LogExceptionDuringLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
         {
             try
             {
-                RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
+                var totalMessage = message == null ? "" : $"{message}\r";
+                totalMessage += SafeFormatMessage(logInstanceInformation);
+                if (exception != null)
+                {
+                    totalMessage += $"\r{exception.Message}\r{exception.StackTrace}";
+                }
+                try
+                {
+                    RecommendedForNetFramework.Log(LogSeverityLevel.Critical, totalMessage);
+                }
+                catch (Exception e)
+                {
+                    totalMessage += $"\r---***---\r{e.Message}\r{e.StackTrace}";
+                    Debug.WriteLine($"{e.Message}\r{e.Message}\r{totalMessage}");
+                }
             }
             catch (Exception)
             {
-                // This method must never fail.
+                // We give up
             }
         }
     }
