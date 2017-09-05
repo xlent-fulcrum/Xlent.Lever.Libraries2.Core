@@ -23,7 +23,6 @@ namespace Xlent.Lever.Libraries2.Core.Context
         public void SetValue<T>(string name, T data)
         {
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
-            InternalContract.RequireNotNull(data, nameof(data));
             Dictionary[name] = data;
         }
     }

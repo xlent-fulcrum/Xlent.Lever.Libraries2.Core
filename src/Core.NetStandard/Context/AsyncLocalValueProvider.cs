@@ -33,7 +33,6 @@ namespace Xlent.Lever.Libraries2.Core.Context
         public void SetValue<T>(string name, T data)
         {
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
-            InternalContract.RequireNotNull(data, nameof(data));
             FulcrumAssert.IsNotNull(Holder, $"{Namespace}: 07B2EC29-9231-4DC1-82FF-09DCB6EC87FA");
             if (Holder.Value == null)
             {
