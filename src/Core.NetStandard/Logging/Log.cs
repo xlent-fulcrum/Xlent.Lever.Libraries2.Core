@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -308,20 +309,36 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <remarks>This method should never throw an exception. If </remarks>
         public static string FormatMessage(Exception exception)
         {
-            // This method should never fail, so if no exception was given, we will create an exception.
+            if (exception == null) return "";
             try
             {
-                InternalContract.RequireNotNull(exception, nameof(exception));
+
+                var formatted = $"Exception type: {exception.GetType().FullName}";
+                var fulcrumException = exception as FulcrumException;
+                if (fulcrumException != null) formatted += $"\r{fulcrumException}";
+                formatted += $"\rException message: {exception.Message}";
+                formatted += $"\r{exception.StackTrace}";
+                formatted += AddInnerExceptions(exception);
+                return formatted;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                exception = e;
+                return exception.Message;
             }
-            var formatted = $"Exception type: {exception.GetType().FullName}";
-            var fulcrumException = exception as FulcrumException;
-            if (fulcrumException != null) formatted += $"\r{fulcrumException}";
-            formatted += $"\rException message: {exception.Message}";
-            formatted += $"\r{exception.StackTrace}";
+        }
+
+        private static string AddInnerExceptions(Exception exception)
+        {
+            var formatted = "";
+            var aggregateException = exception as AggregateException;
+            if (aggregateException != null)
+            {
+                formatted += "\rAggregated exceptions:";
+                formatted = aggregateException
+                    .Flatten()
+                    .InnerExceptions
+                    .Aggregate(formatted, (current, innerException) => current + $"\r{FormatMessage(innerException)}");
+            }
             if (exception.InnerException != null)
             {
                 formatted += $"\r--Inner exception--\r{FormatMessage(exception.InnerException)}";
@@ -352,7 +369,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r{FormatMessage(exception)}";
+                    totalMessage += $"\r{FormatMessage(e)}";
                     Debug.WriteLine($"{totalMessage}");
                 }
             }

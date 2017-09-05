@@ -33,6 +33,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// </summary>
         /// <param name="valueProvider">The value provider to use for getting and setting.</param>
         [Obsolete("Use the empty constructor.")]
+        // ReSharper disable once UnusedParameter.Local
         public TenantConfigurationValueProvider(IValueProvider valueProvider) : this()
         {
         }
