@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using Xlent.Lever.Libraries2.Core.Application;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
@@ -26,7 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         [ThreadStatic]
         private static bool _loggingInProgress;
-        private static object _classLock = new Object();
+        private static readonly object ClassLock = new object();
 
         /// <summary>
         /// The chosen <see cref="IValueProvider"/> to use.
@@ -40,9 +39,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
-        /// Recommended <see cref="IFulcrumLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
+        /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
         /// </summary>
-        public static IFulcrumLogger RecommendedForNetFramework { get; } = TraceSourceLogger;
+        public static IFulcrumFullLogger RecommendedForNetFramework { get; } = TraceSourceLogger;
 
         /// <summary>
         /// Verbose logging of <paramref name="message"/> and optional <paramref name="exception"/>.
@@ -147,7 +146,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                lock (_classLock)
+                lock (ClassLock)
                 {
                     if (_loggingInProgress)
                     {
@@ -171,7 +170,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                lock (_classLock)
+                lock (ClassLock)
                 {
                     if (_loggingInProgress)
                     {
@@ -241,6 +240,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         /// <returns>A formatted message, never null or empty</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception"/> is null AND <paramref name="message"/> is null or empty.</exception>
+        [Obsolete("Use overloaded method with LogInstanceInformation")]
         public static string SafeFormatMessage(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception)
         {
             if (exception == null && string.IsNullOrWhiteSpace(message))
@@ -298,7 +298,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var tenantProvider = new TenantConfigurationValueProvider();
             var tenant = tenantProvider.Tenant;
             result += tenant == null ? "" : $" Tenant {tenant}";
-            return $"result";
+            return $"{result}";
         }
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
-using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
