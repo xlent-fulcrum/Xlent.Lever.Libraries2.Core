@@ -82,5 +82,14 @@ namespace Xlent.Lever.Libraries2.Core.Application
             if (Setup.RunTimeLevel == RunTimeLevelEnum.Production) return;
             Validate();
         }
+
+        /// <summary>
+        /// Generates a representative string for logging purposes.
+        /// </summary>
+        /// <returns></returns>
+        public static string ToLogString()
+        {
+            return $"{Setup.Name} {Setup.Tenant} ({Setup.RunTimeLevel})";
+        }
     }
 }

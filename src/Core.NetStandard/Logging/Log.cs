@@ -259,7 +259,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static string GetContextInformation()
         {
             if (FulcrumApplication.Setup == null) return "";
-            var result = FulcrumApplication.Setup.ToString();
+            var result = FulcrumApplication.ToLogString();
             if (FulcrumApplication.Setup.ContextValueProvider == null) return result;
             var correlationIdProvider = new CorrelationIdValueProvider();
             var correlationId = correlationIdProvider.CorrelationId;
