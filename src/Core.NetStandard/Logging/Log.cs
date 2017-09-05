@@ -155,7 +155,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                         return;
                     }
                 }
-                ThreadHelper.FireAndForget(() => SafeLog(logInstanceInformation));
+                ThreadHelper.FireAndForget(() => LogFailSafe(logInstanceInformation));
             }
             catch (Exception e)
             {
@@ -167,7 +167,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static void SafeLog(LogInstanceInformation logInstanceInformation)
+        private static void LogFailSafe(LogInstanceInformation logInstanceInformation)
         {
             try
             {
@@ -193,8 +193,21 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 };
                 var formattedMessage = SafeFormatMessage(logInstanceInformation);
                 AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
-                var logger = FulcrumApplication.Setup.Logger;
-                var fullLogger = logger as IFulcrumFullLogger;
+                LogWithConfiguredLoggerFailSafe(logInstanceInformation, formattedMessage);
+            }
+            catch (Exception e)
+            {
+                LogExceptionDuringLoggingFailSafe($"{nameof(LogFailSafe)} caught an exception.", logInstanceInformation, e);
+            }
+        }
+
+        private static void LogWithConfiguredLoggerFailSafe(LogInstanceInformation logInstanceInformation,
+            string formattedMessage)
+        {
+            var logger = FulcrumApplication.Setup.Logger ?? RecommendedForNetFramework;
+            var fullLogger = logger as IFulcrumFullLogger;
+            try
+            {
                 if (fullLogger != null)
                 {
                     fullLogger.LogAsync(logInstanceInformation).Wait();
@@ -206,7 +219,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             catch (Exception e)
             {
-                LogExceptionDuringLoggingFailSafe("", logInstanceInformation, e);
+                LogExceptionDuringLoggingFailSafe(
+                    $"{nameof(LogFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
+                    logInstanceInformation, e);
             }
         }
 
@@ -319,7 +334,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
+        /// <param name="message">What went wrong with logging</param>
         /// <param name="logInstanceInformation">The message to log.</param>
+        /// <param name="exception">If what went wrong had an exception</param>
         private static void LogExceptionDuringLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
         {
             try
@@ -328,7 +345,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 totalMessage += SafeFormatMessage(logInstanceInformation);
                 if (exception != null)
                 {
-                    totalMessage += $"\r{exception.Message}\r{exception.StackTrace}";
+                    totalMessage += $"\r{FormatMessage(exception)}";
                 }
                 try
                 {
@@ -336,8 +353,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r---***---\r{e.Message}\r{e.StackTrace}";
-                    Debug.WriteLine($"{e.Message}\r{e.Message}\r{totalMessage}");
+                    totalMessage += $"\r{FormatMessage(exception)}";
+                    Debug.WriteLine($"{totalMessage}");
                 }
             }
             catch (Exception)
