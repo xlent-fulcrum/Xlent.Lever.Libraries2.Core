@@ -43,7 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         [Obsolete("Use FullLogger")]
         public IFulcrumLogger Logger
         {
-            get => _logger;
+            get => _logger ?? FullLogger;
             set
             {
                 _logger = value;

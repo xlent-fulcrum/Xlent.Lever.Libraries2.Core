@@ -22,9 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         {
             FulcrumApplication.Initialize(name, tenant, runTimeLevel);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
-#pragma warning disable 618
-            FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
-#pragma warning restore 618
+            FulcrumApplication.Setup.FullLogger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
             FulcrumApplication.AppSettings = new AppSettings(new ConfigurationManagerAppSettings());
         }
@@ -53,9 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         {
             FulcrumApplication.Initialize(name, new Tenant("unknown", "local"), RunTimeLevelEnum.Development);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
-#pragma warning disable 618
-            FulcrumApplication.Setup.Logger = Log.RecommendedForNetFramework;
-#pragma warning restore 618
+            FulcrumApplication.Setup.FullLogger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
         }
 
