@@ -39,7 +39,9 @@ namespace Xlent.Lever.Libraries2.Core.Application
             Setup.RunTimeLevel = level;
 
             Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
+#pragma warning disable 618
             Setup.Logger = Log.RecommendedForNetFramework;
+#pragma warning restore 618
             Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
         }
 

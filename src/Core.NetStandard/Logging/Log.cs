@@ -234,6 +234,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [Obsolete("Use extension method ToLogString() for Exception")]
         public static string FormatMessageFailSafe(Exception exception)
         {
+            if (exception == null) return "";
             return exception.ToLogString();
         }
 
@@ -244,6 +245,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <returns>A formatted message, never null or empty</returns>
         public static string FormatMessageFailSafe(LogInstanceInformation logInstanceInformation)
         {
+            if (logInstanceInformation == null) return null;
             try
             {
                 return logInstanceInformation.ToLogString();
@@ -263,22 +265,29 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">If what went wrong had an exception</param>
         private static void FallbackToSimpleLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
         {
+            
             try
             {
+
                 var totalMessage = message == null ? "" : $"{message}\r";
-                totalMessage += logInstanceInformation.ToLogString();
+                if (logInstanceInformation != null)
+                {
+                    totalMessage += logInstanceInformation.ToLogString();
+                }
                 if (exception != null)
                 {
                     totalMessage += $"\r\rException when logging\r{exception.ToLogString()}";
                 }
-                if (exception != null || logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
+                if (exception != null || (logInstanceInformation != null && logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
                 {
                     totalMessage += $"\rStack trace up to when logging exception occured\r{Environment.StackTrace}";
                 }
                 try
                 {
                     // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
-                    var severityLevel = logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
+                    var severityLevel = logInstanceInformation == null 
+                        ? LogSeverityLevel.Error 
+                        : logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
                     RecommendedForNetFramework.Log(severityLevel, totalMessage);
                 }
                 catch (Exception e)

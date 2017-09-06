@@ -6,7 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
     /// <summary>
     /// Information about a tenant in the Fulcrum multi tenant runtime.
     /// </summary>
-    public class Tenant : ITenant, ILoggable
+    public class Tenant : ITenant
     {
         private static readonly string Namespace = typeof(Tenant).Namespace;
 

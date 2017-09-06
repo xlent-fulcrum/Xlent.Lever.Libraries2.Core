@@ -61,7 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
                 try
                 {
                     Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical,
-                        $"Background thread failed:\r{Log.FormatMessageFailSafe(e)}." +
+                        $"Background thread failed:\r{e.ToLogString()}." +
                         $"\rApplication information: {FulcrumApplication.ToLogString()}" +
                         $"\rContext information: {ToLogString()}");
                 }

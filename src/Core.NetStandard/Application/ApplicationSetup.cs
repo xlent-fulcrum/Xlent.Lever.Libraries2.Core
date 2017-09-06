@@ -12,7 +12,9 @@ namespace Xlent.Lever.Libraries2.Core.Application
     /// </summary>
     public class ApplicationSetup : IValidatable
     {
+#pragma warning disable 618
         private IFulcrumLogger _logger;
+#pragma warning restore 618
 
         /// <summary>
         /// The name of the application.
@@ -41,7 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         [Obsolete("Use FullLogger")]
         public IFulcrumLogger Logger
         {
-            get { return _logger; }
+            get => _logger;
             set
             {
                 _logger = value;
@@ -67,7 +69,9 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RunTimeLevel, nameof(RunTimeLevel), errorLocation);
             FulcrumValidate.IsValidated(Tenant, propertyPath, nameof(Tenant), errorLocation);
             FulcrumValidate.IsNotNull(ThreadHandler, nameof(ThreadHandler), errorLocation);
+#pragma warning disable 618
             if (FullLogger == null) FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
+#pragma warning restore 618
             FulcrumValidate.IsNotNull(ContextValueProvider, nameof(ContextValueProvider), errorLocation);
         }
 

@@ -107,7 +107,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 detailsLine += $" {ClientName}";
             }
-            if (ApplicationTenant != null)
+            if (ClientTenant != null)
             {
                 detailsLine += $" {ClientTenant.ToLogString()}";
             }
