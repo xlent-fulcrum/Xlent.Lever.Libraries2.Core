@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
@@ -10,19 +13,40 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public static class LoggableExtensions
     {
-        /// <summary>
-        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
-        /// </summary>
-        /// <returns>A string for logging information about this type of object.</returns>
-        /// <remarks>Typically contains more detailed information than the normal ToString(). </remarks>
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
         public static string ToLogString(this DateTimeOffset value) =>
             value.ToString("o", CultureInfo.InvariantCulture);
 
-        /// <summary>
-        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
-        /// </summary>
-        /// <returns>A string for logging information about this type of object.</returns>
-        /// <remarks>Typically contains more information than the normal ToString(). </remarks>
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        public static string ToLogString(this JToken value) =>
+            value.ToString(Formatting.Indented);
+
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        public static string ToLogString(this JObject value) =>
+            value.ToString(Formatting.Indented);
+
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        public static string ToLogString(this JValue value) =>
+            value.ToString(Formatting.Indented);
+
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        public static string ToLogString(this JArray values)
+        {
+            var allStrings = values.Select(v => v.ToLogString());
+            var oneString = string.Join(", ", allStrings);
+            return $"({oneString})";
+        }
+
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        public static string ToLogString<T>(this IEnumerable<T> values)
+            where T : ILoggable
+        {
+            var allStrings = values.Select(v => v.ToLogString());
+            var oneString = string.Join(", ", allStrings);
+            return $"({oneString})";
+        }
+
+        /// <inheritdoc cref="ILoggable.ToLogString"/>
         public static string ToLogString(this Exception value)
         {
             if (value == null) return "";
