@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
-using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Threads;
 
@@ -26,17 +24,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [ThreadStatic]
         private static bool _loggingInProgress;
         private static readonly object ClassLock = new object();
-
-        /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
-        /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use FulcrumApplication.Setup.Logger", true)]
-        public static IFulcrumLogger LoggerForApplication
-        {
-            get => FulcrumApplication.Setup.Logger;
-            set => FulcrumApplication.Setup.Logger = value;
-        }
 
         /// <summary>
         /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
@@ -204,21 +191,24 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static void LogWithConfiguredLoggerFailSafe(LogInstanceInformation logInstanceInformation,
             string formattedMessage)
         {
-            var logger = FulcrumApplication.Setup.Logger ?? RecommendedForNetFramework;
-            var fullLogger = logger as IFulcrumFullLogger;
             try
             {
-                if (fullLogger != null)
+                if (FulcrumApplication.Setup.FullLogger != null)
                 {
-                    fullLogger.LogAsync(logInstanceInformation).Wait();
+                    FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation).Wait();
                 }
                 else
                 {
-                    logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
+#pragma warning disable CS0618 // Type or member is obsolete
+                    FulcrumApplication.Setup.Logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
             }
             catch (Exception e)
             {
+#pragma warning disable CS0618 // Type or member is obsolete
+                IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
+#pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
                     $"{nameof(LogFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
@@ -228,93 +218,24 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
             if (!FulcrumApplication.IsInDevelopment) return;
-            if (FulcrumApplication.Setup.Logger.GetType() == typeof(TraceSourceLogger)) return;
+#pragma warning disable CS0618 // Type or member is obsolete
+            IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
+#pragma warning restore CS0618 // Type or member is obsolete
+            if (logger.GetType() == typeof(TraceSourceLogger)) return;
             TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
-        private static string GetContextInformation()
-        {
-            if (FulcrumApplication.Setup == null) return "";
-            var result = FulcrumApplication.ToLogString();
-            if (FulcrumApplication.Setup.ContextValueProvider == null) return result;
-            var correlationIdProvider = new CorrelationIdValueProvider();
-            var correlationId = correlationIdProvider.CorrelationId;
-            result += string.IsNullOrWhiteSpace(correlationId) ? "" : $" CorrelationId {correlationId}";
-            var tenantProvider = new TenantConfigurationValueProvider();
-            var tenant = tenantProvider.Tenant;
-            result += tenant == null ? "" : $" Tenant {tenant}";
-            return $"{result}";
-        }
-
         /// <summary>
         /// Create a formatted message based on <paramref name="exception"/>
         /// </summary>
         /// <param name="exception">The exception that we will create a log message for.</param>
         /// <returns>A formatted message, never null or empty.</returns>
         /// <remarks>This method should never throw an exception. If </remarks>
-        [Obsolete("Use FormatMessageFailSafe.", true)]
-        public static string FormatMessage(Exception exception)
-        {
-            return FormatMessageFailSafe(exception);
-        }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="exception"/>
-        /// </summary>
-        /// <param name="exception">The exception that we will create a log message for.</param>
-        /// <returns>A formatted message, never null or empty.</returns>
-        /// <remarks>This method should never throw an exception. If </remarks>
+        [Obsolete("Use extension method ToLogString() for Exception")]
         public static string FormatMessageFailSafe(Exception exception)
         {
-            if (exception == null) return "";
-            try
-            {
-                var formatted = $"Exception type: {exception.GetType().FullName}";
-                var fulcrumException = exception as FulcrumException;
-                if (fulcrumException != null) formatted += $"\r{fulcrumException.ToLogString()}";
-                formatted += $"\rException message: {exception.Message}";
-                formatted += $"\r{exception.StackTrace}";
-                formatted += AddInnerExceptions(exception);
-                return formatted;
-            }
-            catch (Exception)
-            {
-                return exception.Message;
-            }
+            return exception.ToLogString();
         }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="message"/> and <paramref name="exception"/>
-        /// </summary>
-        /// <param name="timeStamp">The time when Log was called.</param>
-        /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message. Can be null or empty if exception is not null.</param>
-        /// <param name="exception">Optional exception</param>
-        /// <returns>A formatted message, never null or empty</returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="exception"/> is null AND <paramref name="message"/> is null or empty.</exception>
-        [Obsolete("Use overloaded method with LogInstanceInformation")]
-        public static string SafeFormatMessage(DateTimeOffset timeStamp, LogSeverityLevel severityLevel, string message, Exception exception)
-        {
-            if (exception == null && string.IsNullOrWhiteSpace(message))
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-            var contextInformation = GetContextInformation();
-            var exceptionInformation = exception == null ? "" : $"\r{FormatMessage(exception)}";
-            return $"--- {timeStamp} {severityLevel} {contextInformation}\r{message}{exceptionInformation}";
-        }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="logInstanceInformation"/>.
-        /// </summary>
-        /// <param name="logInstanceInformation">Information about the logging.</param>
-        /// <returns>A formatted message, never null or empty</returns>
-        [Obsolete("Use FormatMessageFailSafe", true)]
-        public static string SafeFormatMessage(LogInstanceInformation logInstanceInformation)
-        {
-            return FormatMessageFailSafe(logInstanceInformation);
-        }
-
 
         /// <summary>
         /// Create a formatted message based on <paramref name="logInstanceInformation"/>.
@@ -325,56 +246,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                var correlation = string.IsNullOrWhiteSpace(logInstanceInformation.CorrelationId)
-                    ? ""
-                    : $" {logInstanceInformation.CorrelationId}";
-                var detailsLine =
-                    $"{logInstanceInformation.TimeStamp}{correlation} {logInstanceInformation.SeverityLevel} {logInstanceInformation.ApplicationTenant} {logInstanceInformation.ApplicationName} ({logInstanceInformation.RunTimeLevel}) ";
-                if (!string.IsNullOrWhiteSpace(logInstanceInformation.ClientName) || logInstanceInformation.ApplicationTenant != null)
-                {
-                    detailsLine += " client:";
-                }
-                if (!string.IsNullOrWhiteSpace(logInstanceInformation.ClientName))
-                {
-                    detailsLine += $" {logInstanceInformation.ClientName}";
-                }
-                if (logInstanceInformation.ApplicationTenant != null)
-                {
-                    detailsLine += $" {logInstanceInformation.ClientTenant}";
-                }
-                var exceptionLine = "";
-                var stackTraceLine = "";
-                if (logInstanceInformation.Exception != null) exceptionLine = $"\r{FormatMessageFailSafe(logInstanceInformation.Exception)}";
-                if (logInstanceInformation.StackTrace != null && (logInstanceInformation.Exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error)))
-                {
-                    stackTraceLine = $"\r{logInstanceInformation.StackTrace}";
-                }
-                return $"{detailsLine}\r{logInstanceInformation.Message}{exceptionLine}{stackTraceLine}";
+                return logInstanceInformation.ToLogString();
             }
             catch (Exception e)
             {
                 return $"Formatting message failed ({e.Message}): {logInstanceInformation.Message}";
             }
         }
-
-        private static string AddInnerExceptions(Exception exception)
-        {
-            var formatted = "";
-            var aggregateException = exception as AggregateException;
-            if (aggregateException != null)
-            {
-                formatted += "\rAggregated exceptions:";
-                formatted = aggregateException
-                    .Flatten()
-                    .InnerExceptions
-                    .Aggregate(formatted, (current, innerException) => current + $"\r{FormatMessageFailSafe(innerException)}");
-            }
-            if (exception.InnerException != null)
-            {
-                formatted += $"\r--Inner exception--\r{FormatMessageFailSafe(exception.InnerException)}";
-            }
-            return formatted;
-        }
+        
 
         /// <summary>
         /// Use this method to log when the original logging method fails.
@@ -387,24 +266,24 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 var totalMessage = message == null ? "" : $"{message}\r";
-                totalMessage += FormatMessageFailSafe(logInstanceInformation);
+                totalMessage += logInstanceInformation.ToLogString();
                 if (exception != null)
                 {
-                    totalMessage += $"\r\r{FormatMessageFailSafe(exception)}";
+                    totalMessage += $"\r\rException when logging\r{exception.ToLogString()}";
                 }
-                if (exception != null || IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Error))
+                if (exception != null || logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
                 {
-                    totalMessage += $"\r\r{Environment.StackTrace}";
+                    totalMessage += $"\rStack trace up to when logging exception occured\r{Environment.StackTrace}";
                 }
                 try
                 {
                     // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
-                    var severityLevel = IsLevelEqualOrGreaterThan(logInstanceInformation, LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
+                    var severityLevel = logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
                     RecommendedForNetFramework.Log(severityLevel, totalMessage);
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r{FormatMessageFailSafe(e)}";
+                    totalMessage += $"\r{e.ToLogString()}";
                     Debug.WriteLine($"{totalMessage}");
                 }
             }
@@ -412,11 +291,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 // We give up
             }
-        }
-
-        private static bool IsLevelEqualOrGreaterThan(LogInstanceInformation logInstanceInformation, LogSeverityLevel severityLevel)
-        {
-            return (int)logInstanceInformation.SeverityLevel >= (int)severityLevel;
         }
     }
 }

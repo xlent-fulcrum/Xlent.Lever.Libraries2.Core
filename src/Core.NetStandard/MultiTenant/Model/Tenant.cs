@@ -1,11 +1,12 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Logging;
 
 namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
 {
     /// <summary>
     /// Information about a tenant in the Fulcrum multi tenant runtime.
     /// </summary>
-    public class Tenant : ITenant
+    public class Tenant : ITenant, ILoggable
     {
         private static readonly string Namespace = typeof(Tenant).Namespace;
 
@@ -31,16 +32,19 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
         public string Environment { get; }
 
         /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{Organization} ({Environment})";
         }
 
         /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
+        public string ToLogString() => ToString();
 
         /// <inheritdoc />
         public override bool Equals(object obj)

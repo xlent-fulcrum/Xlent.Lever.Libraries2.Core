@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>
-    public class LogInstanceInformation : IValidatable
+    public class LogInstanceInformation : IValidatable, ILoggable
     {
         /// <summary>
         /// The name of the application that was executing when the log message was created.
@@ -86,6 +86,48 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             FulcrumValidate.IsNotDefaultValue(SeverityLevel, nameof(SeverityLevel), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(Message, nameof(Message), errorLocation);
             FulcrumValidate.IsNotDefaultValue(RunTimeLevel, nameof(RunTimeLevel), errorLocation);
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{SeverityLevel}: {Message}";
+
+        /// <inheritdoc />
+        public string ToLogString()
+        {
+            var correlation = string.IsNullOrWhiteSpace(CorrelationId)
+                ? ""
+                : $" {CorrelationId}";
+            var detailsLine =
+                $"{TimeStamp.ToLogString()}{correlation} {SeverityLevel} {ApplicationTenant} {ApplicationName} ({RunTimeLevel}) ";
+            if (!string.IsNullOrWhiteSpace(ClientName) || ApplicationTenant != null)
+            {
+                detailsLine += " client:";
+            }
+            if (!string.IsNullOrWhiteSpace(ClientName))
+            {
+                detailsLine += $" {ClientName}";
+            }
+            if (ApplicationTenant != null)
+            {
+                detailsLine += $" {ClientTenant.ToLogString()}";
+            }
+            var exceptionLine = "";
+            var stackTraceLine = "";
+            if (Exception != null) exceptionLine = $"\r{Exception.ToLogString()}";
+            if (StackTrace != null && (Exception != null || IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
+            {
+                stackTraceLine = $"\r{StackTrace}";
+            }
+            return $"{detailsLine}\r{Message}{exceptionLine}{stackTraceLine}";
+        }
+
+        /// <summary>
+        /// Compares the current <see cref="SeverityLevel"/> with the supplied <paramref name="severityLevel"/>.
+        /// </summary>
+        /// <returns>True if the current level is greater than or equal to the value in the parameter <paramref name="severityLevel"/>.</returns>
+        public bool IsGreateThanOrEqualTo(LogSeverityLevel severityLevel)
+        {
+            return (int)SeverityLevel >= (int)severityLevel;
         }
     }
 }

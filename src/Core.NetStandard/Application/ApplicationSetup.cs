@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
@@ -11,6 +12,8 @@ namespace Xlent.Lever.Libraries2.Core.Application
     /// </summary>
     public class ApplicationSetup : IValidatable
     {
+        private IFulcrumLogger _logger;
+
         /// <summary>
         /// The name of the application.
         /// </summary>
@@ -35,7 +38,22 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <summary>
         /// The logger to use for logging for the entire application.
         /// </summary>
-        public IFulcrumLogger Logger { get; set; }
+        [Obsolete("Use FullLogger")]
+        public IFulcrumLogger Logger
+        {
+            get { return _logger; }
+            set
+            {
+                _logger = value;
+                var fullLogger = value as IFulcrumFullLogger;
+                if (fullLogger != null) FullLogger = fullLogger;
+            }
+        }
+
+        /// <summary>
+        /// The logger to use for logging for the entire application.
+        /// </summary>
+        public IFulcrumFullLogger FullLogger { get; set; }
 
         /// <summary>
         /// The context value provider that will be used all over the application.
@@ -49,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RunTimeLevel, nameof(RunTimeLevel), errorLocation);
             FulcrumValidate.IsValidated(Tenant, propertyPath, nameof(Tenant), errorLocation);
             FulcrumValidate.IsNotNull(ThreadHandler, nameof(ThreadHandler), errorLocation);
-            FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
+            if (FullLogger == null) FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
             FulcrumValidate.IsNotNull(ContextValueProvider, nameof(ContextValueProvider), errorLocation);
         }
 
