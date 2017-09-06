@@ -52,10 +52,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             if (value == null) return "";
             try
             {
-                var formatted = $"value type: {value.GetType().FullName}";
+                var formatted = $"Exception type: {value.GetType().FullName}";
                 var fulcrumvalue = value as FulcrumException;
                 if (fulcrumvalue != null) formatted += $"\r{fulcrumvalue.ToLogString()}";
-                formatted += $"\rvalue message: {value.Message}";
+                formatted += $"\Exception message: {value.Message}";
                 formatted += $"\r{value.StackTrace}";
                 formatted += AddInnerExceptions(value);
                 return formatted;
