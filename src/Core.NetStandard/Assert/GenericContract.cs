@@ -223,7 +223,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var exception = (TException)Activator.CreateInstance(typeof(TException), message);
             exception.ErrorLocation = Environment.StackTrace;
-            Log.LogError(message, exception);
+            // TODO: Can create stack overflow: Log.LogError(message, exception);
             throw exception;
         }
     }
