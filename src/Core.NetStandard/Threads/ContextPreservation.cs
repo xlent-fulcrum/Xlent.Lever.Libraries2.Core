@@ -12,7 +12,10 @@ using Xlent.Lever.Libraries2.Core.Platform.Configurations;
 
 namespace Xlent.Lever.Libraries2.Core.Threads
 {
-    internal class ContextPreservation : ILoggable
+    /// <summary>
+    /// A way to preserve important properties when starting new threads/jobs.
+    /// </summary>
+    public class ContextPreservation : ILoggable
     {
         private const int MaxDepthForBackgroundThreads = 5;
         private readonly ITenant _clientTenant;
@@ -29,6 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
 
         private static readonly object ClassLock = new object();
 
+        /// <summary></summary>
         public ContextPreservation()
         {
             lock (ClassLock)
@@ -49,6 +53,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             _correlationId = correlationProvider.CorrelationId;
         }
 
+        /// <summary></summary>
         public void ExecuteActionFailSafe(Action<CancellationToken> action, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
