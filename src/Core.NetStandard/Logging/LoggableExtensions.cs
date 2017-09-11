@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 var formatted = $"Exception type: {value.GetType().FullName}";
                 var fulcrumvalue = value as FulcrumException;
                 if (fulcrumvalue != null) formatted += $"\r{fulcrumvalue.ToLogString()}";
-                formatted += $"\Exception message: {value.Message}";
+                formatted += $"\rException message: {value.Message}";
                 formatted += $"\r{value.StackTrace}";
                 formatted += AddInnerExceptions(value);
                 return formatted;
