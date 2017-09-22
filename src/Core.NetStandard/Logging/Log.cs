@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Threads;
@@ -24,6 +25,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [ThreadStatic]
         private static bool _loggingInProgress;
         private static readonly object ClassLock = new object();
+
+        /// <summary>
+        /// This is a property specifically for unit testing.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        public static bool OnlyForUnitTest_LoggingInProgress
+        {
+            get
+            {
+                FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
+                    "This property must only be used in unit tests.");
+                return _loggingInProgress;
+            }
+        }
 
         /// <summary>
         /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
@@ -162,7 +177,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     if (_loggingInProgress)
                     {
-                        FallbackToSimpleLoggingFailSafe("Log was is already in progress", logInstanceInformation);
+                        FallbackToSimpleLoggingFailSafe("When starting a new logging thread, logging was unexpectedly already in progress.", logInstanceInformation);
                         return;
                     }
                     _loggingInProgress = true;
@@ -210,7 +225,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
 #pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
-                    $"{nameof(LogFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
+                    $"{nameof(LogWithConfiguredLoggerFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
             }
         }
