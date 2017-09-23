@@ -228,6 +228,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     $"{nameof(LogWithConfiguredLoggerFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
             }
+            finally
+            {
+                _loggingInProgress = false;
+            }
         }
 
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)

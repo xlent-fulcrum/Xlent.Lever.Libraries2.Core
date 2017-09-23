@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -42,6 +43,35 @@ namespace Xlent.Lever.Libraries2.Core.Threads
                 Thread.Sleep(TimeSpan.FromMilliseconds(10));
             }
             UT.Assert.IsTrue(canAccess);
+        }
+
+        [TestMethod]
+        public void TestMaxDepth()
+        {
+            var correlationId = Guid.NewGuid().ToString();
+            _provider.CorrelationId = correlationId;
+
+            const int tries = 15;
+            var count = 0;
+            var actionCalled = new ManualResetEvent(false);
+            for (var i = 0; i <= tries; i++)
+            {
+                ThreadHelper.FireAndForget(can =>
+                {
+                    lock (correlationId)
+                    {
+                        Thread.Sleep(TimeSpan.FromMilliseconds(100));
+                        var provider = new CorrelationIdValueProvider();
+                        var canAccess = correlationId == provider.CorrelationId;
+                        if (++count == tries) actionCalled.Set();
+                        UT.Assert.IsTrue(canAccess);
+                        Console.WriteLine($"count: {count}");
+                    }
+                });
+                Console.WriteLine($"i: {i}");
+            }
+            UT.Assert.IsTrue(actionCalled.WaitOne(TimeSpan.FromSeconds(3)), $"Could not finish the {tries} tasks");
+
         }
     }
 }
