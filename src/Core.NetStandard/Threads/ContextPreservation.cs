@@ -22,13 +22,13 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         private readonly string _correlationId;
         private readonly string _callingClientName;
         private readonly ILeverConfiguration _configuration;
-        private readonly string[] _stackTraces;
+        private readonly List<string> _stackTraces;
         private readonly int _callDepth;
 
         [ThreadStatic]
         private static int _threadCallDepth;
         [ThreadStatic]
-        private static string[] _threadStackTraces;
+        private static List<string> _threadStackTraces;
 
         private static readonly object ClassLock = new object();
 
@@ -38,12 +38,11 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             lock (ClassLock)
             {
                 _callDepth = _threadCallDepth;
-                var list = new List<string>
+                _stackTraces = new List<string>
                 {
                     Environment.StackTrace
                 };
-                if (_threadStackTraces != null) list.AddRange(_threadStackTraces);
-                _stackTraces = list.ToArray();
+                if (_threadStackTraces != null) _stackTraces.AddRange(_threadStackTraces);
             }
             var tenantProvider = new TenantConfigurationValueProvider();
             _clientTenant = tenantProvider.Tenant;
@@ -60,15 +59,20 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             {
                 RestoreContext();
                 action(cancellationToken);
+                lock (ClassLock)
+                {
+                    if (_threadStackTraces.Count != 0) _threadStackTraces.RemoveAt(_threadStackTraces.Count - 1);
+                    _threadCallDepth--;
+                }
             }
             catch (Exception e)
             {
                 try
                 {
-                    Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical,
-                        $"Background thread failed:\r{e.ToLogString()}." +
-                        $"\rApplication information: {FulcrumApplication.ToLogString()}" +
-                        $"\rContext information: {ToLogString()}");
+                    var message = $"Background thread failed:\r{e.ToLogString()}." +
+                                  $"\rApplication information: {FulcrumApplication.ToLogString()}" +
+                                  $"\rContext information: {ToLogString()}";
+                    Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
                 }
                 catch (Exception)
                 {
