@@ -51,7 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         {
             FulcrumApplication.Initialize(name, new Tenant("unknown", "local"), RunTimeLevelEnum.Development);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
-            FulcrumApplication.Setup.FullLogger = Log.RecommendedForNetFramework;
+            FulcrumApplication.Setup.FullLogger = Log.RecommendedForUnitTest;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
         }
 

@@ -22,6 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static IFulcrumLogger _chosenLogger;
 #pragma warning restore 169
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
+        private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         [ThreadStatic]
         private static bool _loggingInProgress;
         private static readonly object ClassLock = new object();
@@ -39,6 +40,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 return _loggingInProgress;
             }
         }
+
+        /// <summary>
+        /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
+        /// </summary>
+        public static IFulcrumFullLogger RecommendedForUnitTest { get; } = ConsoleLogger;
 
         /// <summary>
         /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
@@ -303,12 +309,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     var severityLevel = logInstanceInformation == null 
                         ? LogSeverityLevel.Error 
                         : logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
-                    RecommendedForNetFramework.Log(severityLevel, totalMessage);
+                    if (FulcrumApplication.IsInDevelopment && FulcrumApplication.Setup.FullLogger != RecommendedForNetFramework) RecommendedForUnitTest.Log(severityLevel, totalMessage);
+                    else RecommendedForNetFramework.Log(severityLevel, totalMessage); 
                 }
                 catch (Exception e)
                 {
                     totalMessage += $"\r{e.ToLogString()}";
-                    Debug.WriteLine($"{totalMessage}");
+                    Console.WriteLine($"{totalMessage}");
                 }
             }
             catch (Exception)

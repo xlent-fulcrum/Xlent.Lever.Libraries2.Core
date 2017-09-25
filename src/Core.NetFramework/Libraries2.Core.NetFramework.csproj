@@ -80,6 +80,7 @@
     <Compile Include="Core\Logging\IFulcrumFullLogger.cs" />
     <Compile Include="Core\Logging\ILoggable.cs" />
     <Compile Include="Core\Logging\LogInstanceInformation.cs" />
+    <Compile Include="Core\Logging\ConsoleLogger.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
     <Compile Include="Core\Threads\ContextPreservation.cs" />
