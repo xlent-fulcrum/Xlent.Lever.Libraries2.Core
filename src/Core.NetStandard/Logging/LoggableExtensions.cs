@@ -13,23 +13,38 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public static class LoggableExtensions
     {
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this DateTimeOffset value) =>
             value.ToString("o", CultureInfo.InvariantCulture);
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this JToken value) =>
             value.ToString(Formatting.Indented);
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this JObject value) =>
             value.ToString(Formatting.Indented);
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this JValue value) =>
             value.ToString(Formatting.Indented);
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this JArray values)
         {
             var allStrings = values.Select(v => v.ToLogString());
@@ -37,7 +52,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             return $"({oneString})";
         }
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString<T>(this IEnumerable<T> values)
             where T : ILoggable
         {
@@ -46,8 +64,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             return $"({oneString})";
         }
 
-        /// <inheritdoc cref="ILoggable.ToLogString"/>
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this Exception value)
+        {
+            return value.ToLogString(true);
+        }
+
+        /// <summary>
+        /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
+        /// </summary>
+        /// <returns>A string for logging information about this type of object.</returns>
+        public static string ToLogString(this Exception value, bool showStackTrace)
         {
             if (value == null) return "";
             try
@@ -56,8 +86,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 var fulcrumvalue = value as FulcrumException;
                 if (fulcrumvalue != null) formatted += $"\r{fulcrumvalue.ToLogString()}";
                 formatted += $"\rException message: {value.Message}";
-                formatted += $"\r{value.StackTrace}";
-                formatted += AddInnerExceptions(value);
+                if (showStackTrace) formatted += $"\r{value.StackTrace}";
+                formatted += AddInnerExceptions(value, showStackTrace);
                 return formatted;
             }
             catch (Exception)
@@ -66,7 +96,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
         }
 
-        private static string AddInnerExceptions(Exception exception)
+        private static string AddInnerExceptions(Exception exception, bool showStackTrace)
         {
             var formatted = "";
             var aggregateException = exception as AggregateException;
@@ -76,11 +106,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 formatted = aggregateException
                     .Flatten()
                     .InnerExceptions
-                    .Aggregate(formatted, (current, innerException) => current + $"\r{innerException.ToLogString()}");
+                    .Aggregate(formatted, (current, innerException) => current + $"\r{innerException.ToLogString(showStackTrace)}");
             }
             if (exception.InnerException != null)
             {
-                formatted += $"\r--Inner exception--\r{exception.InnerException.ToLogString()}";
+                formatted += $"\r--Inner exception--\r{exception.InnerException.ToLogString(showStackTrace)}";
             }
             return formatted;
         }
