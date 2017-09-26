@@ -70,24 +70,25 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <returns>A string for logging information about this type of object.</returns>
         public static string ToLogString(this Exception value)
         {
-            return value.ToLogString(true);
+            return value.ToLogString(false);
         }
 
         /// <summary>
         /// Very much like <see cref="object.ToString"/>, but specifically for logging purposes.
         /// </summary>
+        /// <param name="value">The exception to base the string on.</param>
+        /// <param name="hideStackTrace">When this is true, any stack trace will be hidden.</param>
         /// <returns>A string for logging information about this type of object.</returns>
-        public static string ToLogString(this Exception value, bool showStackTrace)
+        public static string ToLogString(this Exception value, bool hideStackTrace)
         {
             if (value == null) return "";
             try
             {
-                var formatted = $"Exception type: {value.GetType().FullName}";
+                var formatted = $"{value.GetType().FullName} {value.Message}";
                 var fulcrumvalue = value as FulcrumException;
                 if (fulcrumvalue != null) formatted += $"\r{fulcrumvalue.ToLogString()}";
-                formatted += $"\rException message: {value.Message}";
-                if (showStackTrace) formatted += $"\r{value.StackTrace}";
-                formatted += AddInnerExceptions(value, showStackTrace);
+                if (!hideStackTrace) formatted += $"\r{value.StackTrace}";
+                formatted += AddInnerExceptions(value, hideStackTrace);
                 return formatted;
             }
             catch (Exception)
@@ -96,7 +97,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
         }
 
-        private static string AddInnerExceptions(Exception exception, bool showStackTrace)
+        private static string AddInnerExceptions(Exception exception, bool hideStackTrace)
         {
             var formatted = "";
             var aggregateException = exception as AggregateException;
@@ -106,11 +107,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 formatted = aggregateException
                     .Flatten()
                     .InnerExceptions
-                    .Aggregate(formatted, (current, innerException) => current + $"\r{innerException.ToLogString(showStackTrace)}");
+                    .Aggregate(formatted, (current, innerException) => current + $"\r{innerException.ToLogString(hideStackTrace)}");
             }
             if (exception.InnerException != null)
             {
-                formatted += $"\r--Inner exception--\r{exception.InnerException.ToLogString(showStackTrace)}";
+                formatted += $"\r--Inner exception--\r{exception.InnerException.ToLogString(hideStackTrace)}";
             }
             return formatted;
         }

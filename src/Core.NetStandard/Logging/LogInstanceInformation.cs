@@ -94,6 +94,16 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <inheritdoc />
         public string ToLogString()
         {
+            return ToLogString(true);
+        }
+
+        /// <summary>
+        /// Summarize the information suitable for logging purposes.
+        /// </summary>
+        /// <param name="hideStackTrace">When this is true, any stack trace will be hidden.</param>
+        /// <returns></returns>
+        public string ToLogString(bool hideStackTrace)
+        {
             var correlation = string.IsNullOrWhiteSpace(CorrelationId)
                 ? ""
                 : $" {CorrelationId}";
@@ -113,8 +123,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             var exceptionLine = "";
             var stackTraceLine = "";
-            if (Exception != null) exceptionLine = $"\r{Exception.ToLogString()}";
-            if (StackTrace != null && (Exception != null || IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
+            if (Exception != null) exceptionLine = $"\r{Exception.ToLogString(hideStackTrace)}";
+            if (!hideStackTrace && StackTrace != null && (Exception != null || IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
             {
                 stackTraceLine = $"\r{StackTrace}";
             }
