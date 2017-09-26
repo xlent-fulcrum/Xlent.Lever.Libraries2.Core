@@ -65,6 +65,7 @@
     <Compile Include="Core\Decoupling\IFactory.cs" />
     <Compile Include="Core\Decoupling\Model\ConceptValue.cs" />
     <Compile Include="Core\Decoupling\Model\IConceptValue.cs" />
+    <Compile Include="Core\Error\Logic\FulcrumResourceContractException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumAssertionFailedException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumBusinessRuleException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumConflictException.cs" />
