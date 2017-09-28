@@ -29,20 +29,12 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        public FulcrumResourceContractException() : this(null, (Exception)null) { }
+        public FulcrumResourceContractException() : this(null, null) { }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public FulcrumResourceContractException(string message) : this(message, (Exception)null) { }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public FulcrumResourceContractException(string message, string errorLocation) : this(message, (Exception)null)
-        {
-            ErrorLocation = errorLocation;
-        }
+        public FulcrumResourceContractException(string message) : this(message, null) { }
 
         /// <summary>
         /// Constructor
@@ -67,7 +59,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
 
         private void SetProperties()
         {
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#ResourceContractException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

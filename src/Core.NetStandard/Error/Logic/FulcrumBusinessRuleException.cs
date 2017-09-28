@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage =
                 "The request conflicted with a business rules. Please make changes accordingly and try again.";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumBusinessRuleException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

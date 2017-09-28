@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage =
                 "The system could identify you, but you did not have right to access the resource.";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumForbiddenAccessException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

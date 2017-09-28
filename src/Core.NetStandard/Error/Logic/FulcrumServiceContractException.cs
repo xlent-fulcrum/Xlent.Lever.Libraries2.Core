@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage =
                 "The request contained data that was syntactically wrong, had values out of range, or something similar.";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumServiceContractException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

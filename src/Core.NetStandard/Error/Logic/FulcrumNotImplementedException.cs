@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage += $"\rCorrelactionId: {CorrelationId}";
             FriendlyMessage += $"\rInstanceId: {InstanceId}";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumNotImplementedException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

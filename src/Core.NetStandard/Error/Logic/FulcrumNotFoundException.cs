@@ -60,7 +60,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
                     "The resource with the given identification could not be found. Check that your information is correct or try again after a minute or so.";
             }
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumNotFoundException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

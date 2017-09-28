@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage =
                 "Authorization was missing or not accepted.";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumUnauthorizedException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

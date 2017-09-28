@@ -62,7 +62,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
 
         private void SetProperties()
         {
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumContractException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }

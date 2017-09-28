@@ -57,7 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
             FriendlyMessage =
                 "The request conflicted with a request made by someone else. Please reload your data and make a new request.";
 
-            MoreInfoUrl = "http://lever.xlent-fulcrum.info/FulcrumExceptions#FulcrumConflictException";
+            MoreInfoUrl = $"http://lever.xlent-fulcrum.info/FulcrumExceptions#{Type}";
         }
     }
 }
