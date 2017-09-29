@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.5.0 Added FulcrumResourceContractException
+      1.5.1 Added FulcrumResourceContractException
       1.4.38 Added option for Exception extension ToLogString() to do logging of stack trace or not.
       1.4.34 Experimentation with _loggingInProgress and _threadCallDepth
       1.4.31 Better error message in Log
