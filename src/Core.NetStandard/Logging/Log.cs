@@ -191,7 +191,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                _loggingInProgress = true;
                 while (true)
                 {
                     var taskList = new List<Task>();
@@ -214,7 +213,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             finally
             {
                 _hasBackgroundWorkerForLogging = false;
-                _loggingInProgress = false;
             }
         }
 
@@ -265,6 +263,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 if (FulcrumApplication.Setup.FullLogger != null)
                 {
+                    _loggingInProgress = true;
                     await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
                 }
                 else

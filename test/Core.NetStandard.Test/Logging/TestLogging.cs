@@ -66,7 +66,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             stopWatch.Start();
             for (var i = 0; i < numberOfLogs; i++)
             {
-                Log.LogInformation($"Log number {i+1}");
+                Log.LogInformation($"Log number {i + 1}");
             }
             stopWatch.Stop();
             Console.WriteLine($"Time for {numberOfLogs} log messages: {stopWatch.Elapsed.TotalSeconds} seconds");
@@ -94,8 +94,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     }
 
     internal class RecursiveLogger : IFulcrumFullLogger
-        {
-            public static string Message { get; private set; }
+    {
+        public static string Message { get; private set; }
         public static bool HasFailed { get; private set; }
         public static bool IsRunning { get; set; }
         public static int InstanceCount { get; set; }
@@ -115,9 +115,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 InstanceCount++;
                 IsRunning = true;
             }
-            var uniqueString = Guid.NewGuid().ToString();
-            var recursive = message.Message == uniqueString;
-            if (recursive || !Logging.Log.OnlyForUnitTest_LoggingInProgress)
+            var recursiveLogMessage = "Recursive log message";
+            var recursive = message.Message == recursiveLogMessage;
+            if (recursive)
             {
                 if (!HasFailed)
                 {
@@ -128,20 +128,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             Console.WriteLine(message.Message);
             // Try to provoke a recursive log call of this method
-            Logging.Log.LogError(uniqueString);
+            if (!HasFailed) Logging.Log.LogError(recursiveLogMessage);
             await Task.Yield();
             lock (ClassLock)
             {
                 InstanceCount--;
                 if (InstanceCount < 0)
                 {
-                    InstanceCount = 0;
                     if (!HasFailed)
                     {
                         HasFailed = true;
                         Message =
                             $"Unexpectedly had an {nameof(InstanceCount)} with value {InstanceCount} < 0";
                     }
+                    InstanceCount = 0;
                 }
                 if (InstanceCount == 0) IsRunning = false;
             }
