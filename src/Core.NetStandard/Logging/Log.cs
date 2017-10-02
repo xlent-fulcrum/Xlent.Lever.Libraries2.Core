@@ -16,21 +16,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public static class Log
     {
-        /// <summary>
-        /// The chosen <see cref="IValueProvider"/> to use.
-        /// </summary>
-        /// <remarks>There are overrides for this, see e.g. in Xlent.Lever.Libraries2.WebApi.ContextValueProvider.</remarks>
-        [Obsolete("Use FulcrumApplication.Setup.Logger", true)]
-#pragma warning disable 169
-        private static IFulcrumLogger _chosenLogger;
-#pragma warning restore 169
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         [ThreadStatic]
         private static bool _loggingInProgress;
         private static readonly object ClassLock = new object();
         private static ConcurrentQueue<LogInstanceInformation> _logQueue = new ConcurrentQueue<LogInstanceInformation>();
-        private static bool _hasBackgroundWorkerForLogging = false;
+        private static bool _hasBackgroundWorkerForLogging;
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -43,6 +35,20 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
                     "This property must only be used in unit tests.");
                 return _loggingInProgress;
+            }
+        }
+
+        /// <summary>
+        /// This is a property specifically for unit testing.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        public static bool OnlyForUnitTest_HasBackgroundWorkerForLogging
+        {
+            get
+            {
+                FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
+                    "This property must only be used in unit tests.");
+                return _hasBackgroundWorkerForLogging;
             }
         }
 

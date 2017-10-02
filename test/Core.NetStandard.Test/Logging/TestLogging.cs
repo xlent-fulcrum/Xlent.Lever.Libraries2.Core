@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -50,22 +51,26 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [TestMethod]
         public void ManySlowLogs()
         {
-            FulcrumApplication.Setup.FullLogger = new SlowLogger(TimeSpan.FromSeconds(1.0));
-            for (int i = 0; i < 60; i++)
-            {
-                Log.LogInformation($"Log number {i}");
-            }
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            LogSpecifiedNumberOfLogs(1000);
+            while (Log.OnlyForUnitTest_HasBackgroundWorkerForLogging) Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            stopWatch.Stop();
+            Console.WriteLine($"Total time: {stopWatch.Elapsed.TotalSeconds} seconds");
         }
 
-        //[TestMethod]
-        //public void MassiveSlowLogs()
-        //{
-        //    FulcrumApplication.Setup.FullLogger = new SlowLogger(TimeSpan.FromSeconds(1.0));
-        //    for (int i = 0; i < 100000; i++)
-        //    {
-        //        Log.LogInformation($"Log number {i}");
-        //    }
-        //}
+        private static void LogSpecifiedNumberOfLogs(int numberOfLogs)
+        {
+            FulcrumApplication.Setup.FullLogger = new SlowLogger(TimeSpan.FromSeconds(1.0));
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            for (var i = 0; i < numberOfLogs; i++)
+            {
+                Log.LogInformation($"Log number {i+1}");
+            }
+            stopWatch.Stop();
+            Console.WriteLine($"Time for {numberOfLogs} log messages: {stopWatch.Elapsed.TotalSeconds} seconds");
+        }
     }
 
     internal class SlowLogger : IFulcrumFullLogger
@@ -84,7 +89,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         public async Task LogAsync(LogInstanceInformation message)
         {
-            Console.WriteLine(message.Message);
             await Task.Delay(TimeSpan.FromMilliseconds(100));
         }
     }
