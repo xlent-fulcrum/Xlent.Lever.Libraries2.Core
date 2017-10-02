@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -26,6 +29,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [ThreadStatic]
         private static bool _loggingInProgress;
         private static readonly object ClassLock = new object();
+        private static ConcurrentQueue<LogInstanceInformation> _logQueue = new ConcurrentQueue<LogInstanceInformation>();
+        private static bool _hasBackgroundWorkerForLogging = false;
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -143,51 +148,89 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     Exception = e
                 };
             }
-            LogInBackground(logInstanceInformation);
+            logInstanceInformation.StackTrace = Environment.StackTrace;
+            if (_loggingInProgress)
+            {
+                FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
+            }
+            else
+            {
+                _logQueue.Enqueue(logInstanceInformation);
+                StartBackgroundWorkerIfMissing();
+            }
         }
 
         /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// Starts a background worker if needed. The background worker will take log messages from the queue until it is empty.
         /// </summary>
-        /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static void LogInBackground(LogInstanceInformation logInstanceInformation)
+        private static void StartBackgroundWorkerIfMissing()
         {
             try
             {
-                lock (ClassLock)
+                lock (_logQueue)
                 {
-                    if (_loggingInProgress)
-                    {
-                        FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
-                        return;
-                    }
+                    if (_logQueue.IsEmpty || _hasBackgroundWorkerForLogging) return;
+                    _hasBackgroundWorkerForLogging = true;
+                    ThreadHelper.FireAndForget(async () => await BackgroundWorkerForLogging().ConfigureAwait(false));
                 }
-                logInstanceInformation.StackTrace = Environment.StackTrace;
-                ThreadHelper.FireAndForget(() => LogFailSafe(logInstanceInformation));
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe("Failed to start background job for logging.", logInstanceInformation, e);
+                _hasBackgroundWorkerForLogging = false;
+                LogError("Could not start background worker for logging", e);
             }
+        }
+
+        private static async Task BackgroundWorkerForLogging()
+        {
+            try
+            {
+                _loggingInProgress = true;
+                while (true)
+                {
+                    var taskList = new List<Task>();
+                    LogInstanceInformation logInstanceInformation;
+                    while (_logQueue.TryDequeue(out logInstanceInformation))
+                    {
+                        var task = LogFailSafeAsync(logInstanceInformation);
+                        taskList.Add(task);
+                    }
+                    await Task.WhenAll(taskList);
+                    if (await ItemsWereAddedWithinTimespanAsync(TimeSpan.FromSeconds(1.0))) continue;
+                    lock (_logQueue)
+                    {
+                        if (!_logQueue.IsEmpty) continue;
+                        _hasBackgroundWorkerForLogging = false;
+                        return;
+                    }
+                }
+            }
+            finally
+            {
+                _hasBackgroundWorkerForLogging = false;
+                _loggingInProgress = false;
+            }
+        }
+
+        private static async Task<bool> ItemsWereAddedWithinTimespanAsync(TimeSpan timeSpan)
+        {
+            var deadline = DateTimeOffset.Now.Add(timeSpan);
+            while (DateTimeOffset.Now < deadline)
+            {
+                if (!_logQueue.IsEmpty) return true;
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
+            }
+            return false;
         }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static void LogFailSafe(LogInstanceInformation logInstanceInformation)
+        private static async Task LogFailSafeAsync(LogInstanceInformation logInstanceInformation)
         {
             try
             {
-                lock (ClassLock)
-                {
-                    if (_loggingInProgress)
-                    {
-                        FallbackToSimpleLoggingFailSafe("When starting a new logging thread, logging was unexpectedly already in progress.", logInstanceInformation);
-                        return;
-                    }
-                    _loggingInProgress = true;
-                }
                 //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
@@ -201,22 +244,22 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 };
                 var formattedMessage = FormatMessageFailSafe(logInstanceInformation);
                 AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
-                LogWithConfiguredLoggerFailSafe(logInstanceInformation, formattedMessage);
+                await LogWithConfiguredLoggerFailSafeAsync(logInstanceInformation, formattedMessage);
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafe)} caught an exception.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logInstanceInformation, e);
             }
         }
 
-        private static void LogWithConfiguredLoggerFailSafe(LogInstanceInformation logInstanceInformation,
+        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogInstanceInformation logInstanceInformation,
             string formattedMessage)
         {
             try
             {
                 if (FulcrumApplication.Setup.FullLogger != null)
                 {
-                    FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation).Wait();
+                    await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
                 }
                 else
                 {
@@ -231,7 +274,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
 #pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
-                    $"{nameof(LogWithConfiguredLoggerFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
+                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
             }
             finally
