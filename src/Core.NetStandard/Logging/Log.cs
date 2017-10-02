@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -163,7 +164,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     }
                 }
                 logInstanceInformation.StackTrace = Environment.StackTrace;
-                ThreadHelper.FireAndForget(() => LogFailSafe(logInstanceInformation));
+               ThreadHelper.FireAndForget(async () => await LogFailSafeAsync(logInstanceInformation));
             }
             catch (Exception e)
             {
@@ -175,7 +176,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static void LogFailSafe(LogInstanceInformation logInstanceInformation)
+        private static async Task LogFailSafeAsync(LogInstanceInformation logInstanceInformation)
         {
             try
             {
@@ -201,22 +202,22 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 };
                 var formattedMessage = FormatMessageFailSafe(logInstanceInformation);
                 AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
-                LogWithConfiguredLoggerFailSafe(logInstanceInformation, formattedMessage);
+                await LogWithConfiguredLoggerFailSafeAsync(logInstanceInformation, formattedMessage);
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafe)} caught an exception.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logInstanceInformation, e);
             }
         }
 
-        private static void LogWithConfiguredLoggerFailSafe(LogInstanceInformation logInstanceInformation,
+        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogInstanceInformation logInstanceInformation,
             string formattedMessage)
         {
             try
             {
                 if (FulcrumApplication.Setup.FullLogger != null)
                 {
-                    FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation).Wait();
+                    await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
                 }
                 else
                 {
@@ -231,7 +232,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
 #pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
-                    $"{nameof(LogWithConfiguredLoggerFailSafe)} caught an exception from logger {logger.GetType().FullName}.",
+                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {logger.GetType().FullName}.",
                     logInstanceInformation, e);
             }
             finally
