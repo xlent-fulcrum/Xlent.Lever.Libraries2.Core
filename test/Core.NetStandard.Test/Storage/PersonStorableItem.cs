@@ -70,7 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage
         }
     }
 
-    internal partial class PersonStorableItem<TId> : IStorableItemForTesting<PersonStorableItem<TId>, TId>
+    internal partial class PersonStorableItem<TId> : IStorableItemForTesting<PersonStorableItem<TId>, TId>, IValidatable
     {
         public PersonStorableItem<TId> InitializeWithDataForTesting(TypeOfTestDataEnum typeOfTestData)
         {

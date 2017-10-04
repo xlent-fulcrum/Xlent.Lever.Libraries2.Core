@@ -15,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TStorableItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class MemoryStorage<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
-        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem> 
+        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         private static readonly string Namespace = typeof(MemoryStorage<TStorableItem, TId>).Namespace;
         // ReSharper disable once StaticMemberInGenericType

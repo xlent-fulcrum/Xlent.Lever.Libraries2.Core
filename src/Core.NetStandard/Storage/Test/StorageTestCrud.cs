@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Test
     /// </summary>
     public class StorageTestCrud<TStorage, TTestableItem, TId>
         where TStorage : ICrud<TTestableItem, TId>, IDeleteAll
-        where TTestableItem : IStorableItemForTesting<TTestableItem, TId>, IStorableItem<TId>, new()
+        where TTestableItem : IStorableItemForTesting<TTestableItem, TId>, IStorableItem<TId>, IValidatable, new()
     {
         /// <summary>
         /// The storage that should be tested

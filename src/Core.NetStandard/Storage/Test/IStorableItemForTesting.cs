@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Storage.Model;
+﻿using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Test
 {
@@ -9,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Test
     /// <typeparam name="TStorableItem">The type for the items that can be stored.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/></typeparam>
     public interface IStorableItemForTesting<out TStorableItem, TId>
-        where TStorableItem : IStorableItem<TId>
+        where TStorableItem : IStorableItem<TId>, IValidatable
     {
         /// <summary>
         /// Fills all mandatory fields  with valid data.
