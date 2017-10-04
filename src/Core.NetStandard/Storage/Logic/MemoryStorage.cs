@@ -15,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TStorableItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class MemoryStorage<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
-        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
+            where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         private static readonly string Namespace = typeof(MemoryStorage<TStorableItem, TId>).Namespace;
         // ReSharper disable once StaticMemberInGenericType
@@ -34,30 +34,45 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             if (typeof(TId) == typeof(Guid))
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                id = (dynamic) Guid.NewGuid();
+                id = (dynamic)Guid.NewGuid();
             }
             else if (typeof(TId) == typeof(string))
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                id = (dynamic) Guid.NewGuid().ToString();
+                id = (dynamic)Guid.NewGuid().ToString();
             }
             else if (typeof(TId) == typeof(int))
             {
                 lock (LockObject)
                 {
                     // ReSharper disable once SuspiciousTypeConversion.Global
-                    id = (dynamic) _nextInteger++;
+                    id = (dynamic)_nextInteger++;
                 }
             }
             else
             {
                 FulcrumAssert.Fail($"{Namespace}: 5CBE07D8-4C31-43E7-A41C-1DF0B173ABF9", $"MemoryStorage can handle Guid, string and int as type for Id, but it can't handle {typeof(TId)}.");
             }
-            return CreateAsync(id, item);
+            return CreateWithSpecifiedIdAsync(id, item);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Obsolete.
+        /// </summary>
+        /// <exception cref="FulcrumNotImplementedException"></exception>
+        [Obsolete("Method has been renamed to CreateWithSpecifiedIdAsync.", true)]
         public Task<TStorableItem> CreateAsync(TId id, TStorableItem item)
+        {
+            throw new FulcrumNotImplementedException();
+        }
+
+        /// <summary>
+        /// Same as <see cref="CreateAsync(TStorableItem)"/>, but you can specify the new id.
+        /// </summary>
+        /// <param name="id">The id to use for the new item.</param>
+        /// <param name="item">The item to create in storage.</param>
+        /// <returns>The newly created item.</returns>
+        public Task<TStorableItem> CreateWithSpecifiedIdAsync(TId id, TStorableItem item)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
