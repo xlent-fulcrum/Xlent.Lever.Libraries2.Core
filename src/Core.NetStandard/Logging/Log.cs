@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
-using Xlent.Lever.Libraries2.Core.Threads;
+using Xlent.Lever.Libraries2.Core.Queue.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -20,9 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         [ThreadStatic]
         private static bool _loggingInProgress;
-        private static readonly object ClassLock = new object();
-        private static ConcurrentQueue<LogInstanceInformation> _logQueue = new ConcurrentQueue<LogInstanceInformation>();
-        private static bool _hasBackgroundWorkerForLogging;
+        private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -48,7 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
                     "This property must only be used in unit tests.");
-                return _hasBackgroundWorkerForLogging;
+                return LogQueue.OnlyForUnitTest_HasBackgroundWorkerForLogging;
             }
         }
 
@@ -161,70 +156,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                _logQueue.Enqueue(logInstanceInformation);
-                StartBackgroundWorkerIfMissing();
+                LogQueue.AddMessageAsync(logInstanceInformation).Wait();
             }
-        }
-
-        /// <summary>
-        /// Starts a background worker if needed. The background worker will take log messages from the queue until it is empty.
-        /// </summary>
-        private static void StartBackgroundWorkerIfMissing()
-        {
-            try
-            {
-                lock (_logQueue)
-                {
-                    if (_logQueue.IsEmpty || _hasBackgroundWorkerForLogging) return;
-                    _hasBackgroundWorkerForLogging = true;
-                    ThreadHelper.FireAndForget(async () => await BackgroundWorkerForLogging().ConfigureAwait(false));
-                }
-            }
-            catch (Exception e)
-            {
-                _hasBackgroundWorkerForLogging = false;
-                LogError("Could not start background worker for logging", e);
-            }
-        }
-
-        private static async Task BackgroundWorkerForLogging()
-        {
-            try
-            {
-                while (true)
-                {
-                    var taskList = new List<Task>();
-                    LogInstanceInformation logInstanceInformation;
-                    while (_logQueue.TryDequeue(out logInstanceInformation))
-                    {
-                        var task = LogFailSafeAsync(logInstanceInformation);
-                        taskList.Add(task);
-                    }
-                    await Task.WhenAll(taskList);
-                    if (await ItemsWereAddedWithinTimespanAsync(TimeSpan.FromSeconds(1.0))) continue;
-                    lock (_logQueue)
-                    {
-                        if (!_logQueue.IsEmpty) continue;
-                        _hasBackgroundWorkerForLogging = false;
-                        return;
-                    }
-                }
-            }
-            finally
-            {
-                _hasBackgroundWorkerForLogging = false;
-            }
-        }
-
-        private static async Task<bool> ItemsWereAddedWithinTimespanAsync(TimeSpan timeSpan)
-        {
-            var deadline = DateTimeOffset.Now.Add(timeSpan);
-            while (DateTimeOffset.Now < deadline)
-            {
-                if (!_logQueue.IsEmpty) return true;
-                await Task.Delay(TimeSpan.FromMilliseconds(10));
-            }
-            return false;
         }
 
         /// <summary>

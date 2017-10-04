@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Health.Model;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Queue.Model;
+using Xlent.Lever.Libraries2.Core.Threads;
 
 // ReSharper disable RedundantExtendsListEntry
 
@@ -18,7 +19,15 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     public partial class MemoryQueue<T> : IBaseQueue
     {
         private readonly ConcurrentQueue<T> _queue;
-        //private Func<Task<T>> _callback;
+        private readonly FailSafeQueueItemActionDelegate _failSafeQueueItemAction;
+        private bool _hasBackgroundWorker;
+
+        /// <summary>
+        /// Delegate for the action to take on every queue item.
+        /// The delegate must never fail.
+        /// </summary>
+        /// <param name="item">A queue item.</param>
+        public delegate Task FailSafeQueueItemActionDelegate(T item);
 
         /// <summary>
         /// Constructor
@@ -30,13 +39,27 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
             _queue = new ConcurrentQueue<T>();
         }
 
-        ///// <summary>
-        ///// Constructor
-        ///// </summary>
-        //public MemoryQueue(string name, Func<Task<T>> callback) :this(name)
-        //{
-        //    _callback = callback;
-        //}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public MemoryQueue(string name, FailSafeQueueItemActionDelegate failSafeQueueItemAction) : this(name)
+        {
+            _failSafeQueueItemAction = failSafeQueueItemAction;
+        }
+
+        /// <summary>
+        /// This is a property specifically for unit testing.
+        /// </summary>
+        // ReSharper disable once InconsistentNaming
+        public bool OnlyForUnitTest_HasBackgroundWorkerForLogging
+        {
+            get
+            {
+                FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
+                    "This property must only be used in unit tests.");
+                return _hasBackgroundWorker;
+            }
+        }
 
         /// <inheritdoc />
         public string Name { get; }
@@ -47,12 +70,9 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// <inheritdoc />
         public async Task AddMessageAsync(T message, TimeSpan? timeSpanToWait = null)
         {
-            FulcrumAssert.IsNotNull(_queue, null, $"Expected the queue ({Name}) to exist. Did you forget to call MaybeCreateAndConnect()?");
+            FulcrumAssert.IsNotNull(_queue, null, $"Expected the queue ({Name}) to exist.");
             _queue.Enqueue(message);
-            //if (_callback != null)
-            //{
-                
-            //}
+            StartBackgroundWorkerIfNeeded();
             await Task.Yield();
         }
 
@@ -65,6 +85,74 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
             }
             await Task.Yield();
         }
+
+        /// <summary>
+        /// Starts a background worker if needed. The background worker will take log messages from the queue until it is empty.
+        /// </summary>
+        private void StartBackgroundWorkerIfNeeded()
+        {
+            if (_failSafeQueueItemAction == null) return;
+            try
+            {
+                lock (_queue)
+                {
+                    if (_queue.IsEmpty || _hasBackgroundWorker) return;
+                    _hasBackgroundWorker = true;
+                    ThreadHelper.FireAndForget(async () => await BackgroundWorker().ConfigureAwait(false));
+                }
+            }
+            catch (Exception e)
+            {
+                _hasBackgroundWorker = false;
+                Logging.Log.LogError("Could not start background worker for logging", e);
+            }
+        }
+
+        private async Task BackgroundWorker()
+        {
+            var successfulExecution = false;
+            try
+            {
+                while (true)
+                {
+                    await CallCallbackUntilQueueIsEmpty();
+                    if (await ItemsWereAddedWithinTimespanAsync(TimeSpan.FromSeconds(1.0))) continue;
+                    lock (_queue)
+                    {
+                        if (!_queue.IsEmpty) continue;
+                        _hasBackgroundWorker = false;
+                        successfulExecution = true;
+                        return;
+                    }
+                }
+            }
+            finally
+            {
+                if (!successfulExecution) _hasBackgroundWorker = false;
+            }
+        }
+
+        private async Task CallCallbackUntilQueueIsEmpty()
+        {
+            var taskList = new List<Task>();
+            while (_queue.TryDequeue(out T item))
+            {
+                var task = _failSafeQueueItemAction(item);
+                taskList.Add(task);
+            }
+            await Task.WhenAll(taskList);
+        }
+
+        private async Task<bool> ItemsWereAddedWithinTimespanAsync(TimeSpan timeSpan)
+        {
+            var deadline = DateTimeOffset.Now.Add(timeSpan);
+            while (DateTimeOffset.Now < deadline)
+            {
+                if (!_queue.IsEmpty) return true;
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
+            }
+            return false;
+        }
     }
 
     public partial class MemoryQueue<T> : IReadableQueue<T>
@@ -72,7 +160,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// <inheritdoc />
         public Task<T> GetOneMessageNoBlockAsync()
         {
-            return !_queue.TryDequeue(out T item) ? Task.FromResult(default(T)): Task.FromResult(item);
+            return !_queue.TryDequeue(out T item) ? Task.FromResult(default(T)) : Task.FromResult(item);
         }
     }
 

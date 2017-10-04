@@ -1,5 +1,4 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
-using Xlent.Lever.Libraries2.Core.Logging;
 
 namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
 {
