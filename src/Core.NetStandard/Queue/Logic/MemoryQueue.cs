@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,9 +17,8 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     /// </summary>
     public partial class MemoryQueue<T> : IBaseQueue
     {
-        private static readonly string Namespace = typeof(MemoryQueue<T>).Namespace;
-        private readonly object _lockObject = new object();
-        private readonly Queue<T> _queue;
+        private readonly ConcurrentQueue<T> _queue;
+        //private Func<Task<T>> _callback;
 
         /// <summary>
         /// Constructor
@@ -27,8 +27,16 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         {
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
             Name = name;
-            _queue = new Queue<T>();
+            _queue = new ConcurrentQueue<T>();
         }
+
+        ///// <summary>
+        ///// Constructor
+        ///// </summary>
+        //public MemoryQueue(string name, Func<Task<T>> callback) :this(name)
+        //{
+        //    _callback = callback;
+        //}
 
         /// <inheritdoc />
         public string Name { get; }
@@ -36,26 +44,24 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
 
     public partial class MemoryQueue<T> : IWritableQueue<T>
     {
-
         /// <inheritdoc />
         public async Task AddMessageAsync(T message, TimeSpan? timeSpanToWait = null)
         {
-            lock (_lockObject)
-            {
-                FulcrumAssert.IsNotNull(_queue, $"{Namespace}: 9BD616FD-3867-453C-93C6-13B4767A6FE5",
-                    $"Expected the queue ({Name}) to exist. Did you forget to call MaybeCreateAndConnect()?");
-                _queue.Enqueue(message);
-            }
+            FulcrumAssert.IsNotNull(_queue, null, $"Expected the queue ({Name}) to exist. Did you forget to call MaybeCreateAndConnect()?");
+            _queue.Enqueue(message);
+            //if (_callback != null)
+            //{
+                
+            //}
             await Task.Yield();
         }
 
         /// <inheritdoc />
         public async Task ClearAsync()
         {
-            lock (_lockObject)
+            if (_queue == null) return;
+            while (_queue.TryDequeue(out T _))
             {
-                if (_queue == null) return;
-                _queue.Clear();
             }
             await Task.Yield();
         }
@@ -63,35 +69,25 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
 
     public partial class MemoryQueue<T> : IReadableQueue<T>
     {
-
         /// <inheritdoc />
         public Task<T> GetOneMessageNoBlockAsync()
         {
-            lock (_lockObject)
-            {
-                if (!_queue.Any()) return null;
-                return Task.FromResult(_queue.Dequeue());
-            }
+            return !_queue.TryDequeue(out T item) ? Task.FromResult(default(T)): Task.FromResult(item);
         }
     }
 
     public partial class MemoryQueue<T> : IPeekableQueue<T>
     {
-
         /// <inheritdoc />
         public Task<T> PeekNoBlockAsync()
         {
-            lock (_lockObject)
-            {
-                return Task.FromResult(_queue.FirstOrDefault());
-            }
+            return !_queue.TryPeek(out T item) ? Task.FromResult(default(T)) : Task.FromResult(item);
         }
     }
 
-   
+
     public partial class MemoryQueue<T> : IResourceHealth
     {
-
         /// <inheritdoc />
         public async Task<HealthResponse> GetResourceHealthAsync(ITenant tenant)
         {
