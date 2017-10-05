@@ -13,12 +13,27 @@ using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Queue.Logic
 {
+    internal class MessageWithActivationTime<T>
+    {
+        public MessageWithActivationTime(T message, TimeSpan? timeSpanToWait)
+        {
+            Message = message;
+            PostponeUntil = timeSpanToWait == null
+                ? (DateTimeOffset?)null
+                : DateTimeOffset.Now.Add(timeSpanToWait.Value);
+        }
+
+        public bool IsActivationTime => PostponeUntil == null || DateTimeOffset.Now > PostponeUntil;
+        public T Message { get; set; }
+        public DateTimeOffset? PostponeUntil { get; set; }
+    }
+
     /// <summary>
     /// A generic interface for adding strings to a queue.
     /// </summary>
     public partial class MemoryQueue<T> : IBaseQueue
     {
-        private readonly ConcurrentQueue<T> _queue;
+        private readonly ConcurrentQueue<MessageWithActivationTime<T>> _queue;
         private readonly FailSafeQueueItemActionDelegate _failSafeQueueItemAction;
         private bool _hasBackgroundWorker;
 
@@ -36,7 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         {
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
             Name = name;
-            _queue = new ConcurrentQueue<T>();
+            _queue = new ConcurrentQueue<MessageWithActivationTime<T>>();
         }
 
         /// <summary>
@@ -71,7 +86,8 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         public async Task AddMessageAsync(T message, TimeSpan? timeSpanToWait = null)
         {
             FulcrumAssert.IsNotNull(_queue, null, $"Expected the queue ({Name}) to exist.");
-            _queue.Enqueue(message);
+            var messageWithExpiration = new MessageWithActivationTime<T>(message, timeSpanToWait);
+            _queue.Enqueue(messageWithExpiration);
             StartBackgroundWorkerIfNeeded();
             await Task.Yield();
         }
@@ -80,7 +96,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         public async Task ClearAsync()
         {
             if (_queue == null) return;
-            while (_queue.TryDequeue(out T _))
+            while (_queue.TryDequeue(out MessageWithActivationTime<T> _))
             {
             }
             await Task.Yield();
@@ -116,12 +132,16 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
                 while (true)
                 {
                     await CallCallbackUntilQueueIsEmpty();
-                    if (await ItemsWereAddedWithinTimespanAsync(TimeSpan.FromSeconds(1.0))) continue;
-                    lock (_queue)
+                    var queueStaysEmpty = !await ItemsWereAddedWithinTimespanAsync(TimeSpan.FromSeconds(1.0));
+                    if (queueStaysEmpty)
                     {
-                        if (!_queue.IsEmpty) continue;
-                        _hasBackgroundWorker = false;
-                        successfulExecution = true;
+                        // Give up
+                        lock (_queue)
+                        {
+                            if (!_queue.IsEmpty) continue;
+                            _hasBackgroundWorker = false;
+                            successfulExecution = true;
+                        }
                         return;
                     }
                 }
@@ -135,10 +155,19 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         private async Task CallCallbackUntilQueueIsEmpty()
         {
             var taskList = new List<Task>();
-            while (_queue.TryDequeue(out T item))
+            while (!_queue.IsEmpty)
             {
-                var task = _failSafeQueueItemAction(item);
-                taskList.Add(task);
+                var message = await GetOneMessageNoBlockAsync();
+                if (!_queue.IsEmpty && Equals(message, default(T)))
+                {
+                    // There seems to be postponed items on the queue. Make a pause.
+                    await Task.Delay(TimeSpan.FromSeconds(1.0));
+                }
+                else
+                {
+                    var task = _failSafeQueueItemAction(message);
+                    taskList.Add(task);
+                }
             }
             await Task.WhenAll(taskList);
         }
@@ -158,9 +187,26 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     public partial class MemoryQueue<T> : IReadableQueue<T>
     {
         /// <inheritdoc />
-        public Task<T> GetOneMessageNoBlockAsync()
+        public async Task<T> GetOneMessageNoBlockAsync()
         {
-            return !_queue.TryDequeue(out T item) ? Task.FromResult(default(T)) : Task.FromResult(item);
+            var triedItems = new List<MessageWithActivationTime<T>>();
+            while (true)
+            {
+                if (!_queue.TryDequeue(out var messageWithActivationTime)) return default(T);
+                if (triedItems.Contains(messageWithActivationTime))
+                {
+                    // We have looped through all items in the queue
+                    _queue.Enqueue(messageWithActivationTime);
+                    return default(T);
+                }
+                if (messageWithActivationTime.IsActivationTime)
+                {
+                    // We have found the first message in the queue that should be activated now
+                    return await Task.FromResult(messageWithActivationTime.Message);
+                }
+                _queue.Enqueue(messageWithActivationTime);
+                triedItems.Add(messageWithActivationTime);
+            }
         }
     }
 
@@ -169,7 +215,8 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// <inheritdoc />
         public Task<T> PeekNoBlockAsync()
         {
-            return !_queue.TryPeek(out T item) ? Task.FromResult(default(T)) : Task.FromResult(item);
+            if (!_queue.TryPeek(out var item)) return Task.FromResult(default(T));
+            return item.IsActivationTime ? Task.FromResult(item.Message) : Task.FromResult(default(T));
         }
     }
 
