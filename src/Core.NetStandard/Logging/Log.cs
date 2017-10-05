@@ -156,7 +156,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                LogQueue.AddMessageAsync(logInstanceInformation).Wait();
+                LogQueue.AddMessageAsync(logInstanceInformation).ConfigureAwait(false).GetAwaiter().GetResult();
             }
         }
 
