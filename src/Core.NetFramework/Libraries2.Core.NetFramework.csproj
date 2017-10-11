@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Xlent.Lever.Libraries2</RootNamespace>
     <AssemblyName>Xlent.Lever.Libraries2.Core.NetFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -162,7 +163,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rd /s /q $(ProjectDir)lib\
-mkdir $(ProjectDir)lib\net462
-copy  $(ProjectDir)$(OutDir)Xlent.Lever.Libraries2.Core.NetFramework* $(ProjectDir)lib\net462</PostBuildEvent>
+mkdir $(ProjectDir)lib\net46
+copy  $(ProjectDir)$(OutDir)Xlent.Lever.Libraries2.Core.NetFramework* $(ProjectDir)lib\net46</PostBuildEvent>
   </PropertyGroup>
 </Project>

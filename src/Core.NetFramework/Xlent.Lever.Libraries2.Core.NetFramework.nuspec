@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.8.3</version>
+    <version>1.9.2</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.9.2 Changed from .NET Framework 4.6.2 to 4.6 (to enable use in Azure Function Apps)
       1.8.3 BUG: Deadlock in logging.
       1.8.1 MemoryQueue now supports postponed items.
       1.8.0 MemoryQueue now has support for background reading of items. Used by the Log queue.
@@ -77,7 +78,7 @@
     </releaseNotes>
     <tags>fulcrum lever</tags>
     <dependencies>
-      <group targetFramework="net462">
+      <group targetFramework="net46">
       </group>
     </dependencies>
   </metadata>
