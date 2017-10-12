@@ -2089,6 +2089,262 @@
             Attribute to hide methods from <see cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumException"/> stack traces.
             </summary>
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData">
+            <summary>
+            Meta data present at publication of all Business Events
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.PublisherName">
+            <summary>The technical name of the publishing client</summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.EntityName">
+            <summary>The name of the entity</summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.EventName">
+            <summary>The name of the event, in the context of the <see cref="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.EntityName"/></summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MajorVersion">
+            <summary>The major version of the event</summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MainorVersion">
+            <summary>The minor version of the event</summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.PublishedAt">
+            <summary>The timestamp for when the event was published</summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse">
+            <summary>
+            The payload that Business Events sends when it gets the response from an event it sent.
+            </summary>
+            <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.CorrelationId">
+            <summary>
+            The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.Name">
+            <summary>
+            The name of the original event that was sent, on the form Entity.Event/MajorVErsion.MinorVersion
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.StatusCode">
+            <summary>
+            The Http status code from the subscriber
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.Url">
+            <summary>
+            The subscription url
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.SubscriberClientName">
+            <summary>
+            The subscriber's client name (as defined in the BusinessEvents Service)
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse">
+            <summary>
+            The payload that Business Events sends when it gets the response from an event it sent.
+            </summary>
+            <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.CorrelationId">
+            <summary>
+            The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Name">
+            <summary>
+            The name of the original event that was sent, on the form Entity.Event/MajorVErsion.MinorVersion
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.StatusCode">
+            <summary>
+            The Http status code from the subscriber
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Url">
+            <summary>
+            The subscription url
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.SubscriberClientName">
+            <summary>
+            The subscriber's client name (as defined in the BusinessEvents Service)
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum">
+            <summary>
+            Enumeration for the roles that authenication handles
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.SysAdminUser">
+            <summary>
+            Have all rights
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.InternalSystemUser">
+            <summary>
+            A Fulcrum internal system
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.ExternalSystemUser">
+            <summary>
+            An external system (belonging to the organization)
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.Administrator">
+            <summary>
+            A human administrator
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.OrganizationAdmin">
+            <summary>
+            A human administrator, having rights to make changes to whole organization
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames">
+            <summary>
+            Constants for claim types.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames.Organization">
+            <summary>
+            The name for the claim type Organization
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames.Environment">
+            <summary>
+            The name for the claim type Environment
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials">
+            <summary>
+            Credentials for authentication.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials.ClientId">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials.ClientSecret">
+            <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken">
+            <summary>
+            A JWT token and some metadata for that token
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.AccessToken">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.Type">
+            <inheritdoc />
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.ExpiresOn">
+            <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials">
+            <summary>
+            Interface for credentials (á la username and password)
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials.ClientId">
+            
+             The identity for the client that provides these credentials.
+             Corresponds to the "User name" in "User name and password".
+            
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials.ClientSecret">
+            
+             The proof that the client is who it claims it is.
+             Corresponds to the "password" in "User name and password"
+             
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken">
+            <summary>
+            An interface for a JWT token and some metadata for that token
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.AccessToken">
+            <summary>
+            The actual token
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.Type">
+            <summary>
+            The token type for this token
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.ExpiresOn">
+            <summary>
+            The time that this token expires
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.ITokenRefresher">
+            <summary>
+            A Service Client that can refresh tokens.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Authentication.ITokenRefresher.GetJwtTokenAsync">
+            <summary>
+            Get a cached <see cref="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken"/>. If no token is cached or the token is becoming old, a new one is returned.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.JwtTokenTypeEnum">
+            <summary>
+            The different types of JwtTokens that we currently support
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.JwtTokenTypeEnum.Bearer">
+            <summary>
+            A bearer token
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration">
+            <summary>
+            Interface for retrieving configuration data.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration.MandatoryValue``1(System.Object)">
+            <summary>
+            Gets a value from the configuration and verifies that it is not null.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration.Value``1(System.Object)">
+            <summary>
+            Gets a value from the configuration.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration">
+            <summary>
+            Contains what is needed in a convenience class for getting configurations and tokens.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceName">
+            <summary>
+            The name of the service that this service configuration is for.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceTenant">
+            <summary>
+            The tenant behind this running service
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.GetConfigurationAsync">
+            <summary>
+            Gets the configuration for the current <see cref="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceTenant"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.GetConfigurationForAsync(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant)">
+            <summary>
+            Gets the configuration for another tenant.
+            </summary>
+            <param name="tenant"></param>
+            <returns></returns>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2">
             <summary>
             Functionality for persisting objects in groups.
@@ -2890,239 +3146,6 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.MultiTenant.Model.Tenant.Validate(System.String,System.String)">
             <inheritdoc />
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum">
-            <summary>
-            Enumeration for the roles that authenication handles
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.SysAdminUser">
-            <summary>
-            Have all rights
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.InternalSystemUser">
-            <summary>
-            A Fulcrum internal system
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.ExternalSystemUser">
-            <summary>
-            An external system (belonging to the organization)
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.Administrator">
-            <summary>
-            A human administrator
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum.OrganizationAdmin">
-            <summary>
-            A human administrator, having rights to make changes to whole organization
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames">
-            <summary>
-            Constants for claim types.
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames.Organization">
-            <summary>
-            The name for the claim type Organization
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.ClaimTypeNames.Environment">
-            <summary>
-            The name for the claim type Environment
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials">
-            <summary>
-            Credentials for authentication.
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials.ClientId">
-            <inheritdoc />
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationCredentials.ClientSecret">
-            <inheritdoc />
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken">
-            <summary>
-            A JWT token and some metadata for that token
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.AccessToken">
-            <inheritdoc />
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.Type">
-            <inheritdoc />
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationToken.ExpiresOn">
-            <inheritdoc />
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials">
-            <summary>
-            Interface for credentials (á la username and password)
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials.ClientId">
-            
-             The identity for the client that provides these credentials.
-             Corresponds to the "User name" in "User name and password".
-            
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationCredentials.ClientSecret">
-            
-             The proof that the client is who it claims it is.
-             Corresponds to the "password" in "User name and password"
-             
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken">
-            <summary>
-            An interface for a JWT token and some metadata for that token
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.AccessToken">
-            <summary>
-            The actual token
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.Type">
-            <summary>
-            The token type for this token
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken.ExpiresOn">
-            <summary>
-            The time that this token expires
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.ITokenRefresher">
-            <summary>
-            A Service Client that can refresh tokens.
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Authentication.ITokenRefresher.GetJwtTokenAsync">
-            <summary>
-            Get a cached <see cref="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.IAuthenticationToken"/>. If no token is cached or the token is becoming old, a new one is returned.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.JwtTokenTypeEnum">
-            <summary>
-            The different types of JwtTokens that we currently support
-            </summary>
-        </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Platform.Authentication.JwtTokenTypeEnum.Bearer">
-            <summary>
-            A bearer token
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse">
-            <summary>
-            The payload that Business Events sends when it gets the response from an event it sent.
-            </summary>
-            <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.CorrelationId">
-            <summary>
-            The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.Name">
-            <summary>
-            The name of the original event that was sent, on the form Entity.Event/MajorVErsion.MinorVersion
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.StatusCode">
-            <summary>
-            The Http status code from the subscriber
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.Url">
-            <summary>
-            The subscription url
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackResponse.SubscriberClientName">
-            <summary>
-            The subscriber's client name (as defined in the BusinessEvents Service)
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse">
-            <summary>
-            The payload that Business Events sends when it gets the response from an event it sent.
-            </summary>
-            <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.CorrelationId">
-            <summary>
-            The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Name">
-            <summary>
-            The name of the original event that was sent, on the form Entity.Event/MajorVErsion.MinorVersion
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.StatusCode">
-            <summary>
-            The Http status code from the subscriber
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Url">
-            <summary>
-            The subscription url
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.SubscriberClientName">
-            <summary>
-            The subscriber's client name (as defined in the BusinessEvents Service)
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration">
-            <summary>
-            Interface for retrieving configuration data.
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration.MandatoryValue``1(System.Object)">
-            <summary>
-            Gets a value from the configuration and verifies that it is not null.
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverConfiguration.Value``1(System.Object)">
-            <summary>
-            Gets a value from the configuration.
-            </summary>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration">
-            <summary>
-            Contains what is needed in a convenience class for getting configurations and tokens.
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceName">
-            <summary>
-            The name of the service that this service configuration is for.
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceTenant">
-            <summary>
-            The tenant behind this running service
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.GetConfigurationAsync">
-            <summary>
-            Gets the configuration for the current <see cref="P:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.ServiceTenant"/>.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Platform.Configurations.ILeverServiceConfiguration.GetConfigurationForAsync(Xlent.Lever.Libraries2.Core.MultiTenant.Model.ITenant)">
-            <summary>
-            Gets the configuration for another tenant.
-            </summary>
-            <param name="tenant"></param>
-            <returns></returns>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Queue.Logic.MemoryQueue`1">
             <summary>
