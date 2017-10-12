@@ -85,6 +85,7 @@
     <Compile Include="Core\Logging\ConsoleLogger.cs" />
     <Compile Include="Core\Misc\AsyncLazy.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
+    <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
     <Compile Include="Core\Storage\Logic\MemoryGroupStorage.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
     <Compile Include="Core\Storage\Model\ICrdAll.cs" />
