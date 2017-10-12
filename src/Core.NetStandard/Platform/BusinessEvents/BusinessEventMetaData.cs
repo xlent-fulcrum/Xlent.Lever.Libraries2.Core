@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Platform.BusinessEvents
         public int MajorVersion { get; set; }
 
         /// <summary>The minor version of the event</summary>
-        public int MainorVersion { get; set; }
+        public int MinorVersion { get; set; }
 
         /// <summary>The timestamp for when the event was published</summary>
         public DateTimeOffset PublishedAt { get; set; }

@@ -2106,7 +2106,7 @@
         <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MajorVersion">
             <summary>The major version of the event</summary>
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MainorVersion">
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MinorVersion">
             <summary>The minor version of the event</summary>
         </member>
         <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.PublishedAt">
