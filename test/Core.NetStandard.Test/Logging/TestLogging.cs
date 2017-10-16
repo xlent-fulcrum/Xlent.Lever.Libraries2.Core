@@ -22,12 +22,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             FulcrumApplication.Setup.FullLogger = new RecursiveLogger();
             RecursiveLogger.IsRunning = true;
-            Logging.Log.LogInformation("Top level logging 1, will be followed by recursive logging that should be detected");
+            Log.LogInformation("Top level logging 1, will be followed by recursive logging that should be detected");
             while (RecursiveLogger.IsRunning) Thread.Sleep(TimeSpan.FromMilliseconds(100));
             Thread.Sleep(TimeSpan.FromSeconds(1.0));
-            UT.Assert.IsFalse(Logging.Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
-            Logging.Log.LogInformation("Top level logging 2, will be followed by recursive logging that should be detected");
-            UT.Assert.IsFalse(Logging.Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
+            UT.Assert.IsFalse(Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
+            Log.LogInformation("Top level logging 2, will be followed by recursive logging that should be detected");
+            UT.Assert.IsFalse(Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
             while (RecursiveLogger.IsRunning) Thread.Sleep(TimeSpan.FromMilliseconds(100));
             Thread.Sleep(TimeSpan.FromSeconds(1.0));
             UT.Assert.IsFalse(RecursiveLogger.HasFailed, RecursiveLogger.Message);
@@ -38,10 +38,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             FulcrumApplication.Setup.FullLogger = new RecursiveLogger();
             RecursiveLogger.IsRunning = true;
-            Logging.Log.LogInformation("Top level logging 1");
-            UT.Assert.IsFalse(Logging.Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
-            Logging.Log.LogInformation("Top level logging 2");
-            UT.Assert.IsFalse(Logging.Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
+            Log.LogInformation("Top level logging 1");
+            UT.Assert.IsFalse(Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
+            Log.LogInformation("Top level logging 2");
+            UT.Assert.IsFalse(Log.OnlyForUnitTest_LoggingInProgress, "Should never happen between logs");
             while (RecursiveLogger.IsRunning) Thread.Sleep(TimeSpan.FromMilliseconds(100));
             Thread.Sleep(TimeSpan.FromSeconds(1.0));
             UT.Assert.IsFalse(RecursiveLogger.HasFailed, RecursiveLogger.Message);
@@ -74,7 +74,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
     internal class SlowLogger : IFulcrumFullLogger
     {
-        private TimeSpan _delay;
+        private readonly TimeSpan _delay;
 
         public SlowLogger(TimeSpan delay)
         {
@@ -88,7 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         public async Task LogAsync(LogInstanceInformation message)
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
+            await Task.Delay(_delay);
         }
     }
 
@@ -122,6 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     HasFailed = true;
                     Message =
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Logging.Log.OnlyForUnitTest_LoggingInProgress}";
                 }
             }
