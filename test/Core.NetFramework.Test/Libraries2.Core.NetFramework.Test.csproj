@@ -51,7 +51,6 @@
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
-    <Compile Include="Core\Logging\TestSynchronizationContext.cs" />
     <Compile Include="Core\Storage\MemoryStorageTest.cs" />
     <Compile Include="Core\Storage\PersonStorableItem.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
