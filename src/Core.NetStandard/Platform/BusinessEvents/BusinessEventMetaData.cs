@@ -7,6 +7,9 @@ namespace Xlent.Lever.Libraries2.Core.Platform.BusinessEvents
     /// </summary>
     public class BusinessEventMetaData
     {
+        /// <summary>A unique id for this specific publication of the event</summary>
+        public string MessageId { get; set; }
+
         /// <summary>The technical name of the publishing client</summary>
         public string PublisherName { get; set; }
 

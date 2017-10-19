@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
+using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -15,6 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestLogging).FullName);
+            SynchronizationContext.SetSynchronizationContext(new TestSynchronizationContext());
         }
 
         [TestMethod]
@@ -36,6 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         [TestMethod]
         public void ParallelLogging()
         {
+            var x = System.Threading.SynchronizationContext.Current;
             FulcrumApplication.Setup.FullLogger = new RecursiveLogger();
             RecursiveLogger.IsRunning = true;
             Log.LogInformation("Top level logging 1");
@@ -52,9 +55,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            LogSpecifiedNumberOfLogs(1000);
+            LogSpecifiedNumberOfLogs(10);
             while (Log.OnlyForUnitTest_HasBackgroundWorkerForLogging) Thread.Sleep(TimeSpan.FromMilliseconds(100));
             stopWatch.Stop();
+            Console.WriteLine();
             Console.WriteLine($"Total time: {stopWatch.Elapsed.TotalSeconds} seconds");
         }
 
@@ -68,7 +72,24 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 Log.LogInformation($"Log number {i + 1}");
             }
             stopWatch.Stop();
+            Console.WriteLine();
             Console.WriteLine($"Time for {numberOfLogs} log messages: {stopWatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        [TestMethod]
+        public async Task NoRecursiveLoggingWithSlowLogger()
+        {
+            FulcrumApplication.Setup.FullLogger = new SlowLogger(TimeSpan.FromMilliseconds(100));
+            ThreadHelper.FireAndForget(() =>
+            {
+                Log.LogInformation("Level 1-a");
+                Log.LogInformation("Level 1-b");
+            });
+            ThreadHelper.FireAndForget(() => Log.LogInformation("Level 2"));
+            Task.Run(() => Log.LogInformation("Level 3")).Wait();
+            Task.Run(() => Log.LogInformation("Level 4")).Wait();
+            Task.Run(() => Log.LogInformation("Level 5")).ConfigureAwait(false).GetAwaiter().GetResult();
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
     }
 
@@ -88,7 +109,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         public async Task LogAsync(LogInstanceInformation message)
         {
-            await Task.Delay(_delay);
+            //await Task.Delay(_delay);
+            await Task.Yield();
+            Thread.Sleep(_delay);
+            Console.Write($"{message.Message} ");
         }
     }
 

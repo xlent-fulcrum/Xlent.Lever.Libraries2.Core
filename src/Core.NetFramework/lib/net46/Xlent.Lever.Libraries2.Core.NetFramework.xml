@@ -2094,6 +2094,9 @@
             Meta data present at publication of all Business Events
             </summary>
         </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.MessageId">
+            <summary>A unique id for this specific publication of the event</summary>
+        </member>
         <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.BusinessEventMetaData.PublisherName">
             <summary>The technical name of the publishing client</summary>
         </member>
