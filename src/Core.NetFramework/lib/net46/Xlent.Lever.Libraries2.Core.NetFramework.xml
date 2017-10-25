@@ -66,8 +66,11 @@
             <summary>
             Sets the recommended application setup for .NET Framework.
             </summary>
-            <paramref name="appSettingGetter"/>How to get app settings for <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.Name"/>, <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.Tenant"/>, <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.RunTimeLevel"/>
-            <remarks>If you want to use <see cref="T:System.Configuration.ConfigurationManager"/> for retreiving app settings, you can use <see cref="T:Xlent.Lever.Libraries2.Core.Application.ConfigurationManagerAppSettings"/> as the <paramref name="appSettingGetter"/>.</remarks>
+            <param name="appSettingGetter">How to get app settings for <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.Name"/>, 
+            <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.Tenant"/>, <see cref="P:Xlent.Lever.Libraries2.Core.Application.ApplicationSetup.RunTimeLevel"/></param>
+            <remarks>If you want to use <see cref="T:System.Configuration.ConfigurationManager"/> for retreiving app settings, you can use <see cref="T:Xlent.Lever.Libraries2.Core.Application.ConfigurationManagerAppSettings"/>
+             as the <paramref name="appSettingGetter"/>.
+            The settings that must exists int the <paramref name="appSettingGetter"/> ApplicationName, Organization, Environment and RunTimeLevel.</remarks>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Application.FulcrumApplicationHelper.UnitTestSetup(System.String)">
             <summary>
