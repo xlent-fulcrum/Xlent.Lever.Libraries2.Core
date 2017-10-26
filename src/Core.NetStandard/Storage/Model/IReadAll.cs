@@ -21,6 +21,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<IPageEnvelope<TStorable, TId>> ReadAllAsync(int offset = 0, int? limit = null);
+        Task<PageEnvelope<TStorable, TId>> ReadAllAsync(int offset = 0, int? limit = null);
     }
 }

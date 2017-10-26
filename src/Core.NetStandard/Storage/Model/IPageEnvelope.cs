@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("Use PageEnvelope instead.", true)]
     public interface IPageEnvelope<TData, TId>
         where TData : IStorableItem<TId>
     {

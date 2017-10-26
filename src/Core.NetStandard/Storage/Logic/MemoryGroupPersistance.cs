@@ -25,7 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<IPageEnvelope<TStorableItem, TId>> ReadAllAsync(TGroup groupValue, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TStorableItem, TId>> ReadAllAsync(TGroup groupValue, int offset = 0, int? limit = null)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAllAsync(offset);

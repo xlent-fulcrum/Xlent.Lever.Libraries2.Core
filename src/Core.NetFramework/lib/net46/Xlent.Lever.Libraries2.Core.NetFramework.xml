@@ -2372,9 +2372,9 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.GetStorage(`2)">
             <summary>
-             Get the storage for a specific <paramref name="groupId"/>.
+             Get the storage for a specific <paramref name="groupValue"/>.
             </summary>
-            <param name="groupId"></param>
+            <param name="groupValue"></param>
             <returns></returns>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3">
@@ -2398,9 +2398,9 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.GetStorage(`2)">
             <summary>
-             Get the storage for a specific <paramref name="groupId"/>.
+             Get the storage for a specific <paramref name="groupValue"/>.
             </summary>
-            <param name="groupId"></param>
+            <param name="groupValue"></param>
             <returns></returns>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2">
@@ -2508,21 +2508,21 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.CreateAsync(`2,`0)">
             <summary>
-            Create a new <paramref name="item"/> in the group <paramref name="groupId"/>.
+            Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
             </summary>
             <returns></returns>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <summary>
-            Read all items for a specific group, <paramref name="groupId"/>.
+            Read all items for a specific group, <paramref name="groupValue"/>.
             </summary>
-            <param name="groupId">The specific group to read the items for.</param>
+            <param name="groupValue">The specific group to read the items for.</param>
             <param name="offset">The number of items that will be skipped in result.</param>
             <param name="limit">The maximum number of items to return.</param>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.DeleteAllAsync(`2)">
             <summary>
-            Delete all items for a specific group, <paramref name="groupId"/>.
+            Delete all items for a specific group, <paramref name="groupValue"/>.
             </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2">
@@ -2738,10 +2738,14 @@
             </summary>
         </member>
         <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.PageInfo">
-            <inheritdoc />
+            <summary>
+            The data in this segment, this "page"
+            </summary>
         </member>
         <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.Data">
-            <inheritdoc />
+            <summary>
+            Information about this segment of the data
+            </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageInfo">
             <summary>
