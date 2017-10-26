@@ -2351,31 +2351,99 @@
             <param name="tenant"></param>
             <returns></returns>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3">
             <summary>
             Functionality for persisting objects in groups.
             </summary>
         </member>
-        <member name="F:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2.Storages">
+        <member name="F:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.Storages">
             <summary>
             The storages; One dictionary with a memory storage for each group id.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2.CreateAsync(`1,`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.CreateAsync(`2,`0)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2.ReadAllAsync(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2.DeleteAllAsync(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.DeleteAllAsync(`2)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`2.GetStorage(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.GetStorage(`2)">
             <summary>
              Get the storage for a specific <paramref name="groupId"/>.
             </summary>
             <param name="groupId"></param>
             <returns></returns>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3">
+            <summary>
+            Functionality for persisting objects in groups.
+            </summary>
+        </member>
+        <member name="F:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.Storages">
+            <summary>
+            The storages; One dictionary with a memory storage for each group id.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.CreateAsync(`2,`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.DeleteAllAsync(`2)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.GetStorage(`2)">
+            <summary>
+             Get the storage for a specific <paramref name="groupId"/>.
+            </summary>
+            <param name="groupId"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2">
+            <summary>
+            General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> in memory.
+            </summary>
+            <typeparam name="TStorableItem"></typeparam>
+            <typeparam name="TId"></typeparam>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`1,`0)">
+            <summary>
+            Obsolete.
+            </summary>
+            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotImplementedException"></exception>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateWithSpecifiedIdAsync(`1,`0)">
+            <summary>
+            Same as <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`0)"/>, but you can specify the new id.
+            </summary>
+            <param name="id">The id to use for the new item.</param>
+            <param name="item">The item to create in storage.</param>
+            <returns>The newly created item.</returns>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.ReadAsync(`1)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAsync(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAsync(`1)">
+            <inheritdoc />
+            <remarks>
+            Idempotent, i.e. will not throw an exception if the item does not exist.
+            </remarks>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAllAsync">
+            <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2">
             <summary>
@@ -2413,7 +2481,7 @@
             Idempotent, i.e. will not throw an exception if the item does not exist.
             </remarks>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAllAsync(System.Int32,System.Int32)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.DeleteAllAsync">
@@ -2433,23 +2501,26 @@
             <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
             <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGroupStorage`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3">
             <summary>
             Functionality for persisting groups of objects.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGroupStorage`2.CreateAsync(`1,`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.CreateAsync(`2,`0)">
             <summary>
             Create a new <paramref name="item"/> in the group <paramref name="groupId"/>.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGroupStorage`2.ReadAllAsync(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <summary>
             Read all items for a specific group, <paramref name="groupId"/>.
             </summary>
+            <param name="groupId">The specific group to read the items for.</param>
+            <param name="offset">The number of items that will be skipped in result.</param>
+            <param name="limit">The maximum number of items to return.</param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGroupStorage`2.DeleteAllAsync(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.DeleteAllAsync(`2)">
             <summary>
             Delete all items for a specific group, <paramref name="groupId"/>.
             </summary>
@@ -2571,11 +2642,13 @@
             <typeparam name="TStorable">The type of objects to read from persistant storage.</typeparam>
             <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`2.ReadAllAsync(System.Int32,System.Int32)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
             <summary>
             Reads all the items from storage.
             </summary>
             <returns>A list of the found objects. Can be empty, but never null.</returns>
+            <param name="offset">The number of items that will be skipped in result.</param>
+            <param name="limit">The maximum number of items to return.</param>
             <remarks>
             The implementor of this method can decide that it is not a valid method to expose.
             In that case, the method should throw a <see cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotImplementedException"/>.

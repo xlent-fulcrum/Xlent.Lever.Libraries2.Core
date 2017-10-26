@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Misc.Models;
@@ -10,14 +9,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    [Obsolete("Renamed to MemoryGroupPersistance")]
-    public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
+    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
         where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
         /// </summary>
-        protected static readonly Dictionary<TGroup, MemoryStorage<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryStorage<TStorableItem, TId>>();
+        protected static readonly Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
 
         /// <inheritdoc />
         public async Task<TStorableItem> CreateAsync(TGroup groupId, TStorableItem item)
@@ -45,9 +43,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="groupId"></param>
         /// <returns></returns>
-        private MemoryStorage<TStorableItem, TId> GetStorage(TGroup groupId)
+        private MemoryPersistance<TStorableItem, TId> GetStorage(TGroup groupId)
         {
-            if (!Storages.ContainsKey(groupId)) Storages[groupId] = new MemoryStorage<TStorableItem, TId>();
+            if (!Storages.ContainsKey(groupId)) Storages[groupId] = new MemoryPersistance<TStorableItem, TId>();
             return Storages[groupId];
         }
     }

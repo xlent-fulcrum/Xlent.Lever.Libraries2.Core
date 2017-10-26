@@ -14,11 +14,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TStorableItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    [Obsolete("Renamed to MemoryPersistance")]
-    public class MemoryStorage<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
+    public class MemoryPersistance<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
             where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
-        private static readonly string Namespace = typeof(MemoryStorage<TStorableItem, TId>).Namespace;
+        private static readonly string Namespace = typeof(MemoryPersistance<TStorableItem, TId>).Namespace;
         // ReSharper disable once StaticMemberInGenericType
         private static int _nextInteger = 1;
         // ReSharper disable once StaticMemberInGenericType
