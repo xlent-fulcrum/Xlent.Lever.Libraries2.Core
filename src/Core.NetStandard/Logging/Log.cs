@@ -115,6 +115,21 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
+            var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
+            if (_loggingInProgress)
+            {
+                FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
+            }
+            else
+            {
+                Task.Run(() => LogQueue.AddMessageAsync(logInstanceInformation))
+                    .Wait();
+            }
+        }
+
+        private static LogInstanceInformation CreateLogInstanceInformation(LogSeverityLevel severityLevel, string message,
+            Exception exception)
+        {
             LogInstanceInformation logInstanceInformation;
             try
             {
@@ -150,15 +165,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 };
             }
             logInstanceInformation.StackTrace = Environment.StackTrace;
-            if (_loggingInProgress)
-            {
-                FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
-            }
-            else
-            {
-                Task.Run(() => LogQueue.AddMessageAsync(logInstanceInformation))
-                    .Wait();
-            }
+            return logInstanceInformation;
         }
 
         /// <summary>
