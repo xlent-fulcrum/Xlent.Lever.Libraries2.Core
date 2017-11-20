@@ -2149,37 +2149,6 @@
             The subscriber's client name (as defined in the BusinessEvents Service)
             </summary>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse">
-            <summary>
-            The payload that Business Events sends when it gets the response from an event it sent.
-            </summary>
-            <remarks>Turn this feature on in for your tenant in Configrations for BusinessEvents with the setting PublishAtCallback = true</remarks>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.CorrelationId">
-            <summary>
-            The correlation id from the Correlation Id Provider, which will inspect the X-Correlation-ID header
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Name">
-            <summary>
-            The name of the original event that was sent, on the form Entity.Event/MajorVErsion.MinorVersion
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.StatusCode">
-            <summary>
-            The Http status code from the subscriber
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.Url">
-            <summary>
-            The subscription url
-            </summary>
-        </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Platform.BusinessEvents.CallbackRespsonse.SubscriberClientName">
-            <summary>
-            The subscriber's client name (as defined in the BusinessEvents Service)
-            </summary>
-        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Platform.Authentication.AuthenticationRoleEnum">
             <summary>
             Enumeration for the roles that authenication handles
