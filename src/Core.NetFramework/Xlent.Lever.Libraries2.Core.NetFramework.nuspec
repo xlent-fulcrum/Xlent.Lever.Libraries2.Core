@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.12-rc</version>
+    <version>1.12.0-rc</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -12,7 +12,7 @@
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
       *** WARNING! I checked in the rc on the branch dev by mistake. Avoid changing this library until I have removed this warning. /Lars *** 
-      1.12-rc Now logs when FulcrumAssert and InternalContract throws exceptions.
+      1.12.0-rc Now logs when FulcrumAssert and InternalContract throws exceptions.
       1.10.1 Updates to Storage models and logic.
       1.9.5 Added BusinessEventMetaData.MessageId
       1.9.4 Added BusinessEventMetaData class
