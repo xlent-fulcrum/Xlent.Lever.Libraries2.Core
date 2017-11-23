@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(message, nameof(message));
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
-            GenericAssert<FulcrumAssertionFailedException>.Fail(errorLocation, message);
+            GenericAssert<ValidationException>.Fail(errorLocation, message);
         }
         /// <summary>
         /// Will always fail. Used in parts of the errorLocation where we should never end up. E.g. a default case in a switch statement where all cases should be covered, so we should never end up in the default case.
@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void Fail(string message)
         {
             InternalContract.RequireNotNull(message, nameof(message));
-            GenericAssert<FulcrumAssertionFailedException>.Fail(message);
+            GenericAssert<ValidationException>.Fail(message);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
-            GenericAssert<FulcrumAssertionFailedException>.IsTrue(mustBeTrue, errorLocation, message);
+            GenericAssert<ValidationException>.IsTrue(mustBeTrue, errorLocation, message);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Property {propertyName} ({value}) must not be null.";
-            GenericAssert<FulcrumAssertionFailedException>.IsNotNull(value, errorLocation, message);
+            GenericAssert<ValidationException>.IsNotNull(value, errorLocation, message);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Property {propertyName} ({value}) must not have the default propertyValue ({default(T)}.";
-            GenericAssert<FulcrumAssertionFailedException>.IsNotDefaultValue(value, errorLocation, message);
+            GenericAssert<ValidationException>.IsNotDefaultValue(value, errorLocation, message);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Property {propertyName} ({value}) must not be null or empty and it must contain other characters than white space.";
-            GenericAssert<FulcrumAssertionFailedException>.IsNotNullOrWhiteSpace(value, errorLocation, message);
+            GenericAssert<ValidationException>.IsNotNullOrWhiteSpace(value, errorLocation, message);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to be equal to ({expectedValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.AreEqual(expectedValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.AreEqual(expectedValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to not be equal to ({expectedValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.AreNotEqual(expectedValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.AreNotEqual(expectedValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to be less than ({greaterValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.IsLessThan(greaterValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.IsLessThan(greaterValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to be less than ({greaterOrEqualValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.IsLessThanOrEqualTo(greaterOrEqualValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.IsLessThanOrEqualTo(greaterOrEqualValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to be less than ({lesserValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.IsGreaterThan(lesserValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.IsGreaterThan(lesserValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNull(propertyName, nameof(propertyName));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to be less than ({lesserOrEqualValue}).";
-            GenericAssert<FulcrumAssertionFailedException>.IsGreaterThanOrEqualTo(lesserOrEqualValue, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.IsGreaterThanOrEqualTo(lesserOrEqualValue, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to match ({regularExpression}).";
-            GenericAssert<FulcrumAssertionFailedException>.MatchesRegExp(regularExpression, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.MatchesRegExp(regularExpression, propertyValue, errorLocation, message);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to not match ({regularExpression}).";
-            GenericAssert<FulcrumAssertionFailedException>.MatchesNotRegExp(regularExpression, propertyValue, errorLocation, message);
+            GenericAssert<ValidationException>.MatchesNotRegExp(regularExpression, propertyValue, errorLocation, message);
         }
     }
 }

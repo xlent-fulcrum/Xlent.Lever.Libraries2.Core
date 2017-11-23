@@ -342,6 +342,26 @@
             Call the Validate() method for each item in <paramref name="values"/>
             </summary>
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Assert.ValidationException">
+            <summary>
+            The base class for all Fulcrum exceptions
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.ValidationException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.ValidationException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.ValidationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Assert.FulcrumValidate">
             <summary>
             A class for asserting things that the programmer thinks is true. Works both as documentation and as verification that the programmers assumptions holds.
@@ -431,6 +451,11 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.FulcrumValidate.MatchesNotRegExp(System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Verify that <paramref name="propertyValue"/> is null or not matches the regular expression <paramref name="regularExpression"/>.
+            </summary>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Assert.GenericBase`1">
+            <summary>
+            A generic class for asserting things that the programmer thinks is true. Generic in the meaning that a parameter says what exception that should be thrown when an assumption is false.
             </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Assert.GenericAssert`1">
@@ -611,6 +636,11 @@
             Verify that <paramref name="parameterValue"/> matches the regular expression <paramref name="regularExpression"/>.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.GenericContract`1.RequireValidated(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
+            <summary>
+            If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
+            </summary>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Assert.InternalContract">
             <summary>
             A class for verifying method contracts. Will throw <see cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumContractException"/> if the contract is broken.
@@ -636,6 +666,11 @@
             Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.InternalContract.RequireValidated(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
+            <summary>
+            If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
+            </summary>
+        </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.InternalContract.RequireValidatedOrNull(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
             <summary>
             If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
@@ -654,11 +689,6 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.InternalContract.RequireValidatedAndNotNull(System.Collections.Generic.IEnumerable{Xlent.Lever.Libraries2.Core.Assert.IValidatable},System.String,System.String)">
             <summary>
             Verify that <paramref name="parameterValues"/> is not null and also call the FulcrumValidate() method of that type.
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Assert.InternalContract.RequireValidated(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
-            <summary>
-            If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
             </summary>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.InternalContract.RequireValidated(System.Collections.Generic.IEnumerable{Xlent.Lever.Libraries2.Core.Assert.IValidatable},System.String,System.String)">
@@ -749,6 +779,11 @@
             Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Assert.ServiceContract.RequireValidated(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
+            <summary>
+            If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
+            </summary>
+        </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.ServiceContract.RequireValidatedOrNull(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
             <summary>
             If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
@@ -767,11 +802,6 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.ServiceContract.RequireValidatedAndNotNull(System.Collections.Generic.IEnumerable{Xlent.Lever.Libraries2.Core.Assert.IValidatable},System.String,System.String)">
             <summary>
             Verify that <paramref name="parameterValues"/> is not null and also call the FulcrumValidate() method of that type.
-            </summary>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Assert.ServiceContract.RequireValidated(Xlent.Lever.Libraries2.Core.Assert.IValidatable,System.String,System.String)">
-            <summary>
-            If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
             </summary>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Assert.ServiceContract.RequireValidated(System.Collections.Generic.IEnumerable{Xlent.Lever.Libraries2.Core.Assert.IValidatable},System.String,System.String)">

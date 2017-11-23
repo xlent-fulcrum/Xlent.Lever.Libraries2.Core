@@ -52,19 +52,20 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
+        [StackTraceHidden]
+        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
+        {
+            GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
+        }
+
+        /// <summary>
+        /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
+        /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
         [StackTraceHidden]
         public static void RequireValidatedOrNull(IValidatable parameterValue, string parameterName, string customMessage = null)
         {
-            if (parameterValue == null) return;
-            try
-            {
-                parameterValue.Validate($"{Namespace}: F8A9DE78-28E2-4FC1-A1D7-88020E720525");
-            }
-            catch (FulcrumContractException e)
-            {
-                throw new FulcrumContractException($"Validation failed for {parameterName}: {e.Message}", e);
-            }
+            GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
         }
 
         /// <summary>
@@ -104,23 +105,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         }
 
         /// <summary>
-        /// If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
-        /// </summary>
-        [StackTraceHidden]
-        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
-        {
-            if (parameterValue == null) return;
-            try
-            {
-                parameterValue.Validate($"{Namespace}: F8A9DE78-28E2-4FC1-A1D7-88020E720525");
-            }
-            catch (FulcrumAssertionFailedException e)
-            {
-                throw new FulcrumContractException(customMessage ?? $"Validation failed for {parameterName}: {e.Message}", e);
-            }
-        }
-
-        /// <summary>
         /// If <paramref name="parameterValues"/> is not null, then call the Validate() method for each item.
         /// </summary>
         [StackTraceHidden]
@@ -129,7 +113,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             if (parameterValues == null) return;
             foreach (var parameterValue in parameterValues)
             {
-                RequireValidated(parameterValue, parameterName, customMessage);
+                GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
             }
         }
 

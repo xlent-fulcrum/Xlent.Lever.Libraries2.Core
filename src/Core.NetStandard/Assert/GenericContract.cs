@@ -83,7 +83,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void Fail(string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
-            ThrowException(message);
+            GenericBase<TException>.ThrowException(message);
         }
 
         /// <summary>
@@ -168,6 +168,23 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             Require(!Regex.IsMatch(parameterValue, regularExpression), message);
         }
 
+        /// <summary>
+        /// If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
+        /// </summary>
+        [StackTraceHidden]
+        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
+        {
+            if (parameterValue == null) return;
+            try
+            {
+                parameterValue.Validate(null);
+            }
+            catch (ValidationException e)
+            {
+                GenericBase<TException>.ThrowException($"ContractViolation: Validation failed for {parameterName} ({e.Message}).");
+            }
+        }
+
         private static string GetErrorMessageIfFalse<T>(T parameterValue, Expression<Func<T, bool>> requirementExpression, string parameterName)
         {
             if (requirementExpression.Compile()(parameterValue)) return null;
@@ -214,16 +231,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void MaybeThrowException(string message)
         {
             if (message == null) return;
-            ThrowException(message);
-        }
-
-        [StackTraceHidden]
-        public static void ThrowException(string message)
-        {
-            var exception = (TException)Activator.CreateInstance(typeof(TException), message);
-            exception.ErrorLocation = Environment.StackTrace;
-            // TODO: Can create stack overflow: Log.LogError(message, exception);
-            throw exception;
+            GenericBase<TException>.ThrowException(message);
         }
     }
 }

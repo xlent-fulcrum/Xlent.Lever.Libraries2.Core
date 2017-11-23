@@ -50,7 +50,9 @@
     <Compile Include="Core\Application\RunTimeLevelEnum.cs" />
     <Compile Include="Core\Application\ApplicationSetup.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />
+    <Compile Include="Core\Assert\ValidationException.cs" />
     <Compile Include="Core\Assert\FulcrumValidate.cs" />
+    <Compile Include="Core\Assert\GenericBase.cs" />
     <Compile Include="Core\Assert\GenericAssert.cs" />
     <Compile Include="Core\Assert\GenericContract.cs" />
     <Compile Include="Core\Assert\InternalContract.cs" />

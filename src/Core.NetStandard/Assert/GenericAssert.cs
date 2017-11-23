@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
             InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
-            ThrowException(errorLocation, message);
+            GenericBase<TException>.ThrowException(message, errorLocation);
         }
         /// <summary>
         /// Will always fail. Used in parts of the errorLocation where we should never end up. E.g. a default case in a switch statement where all cases should be covered, so we should never end up in the default case.
@@ -32,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void Fail(string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
-            ThrowException(null, message);
+            GenericBase<TException>.ThrowException(message);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsTrue(bool value, string errorLocation = null, string customMessage = null)
         {
             if (value) return;
-            ThrowException(errorLocation, customMessage ?? "Expected value to be true.");
+            GenericBase<TException>.ThrowException(customMessage ?? "Expected value to be true.", errorLocation);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var value = expression.Compile()();
             if (value) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected '{expression.Body} to be true.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected '{expression.Body} to be true.", errorLocation);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsNull(object value, string errorLocation = null, string customMessage = null)
         {
             if (value == null) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected value ({value}) to be null.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected value ({value}) to be null.", errorLocation);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var value = expression.Compile()();
             if (value == null) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected '{expression.Body}' ({value}) to be null.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected '{expression.Body}' ({value}) to be null.", errorLocation);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsNotNull(object value, string errorLocation = null, string customMessage = null)
         {
             if (value != null) return;
-            ThrowException(errorLocation, customMessage ?? "Did not expect value to be null.");
+            GenericBase<TException>.ThrowException(customMessage ?? "Did not expect value to be null.", errorLocation);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var value = expression.Compile()();
             if (value != null) return;
-            ThrowException(errorLocation, customMessage ?? $"Did not expect '{expression.Body}' to be null.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Did not expect '{expression.Body}' to be null.", errorLocation);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsNotDefaultValue<T>(T value, string errorLocation = null, string customMessage = null)
         {
             if (!value.Equals(default(T))) return;
-            ThrowException(errorLocation, customMessage ?? $"Did not expect value to be default value ({default(T)}).");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Did not expect value to be default value ({default(T)}).", errorLocation);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsNotNullOrWhiteSpace(string value, string errorLocation = null, string customMessage = null)
         {
             if (!string.IsNullOrWhiteSpace(value)) return;
-            ThrowException(errorLocation, customMessage ?? $"Did not expect value ({value}) to be null, empty or only contain whitespace.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Did not expect value ({value}) to be null, empty or only contain whitespace.", errorLocation);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var value = expression.Compile()();
             if (!string.IsNullOrWhiteSpace(value)) return;
-            ThrowException(errorLocation, customMessage ?? $"Did not expect '{expression.Body}' ({value}) to be null, empty or only contain whitespace.");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Did not expect '{expression.Body}' ({value}) to be null, empty or only contain whitespace.", errorLocation);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void AreEqual(object expectedValue, object actualValue, string errorLocation = null, string customMessage = null)
         {
             if (Equals(expectedValue, actualValue)) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected ({actualValue}) to be equal to ({expectedValue}).");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected ({actualValue}) to be equal to ({expectedValue}).", errorLocation);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void AreNotEqual(object expectedValue, object actualValue, string errorLocation = null, string customMessage = null)
         {
             if (!Equals(expectedValue, actualValue)) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected ({actualValue}) to not be equal to ({expectedValue}).");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected ({actualValue}) to not be equal to ({expectedValue}).", errorLocation);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             var actualValue = expression.Compile()();
             if (Equals(expectedValue, actualValue)) return;
-            ThrowException(errorLocation, customMessage ?? $"Expected '{expression.Body}' ({actualValue}) to be equal to ({expectedValue}).");
+            GenericBase<TException>.ThrowException(customMessage ?? $"Expected '{expression.Body}' ({actualValue}) to be equal to ({expectedValue}).", errorLocation);
         }
 
         /// <summary>
@@ -237,15 +237,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             InternalContract.RequireNotNull(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected ({value}) to not match regular expression ({regularExpression}).";
             IsTrue(!Regex.IsMatch(value, regularExpression), errorLocation, message);
-        }
-
-        [StackTraceHidden]
-        private static void ThrowException(string errorLocation, string message)
-        {
-            var exception = (TException)Activator.CreateInstance(typeof(TException), message);
-            exception.ErrorLocation = errorLocation;
-            // TODO: Can create stack overflow: Log.LogError(message, exception);
-            throw exception;
         }
     }
 }
