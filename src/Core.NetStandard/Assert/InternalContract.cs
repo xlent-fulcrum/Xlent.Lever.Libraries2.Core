@@ -208,7 +208,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
             RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
-            RequireNotNull(errorLocation, nameof(errorLocation));
             GenericContract<FulcrumContractException>.RequireMatchesNotRegExp(regularExpression, value, errorLocation, customMessage);
         }
 

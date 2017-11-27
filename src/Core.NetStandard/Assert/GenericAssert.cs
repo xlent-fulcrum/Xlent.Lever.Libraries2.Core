@@ -21,7 +21,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void Fail(string errorLocation, string message)
         {
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
-            InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
             GenericBase<TException>.ThrowException(message, errorLocation);
         }
         /// <summary>
