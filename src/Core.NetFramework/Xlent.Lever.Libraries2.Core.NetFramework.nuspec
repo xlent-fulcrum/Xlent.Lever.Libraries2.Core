@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.12.1 FulcrumValidate now accepts null for errorLocation.
       1.12.0 Now logs when FulcrumAssert and InternalContract throws exceptions.
       1.10.1 Updates to Storage models and logic.
       1.9.5 Added BusinessEventMetaData.MessageId

@@ -19,7 +19,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void Fail(string errorLocation, string message)
         {
             InternalContract.RequireNotNull(message, nameof(message));
-            InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
             GenericAssert<ValidationException>.Fail(errorLocation, message);
         }
         /// <summary>
@@ -42,7 +41,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void IsTrue(bool mustBeTrue, string errorLocation, string message)
         {
-            InternalContract.RequireNotNull(errorLocation, nameof(errorLocation));
             InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
             GenericAssert<ValidationException>.IsTrue(mustBeTrue, errorLocation, message);
         }
