@@ -127,7 +127,7 @@
     <Compile Include="Core\Queue\Logic\MemoryQueue.cs" />
     <Compile Include="Core\Queue\Model\ICompleteQueue.cs" />
     <Compile Include="Core\Queue\Model\IPeekableQueue.cs" />
-    <Compile Include="Core\Queue\Model\IQueue.cs" />
+    <Compile Include="Core\Queue\Model\IBaseQueue.cs" />
     <Compile Include="Core\Queue\Model\IReadableQueue.cs" />
     <Compile Include="Core\Queue\Model\IWritableQueue.cs" />
     <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
