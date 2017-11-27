@@ -91,6 +91,8 @@
     <Compile Include="Core\Storage\Logic\MemoryGroupPersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryGroupStorage.cs" />
     <Compile Include="Core\Storage\Logic\MemoryPersistance.cs" />
+    <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
+    <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
     <Compile Include="Core\Storage\Model\ICrdAll.cs" />
     <Compile Include="Core\Storage\Model\IGrouped.cs" />
