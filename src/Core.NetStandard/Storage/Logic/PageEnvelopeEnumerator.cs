@@ -5,23 +5,22 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
-    /// An <see cref="IEnumerator{T}"/> for methods that return data packaged in a <see cref="PageEnvelope{TStorableItem,TId}"/>./>
+    /// An <see cref="IEnumerator{T}"/> for methods that return data packaged in a <see cref="PageEnvelope{T}"/>./>
     /// </summary>
-    /// <typeparam name="TStorableItem">The type for the items that are returned in the PageEnvelope.</typeparam>
-    /// <typeparam name="TId">The type for the identifier of the items.</typeparam>
-    public class PageEnvelopeEnumerator<TStorableItem, TId> : IEnumerator<TStorableItem> where TStorableItem : IStorableItem<TId>
+    /// <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
+    public class PageEnvelopeEnumerator<T> : IEnumerator<T>
     {
         private readonly ReadMethod _readMethod;
-        private PageEnvelope<TStorableItem, TId> _currentPageEnvelope;
+        private PageEnvelope<T> _currentPageEnvelope;
         private int? _currentOffset;
-        private IEnumerator<TStorableItem> _dataEnumerator;
+        private IEnumerator<T> _dataEnumerator;
         private bool _endOfData;
 
         /// <summary>
         /// How to get new page envelopes when required.
         /// </summary>
         /// <param name="offset"></param>
-        public delegate PageEnvelope<TStorableItem, TId> ReadMethod(int offset);
+        public delegate PageEnvelope<T> ReadMethod(int offset);
 
         /// <summary>
         /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethod"/> method.
@@ -78,7 +77,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public TStorableItem Current => _dataEnumerator == null ? default(TStorableItem) : _dataEnumerator.Current;
+        public T Current => _dataEnumerator == null ? default(T) : _dataEnumerator.Current;
 
         object IEnumerator.Current => Current;
     }

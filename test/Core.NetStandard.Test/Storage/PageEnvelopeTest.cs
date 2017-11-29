@@ -35,7 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage
                 await _storage.CreateAsync(person);
             }
 
-            var values = new PageEnvelopeEnumerable<PersonStorableItem<string>, string>(offset => _storage.ReadAllAsync(offset, 1).Result);
+            var values = new PageEnvelopeEnumerable<PersonStorableItem<string>>(offset => _storage.ReadAllAsync(offset, 1).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(numberOfValues1, values.Count());
 
             for (var i = 0; i < numberOfValues2; i++)
@@ -49,14 +49,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage
                 await _storage.CreateAsync(person);
             }
 
-            values = new PageEnvelopeEnumerable<PersonStorableItem<string>, string>(offset => _storage.ReadAllAsync(offset, 1).Result);
+            values = new PageEnvelopeEnumerable<PersonStorableItem<string>>(offset => _storage.ReadAllAsync(offset, 1).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(numberOfValues1+numberOfValues2, values.Count());
         }
 
         [TestMethod]
         public void TestEmptyData()
         {
-            var values = new PageEnvelopeEnumerable<PersonStorableItem<string>, string>(offset => _storage.ReadAllAsync(offset, 1).Result);
+            var values = new PageEnvelopeEnumerable<PersonStorableItem<string>>(offset => _storage.ReadAllAsync(offset, 1).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsFalse(values.Any());
         }
 

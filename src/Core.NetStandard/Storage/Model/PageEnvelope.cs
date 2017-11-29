@@ -6,8 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// A paging envelope for returning segments of data.
     /// </summary>
-    public class PageEnvelope<TStorableItem, TId>
-        where TStorableItem : IStorableItem<TId>
+    public class PageEnvelope<T>
     {
         /// <summary>
         /// Empty constructor.
@@ -21,9 +20,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="limit">The limit used for this page.</param>
         /// <param name="total">The total number of items including this page. Null if not known.</param>
         /// <param name="data">The data in this page.</param>
-        public PageEnvelope(int offset, int limit, int? total, IEnumerable<TStorableItem> data)
+        public PageEnvelope(int offset, int limit, int? total, IEnumerable<T> data)
         {
-            var dataAsArray = data as TStorableItem[] ?? data.ToArray();
+            var dataAsArray = data as T[] ?? data.ToArray();
             PageInfo = new PageInfo
             {
                 Offset = offset,
@@ -42,6 +41,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Information about this segment of the data
         /// </summary>
-        public IEnumerable<TStorableItem> Data { get; set; }
+        public IEnumerable<T> Data { get; set; }
     }
 }

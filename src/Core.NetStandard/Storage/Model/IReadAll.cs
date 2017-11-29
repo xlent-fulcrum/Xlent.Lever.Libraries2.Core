@@ -4,12 +4,10 @@ using Xlent.Lever.Libraries2.Core.Error.Logic;
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// Read items of type <see cref="IStorableItem{TId}"/>.
+    /// Read items"/>.
     /// </summary>
-    /// <typeparam name="TStorable">The type of objects to read from persistant storage.</typeparam>
-    /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/> property.</typeparam>
-    public interface IReadAll<TStorable, TId>
-        where TStorable : IStorableItem<TId>
+    /// <typeparam name="T">The type of objects to read from persistant storage.</typeparam>
+    public interface IReadAll<T>
     {
         /// <summary>
         /// Reads all the items from storage.
@@ -21,6 +19,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<PageEnvelope<TStorable, TId>> ReadAllAsync(int offset = 0, int? limit = null);
+        Task<PageEnvelope<T>> ReadAllAsync(int offset = 0, int? limit = null);
     }
 }
