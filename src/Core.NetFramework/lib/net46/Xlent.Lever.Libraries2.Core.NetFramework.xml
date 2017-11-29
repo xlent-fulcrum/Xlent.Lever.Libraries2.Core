@@ -2783,6 +2783,20 @@
             A paging envelope for returning segments of data.
             </summary>
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.#ctor">
+            <summary>
+            Empty constructor.
+            </summary>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.#ctor(System.Int32,System.Int32,System.Nullable{System.Int32},System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Constructor for a page of data.
+            </summary>
+            <param name="offset">The offset for this page.</param>
+            <param name="limit">The limit used for this page.</param>
+            <param name="total">The total number of items including this page. Null if not known.</param>
+            <param name="data">The data in this page.</param>
+        </member>
         <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.PageInfo">
             <summary>
             The data in this segment, this "page"

@@ -146,17 +146,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             {
                 var keys = _memoryItems.Keys.Skip(offset).Take(limit.Value);
                 var list = keys.Select(GetMemoryItem).ToList();
-                PageEnvelope<TStorableItem, TId> page = new PageEnvelope<TStorableItem, TId>
-                {
-                    PageInfo = new PageInfo
-                    {
-                        Offset = offset,
-                        Limit = limit.Value,
-                        Returned = list.Count,
-                        Total = _memoryItems.Count
-                    },
-                    Data = list
-                };
+                var page = new PageEnvelope<TStorableItem, TId>(offset, limit.Value, _memoryItems.Count, list);
                 return Task.FromResult(page);
             }
         }
