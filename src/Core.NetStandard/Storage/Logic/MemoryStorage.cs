@@ -137,7 +137,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TStorableItem, TId>> ReadAllAsync(int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TStorableItem>> ReadAllAsync(int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
@@ -146,7 +146,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             {
                 var keys = _memoryItems.Keys.Skip(offset).Take(limit.Value);
                 var list = keys.Select(GetMemoryItem).ToList();
-                var page = new PageEnvelope<TStorableItem, TId>(offset, limit.Value, _memoryItems.Count, list);
+                var page = new PageEnvelope<TStorableItem>(offset, limit.Value, _memoryItems.Count, list);
                 return Task.FromResult(page);
             }
         }

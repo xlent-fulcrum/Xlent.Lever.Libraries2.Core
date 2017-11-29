@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// Functionality for persisting objects in groups.
     /// </summary>
     [Obsolete("Renamed to MemoryGroupPersistance")]
-    public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
+    public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TGroup>
         where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         /// <summary>
@@ -27,7 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TStorableItem, TId>> ReadAllAsync(TGroup groupValue, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TStorableItem>> ReadAllAsync(TGroup groupValue, int offset = 0, int? limit = null)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAllAsync(offset);

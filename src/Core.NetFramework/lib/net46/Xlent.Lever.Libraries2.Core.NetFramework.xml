@@ -2444,51 +2444,49 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAllAsync">
             <inheritdoc />
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1">
             <summary>
-            An <see cref="T:System.Collections.Generic.IEnumerable`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2"/>./>
+            An <see cref="T:System.Collections.Generic.IEnumerable`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1"/>./>
             </summary>
-            <typeparam name="TStorableItem">The type for the items that are returned in the PageEnvelope.</typeparam>
-            <typeparam name="TId">The type for the identifier of the items.</typeparam>
+            <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`2.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0,`1}.ReadMethod)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethod)">
             <summary>
             Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethod"/> method.
             </summary>
             <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`2.GetEnumerator">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1.GetEnumerator">
             <inheritdoc />
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1">
             <summary>
-            An <see cref="T:System.Collections.Generic.IEnumerator`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2"/>./>
+            An <see cref="T:System.Collections.Generic.IEnumerator`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1"/>./>
             </summary>
-            <typeparam name="TStorableItem">The type for the items that are returned in the PageEnvelope.</typeparam>
-            <typeparam name="TId">The type for the identifier of the items.</typeparam>
+            <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.ReadMethod">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.ReadMethod">
             <summary>
             How to get new page envelopes when required.
             </summary>
             <param name="offset"></param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0,`1}.ReadMethod)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethod)">
             <summary>
             Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethod"/> method.
             </summary>
             <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.Dispose">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.Dispose">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.MoveNext">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.MoveNext">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.Reset">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.Reset">
             <inheritdoc />
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`2.Current">
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.Current">
             <inheritdoc />
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2">
@@ -2547,18 +2545,18 @@
             <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
             <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2">
             <summary>
             Functionality for persisting groups of objects.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.CreateAsync(`2,`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.CreateAsync(`1,`0)">
             <summary>
             Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.ReadAllAsync(`1,System.Int32,System.Nullable{System.Int32})">
             <summary>
             Read all items for a specific group, <paramref name="groupValue"/>.
             </summary>
@@ -2566,7 +2564,7 @@
             <param name="offset">The number of items that will be skipped in result.</param>
             <param name="limit">The maximum number of items to return.</param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.DeleteAllAsync(`2)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.DeleteAllAsync(`1)">
             <summary>
             Delete all items for a specific group, <paramref name="groupValue"/>.
             </summary>
@@ -2681,14 +2679,13 @@
             <returns>The found item.</returns>
             <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <paramref name="id"/> could not be found.</exception>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`1">
             <summary>
-            Read items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Read items"/>.
             </summary>
-            <typeparam name="TStorable">The type of objects to read from persistant storage.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="T">The type of objects to read from persistant storage.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IReadAll`1.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
             <summary>
             Reads all the items from storage.
             </summary>
@@ -2778,17 +2775,17 @@
             <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> for <paramref name="item"/> could not be found.</exception>
             <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumConflictException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> for <paramref name="item"/> was outdated.</exception>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1">
             <summary>
             A paging envelope for returning segments of data.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.#ctor">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1.#ctor">
             <summary>
             Empty constructor.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.#ctor(System.Int32,System.Int32,System.Nullable{System.Int32},System.Collections.Generic.IEnumerable{`0})">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1.#ctor(System.Int32,System.Int32,System.Nullable{System.Int32},System.Collections.Generic.IEnumerable{`0})">
             <summary>
             Constructor for a page of data.
             </summary>
@@ -2797,12 +2794,12 @@
             <param name="total">The total number of items including this page. Null if not known.</param>
             <param name="data">The data in this page.</param>
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.PageInfo">
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1.PageInfo">
             <summary>
             The data in this segment, this "page"
             </summary>
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`2.Data">
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1.Data">
             <summary>
             Information about this segment of the data
             </summary>
