@@ -5,7 +5,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Model
     /// <summary>
     /// A generic interface for reading items to a queue.
     /// </summary>
-    public interface IReadableQueue<T>
+    public interface IReadableQueue<T> : IBaseQueue
     {
         /// <summary>
         /// Remove all items from the queue
