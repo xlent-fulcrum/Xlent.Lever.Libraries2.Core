@@ -154,9 +154,6 @@
     <Compile Include="Core\Storage\Model\StorableAsByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableItem.cs" />
-    <Compile Include="Core\Storage\Test\IStorableItemForTesting.cs" />
-    <Compile Include="Core\Storage\Test\StorageTestCrud.cs" />
-    <Compile Include="Core\Storage\Test\TypeOfTestDataEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +162,9 @@
     <None Include="Xlent.Lever.Libraries2.Core.NetFramework.nuspec">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
