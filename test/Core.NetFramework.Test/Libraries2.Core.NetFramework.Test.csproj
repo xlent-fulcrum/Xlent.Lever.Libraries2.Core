@@ -67,8 +67,15 @@
       <Project>{923faa8d-0a18-41a7-99e3-663b61cda069}</Project>
       <Name>Libraries2.Core.NetFramework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Libraries2.Core.Test.NuGet\Libraries2.Core.Test.NuGet.csproj">
+      <Project>{3eada6f9-0e11-4688-8b0b-f7db0b9ebba7}</Project>
+      <Name>Libraries2.Core.Test.NuGet</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="test.runsettings">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

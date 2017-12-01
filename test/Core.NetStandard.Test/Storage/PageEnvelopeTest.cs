@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Test;
+using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage
 {
