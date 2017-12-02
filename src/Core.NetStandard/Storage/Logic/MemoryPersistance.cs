@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TStorableItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class MemoryPersistance<TStorableItem, TId> : ICrudAll<TStorableItem, TId>
+    public class MemoryPersistance<TStorableItem, TId> : ICrud<TStorableItem, TId>
             where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TStorableItem, TId>).Namespace;

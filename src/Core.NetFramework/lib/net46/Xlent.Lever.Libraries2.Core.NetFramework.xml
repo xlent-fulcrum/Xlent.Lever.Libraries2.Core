@@ -2538,13 +2538,6 @@
             <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
             <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrdAll`2">
-            <summary>
-            Interface for CR-D operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
-            </summary>
-            <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
-        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2">
             <summary>
             Functionality for persisting groups of objects.
@@ -2588,13 +2581,6 @@
             <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrud`2">
-            <summary>
-            Interface for CRUD operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
-            </summary>
-            <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
-        </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrudAll`2">
             <summary>
             Interface for CRUD operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
             </summary>

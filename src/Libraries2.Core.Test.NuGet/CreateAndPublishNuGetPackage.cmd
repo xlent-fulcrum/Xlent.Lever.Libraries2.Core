@@ -8,14 +8,14 @@ echo.
 echo READ THIS
 echo.
 echo 1. Build project (dll files are automatically put in lib folder)
-echo 2. Change version number in Xlent.Lever.Libraries2.Test.NuGet.nuspec
+echo 2. Change version number in Xlent.Lever.Libraries2.Core.Test.NuGet.nuspec
 echo.
 pause
 echo.
 
 del /q *.nupkg
 
-NuGet.exe pack Xlent.Lever.Libraries2.Libraries2.Test.NuGet.nuspec
+NuGet.exe pack Xlent.Lever.Libraries2.Core.Test.NuGet.nuspec
 
 nuget.exe push *.nupkg %api_key% -Source %nuget_url%
 

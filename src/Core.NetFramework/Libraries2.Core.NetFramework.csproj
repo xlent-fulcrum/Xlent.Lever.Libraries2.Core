@@ -94,7 +94,6 @@
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
-    <Compile Include="Core\Storage\Model\ICrdAll.cs" />
     <Compile Include="Core\Storage\Model\IGrouped.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
@@ -135,7 +134,6 @@
     <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
     <Compile Include="Core\Storage\Model\ICreate.cs" />
     <Compile Include="Core\Storage\Model\ICrud.cs" />
-    <Compile Include="Core\Storage\Model\ICrudAll.cs" />
     <Compile Include="Core\Storage\Model\IDelete.cs" />
     <Compile Include="Core\Storage\Model\IDeleteAll.cs" />
     <Compile Include="Core\Storage\Model\INameProperty.cs" />

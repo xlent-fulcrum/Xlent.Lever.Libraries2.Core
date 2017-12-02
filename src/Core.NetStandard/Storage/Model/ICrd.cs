@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/> property.</typeparam>
-    public interface ICrd<TStorable, in TId> : ICreate<TStorable, TId>, IRead<TStorable, TId>, IDelete<TId>, IDeleteAll
+    public interface ICrd<TStorable, in TId> : ICreate<TStorable, TId>, IRead<TStorable, TId>, IDelete<TId>, IReadAll<TStorable>, IDeleteAll
         where TStorable : IStorableItem<TId>
     {
     }
