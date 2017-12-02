@@ -2363,6 +2363,9 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.CreateAsync(`2,`0)">
             <inheritdoc />
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.CreateAndReturnAsync(`2,`0)">
+            <inheritdoc />
+        </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <inheritdoc />
         </member>
@@ -2389,6 +2392,9 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.CreateAsync(`2,`0)">
             <inheritdoc />
         </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.CreateAndReturnAsync(`2,`0)">
+            <inheritdoc />
+        </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupStorage`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <inheritdoc />
         </member>
@@ -2412,11 +2418,8 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`0)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`1,`0)">
-            <summary>
-            Obsolete.
-            </summary>
-            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotImplementedException"></exception>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAndReturnAsync(`0)">
+            <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateWithSpecifiedIdAsync(`1,`0)">
             <summary>
@@ -2430,6 +2433,9 @@
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAsync(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAndReturnAsync(`0)">
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAsync(`1)">
@@ -2489,48 +2495,6 @@
         <member name="P:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.Current">
             <inheritdoc />
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2">
-            <summary>
-            General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> in memory.
-            </summary>
-            <typeparam name="TStorableItem"></typeparam>
-            <typeparam name="TId"></typeparam>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateAsync(`0)">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateAsync(`1,`0)">
-            <summary>
-            Obsolete.
-            </summary>
-            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotImplementedException"></exception>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateWithSpecifiedIdAsync(`1,`0)">
-            <summary>
-            Same as <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.CreateAsync(`0)"/>, but you can specify the new id.
-            </summary>
-            <param name="id">The id to use for the new item.</param>
-            <param name="item">The item to create in storage.</param>
-            <returns>The newly created item.</returns>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAsync(`1)">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.UpdateAsync(`0)">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.DeleteAsync(`1)">
-            <inheritdoc />
-            <remarks>
-            Idempotent, i.e. will not throw an exception if the item does not exist.
-            </remarks>
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryStorage`2.DeleteAllAsync">
-            <inheritdoc />
-        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrd`2">
             <summary>
             Interface for CR-D operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
@@ -2538,18 +2502,25 @@
             <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
             <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3">
             <summary>
             Functionality for persisting groups of objects.
             </summary>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.CreateAsync(`1,`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.CreateAsync(`2,`0)">
+            <summary>
+            
+            Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
+            </summary>
+            <returns>The new id for the created object.</returns>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.CreateAndReturnAsync(`2,`0)">
             <summary>
             Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
             </summary>
-            <returns></returns>
+            <returns>The new item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> and (if it exists) an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.ReadAllAsync(`1,System.Int32,System.Nullable{System.Int32})">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <summary>
             Read all items for a specific group, <paramref name="groupValue"/>.
             </summary>
@@ -2557,7 +2528,7 @@
             <param name="offset">The number of items that will be skipped in result.</param>
             <param name="limit">The maximum number of items to return.</param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`2.DeleteAllAsync(`1)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.DeleteAllAsync(`2)">
             <summary>
             Delete all items for a specific group, <paramref name="groupValue"/>.
             </summary>
@@ -2571,12 +2542,19 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2.CreateAsync(`0)">
             <summary>
+            Creates a new item in storage and returns the new Id.
+            </summary>
+            <param name="item">The item to store.</param>
+            <returns>The new id for the created object.</returns>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2.CreateAndReturnAsync(`0)">
+            <summary>
             Creates a new item in storage and returns the final result.
             </summary>
             <param name="item">The item to store.</param>
-            <returns>The new item as it was saved, including a optional updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
+            <returns>The new item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> and (if it exists) an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
             <remarks>
-            The notes about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
+            The note about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
             </remarks>
             <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>
         </member>
@@ -2751,9 +2729,20 @@
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAsync(`0)">
             <summary>
-            Updated the item uniquely identified by <paramref name="item.Id.Id"/> in storage.
+            Updates the item uniquely identified by <paramref name="item.Id.Id"/> in storage.
             </summary>
-            <param name="item">The updated version of the item.</param>
+            <param name="item">The new version of the item.</param>
+            <remarks>
+            The note about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
+            </remarks>
+            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> for <paramref name="item"/> could not be found.</exception>
+            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumConflictException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> for <paramref name="item"/> was outdated.</exception>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAndReturnAsync(`0)">
+            <summary>
+            Updates the item uniquely identified by <paramref name="item.Id.Id"/> in storage.
+            </summary>
+            <param name="item">The new version of the item.</param>
             <returns>The updated item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/></returns>
             <remarks>
             The notes about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.

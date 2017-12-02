@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             Core.Assert.FulcrumAssert.IsValidated(initialItem);
-            var createdItem = await CrdStorage.CreateAsync(initialItem);
+            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
             FulcrumAssert.IsValidated(createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(initialItem.Id,createdItem.Id);
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             FulcrumAssert.IsValidated(initialItem);
-            var createdItem = await CrdStorage.CreateAsync(initialItem);
+            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
             var readItem = await CrdStorage.ReadAsync(createdItem.Id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(createdItem, readItem);
         }
@@ -58,7 +58,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         public async Task Delete()
         {
             var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
-            var createdItem = await CrdStorage.CreateAsync(initialItem);
+            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
             await CrdStorage.ReadAsync(createdItem.Id);
             await CrdStorage.DeleteAsync(createdItem.Id);
             try

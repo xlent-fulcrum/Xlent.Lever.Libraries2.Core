@@ -6,13 +6,21 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Functionality for persisting groups of objects.
     /// </summary>
-    public interface IGrouped<TStorableItem, in TGroup>
+    public interface IGrouped<TStorableItem, TId, in TGroup>
+        where TStorableItem : IStorableItem<TId>
     {
+        /// <summary>
+        /// 
+        /// Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
+        /// </summary>
+        /// <returns>The new id for the created object.</returns>
+        Task<TId> CreateAsync(TGroup groupValue, TStorableItem item);
+
         /// <summary>
         /// Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
         /// </summary>
-        /// <returns></returns>
-        Task<TStorableItem> CreateAsync(TGroup groupValue, TStorableItem item);
+        /// <returns>The new item as it was saved, including an updated <see cref="IStorableItem{TId}.Id"/> and (if it exists) an updated <see cref="IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
+        Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item);
 
         /// <summary>
         /// Read all items for a specific group, <paramref name="groupValue"/>.

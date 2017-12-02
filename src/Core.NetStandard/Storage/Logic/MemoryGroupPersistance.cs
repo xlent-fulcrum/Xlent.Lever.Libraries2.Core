@@ -9,7 +9,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TGroup>
+    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
         where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         /// <summary>
@@ -18,10 +18,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         protected static readonly Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
 
         /// <inheritdoc />
-        public async Task<TStorableItem> CreateAsync(TGroup groupValue, TStorableItem item)
+        public async Task<TId> CreateAsync(TGroup groupValue, TStorableItem item)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAsync(item);
+        }
+
+        /// <inheritdoc />
+        public async Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.CreateAndReturnAsync(item);
         }
 
         /// <inheritdoc />

@@ -25,7 +25,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         private readonly Dictionary<TId, TStorableItem> _memoryItems = new Dictionary<TId, TStorableItem>();
 
         /// <inheritdoc />
-        public Task<TStorableItem> CreateAsync(TStorableItem item)
+        public async Task<TId> CreateAsync(TStorableItem item)
+        {
+            var result = await CreateAndReturnAsync(item);
+            return result.Id;
+        }
+
+        /// <inheritdoc />
+        public Task<TStorableItem> CreateAndReturnAsync(TStorableItem item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             InternalContract.RequireValidated(item, nameof(item));
@@ -54,16 +61,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 FulcrumAssert.Fail($"{Namespace}: 5CBE07D8-4C31-43E7-A41C-1DF0B173ABF9", $"MemoryStorage can handle Guid, string and int as type for Id, but it can't handle {typeof(TId)}.");
             }
             return CreateWithSpecifiedIdAsync(id, item);
-        }
-
-        /// <summary>
-        /// Obsolete.
-        /// </summary>
-        /// <exception cref="FulcrumNotImplementedException"></exception>
-        [Obsolete("Method has been renamed to CreateWithSpecifiedIdAsync.", true)]
-        public Task<TStorableItem> CreateAsync(TId id, TStorableItem item)
-        {
-            throw new FulcrumNotImplementedException();
         }
 
         /// <summary>
@@ -102,7 +99,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public Task<TStorableItem> UpdateAsync(TStorableItem item)
+        public async Task UpdateAsync(TStorableItem item)
+        {
+            InternalContract.RequireNotNull(item, nameof(item));
+            InternalContract.RequireValidated(item, nameof(item));
+            InternalContract.RequireNotDefaultValue(item.Id, nameof(item.Id));
+
+            await UpdateAndReturnAsync(item);
+        }
+
+        /// <inheritdoc />
+        public Task<TStorableItem> UpdateAndReturnAsync(TStorableItem item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             InternalContract.RequireValidated(item, nameof(item));

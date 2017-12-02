@@ -11,19 +11,26 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// Functionality for persisting objects in groups.
     /// </summary>
     [Obsolete("Renamed to MemoryGroupPersistance")]
-    public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TGroup>
+    public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
         where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
         /// </summary>
-        protected static readonly Dictionary<TGroup, MemoryStorage<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryStorage<TStorableItem, TId>>();
+        protected static readonly Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
 
         /// <inheritdoc />
-        public async Task<TStorableItem> CreateAsync(TGroup groupValue, TStorableItem item)
+        public async Task<TId> CreateAsync(TGroup groupValue, TStorableItem item)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAsync(item);
+        }
+
+        /// <inheritdoc />
+        public async Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.CreateAndReturnAsync(item);
         }
 
         /// <inheritdoc />
@@ -45,9 +52,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="groupValue"></param>
         /// <returns></returns>
-        private MemoryStorage<TStorableItem, TId> GetStorage(TGroup groupValue)
+        private MemoryPersistance<TStorableItem, TId> GetStorage(TGroup groupValue)
         {
-            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new MemoryStorage<TStorableItem, TId>();
+            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new MemoryPersistance<TStorableItem, TId>();
             return Storages[groupValue];
         }
     }

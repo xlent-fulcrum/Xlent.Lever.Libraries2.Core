@@ -131,7 +131,6 @@
     <Compile Include="Core\Queue\Model\IBaseQueue.cs" />
     <Compile Include="Core\Queue\Model\IReadableQueue.cs" />
     <Compile Include="Core\Queue\Model\IWritableQueue.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
     <Compile Include="Core\Storage\Model\ICreate.cs" />
     <Compile Include="Core\Storage\Model\ICrud.cs" />
     <Compile Include="Core\Storage\Model\IDelete.cs" />
