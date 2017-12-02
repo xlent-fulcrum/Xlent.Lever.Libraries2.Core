@@ -8,7 +8,7 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage
 {
     [TestClass]
-    public class MemoryPersistanceTest : TestICrud<Guid>
+    public class MemoryCrudTests : TestICrud<PersonStorableItem<Guid>, Guid>
     {
         private MemoryPersistance<PersonStorableItem<Guid>, Guid> _storage;
 

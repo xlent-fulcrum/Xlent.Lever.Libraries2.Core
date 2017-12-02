@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     /// <summary>
     /// A generic interface for adding strings to a queue.
     /// </summary>
-    public partial class MemoryQueue<T> : IBaseQueue
+    public partial class MemoryQueue<T> : IBaseQueue, ICompleteQueue<T>
     {
         private readonly ConcurrentQueue<MessageWithActivationTime<T>> _queue;
         private readonly FailSafeQueueItemActionDelegate _failSafeQueueItemAction;

@@ -13,12 +13,13 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     /// Tests for testing any storage that implements <see cref="ICrud{TStorable,TId}"/>
     /// </summary>
     [TestClass]
-    public abstract class TestICrd<TId>
+    public abstract class TestICrd<TStorableItem, TId>
+        where TStorableItem : IItemForTesting<TStorableItem>, IStorableItem<TId>, IValidatable, new() 
     {
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICrd<PersonStorableItem<TId>, TId> CrdStorage { get; }
+        protected abstract ICrd<TStorableItem, TId> CrdStorage { get; }
 
         /// <summary>
         /// Create an item
@@ -26,7 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task Create()
         {
-            var initialItem = new PersonStorableItem<TId>().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             Core.Assert.FulcrumAssert.IsValidated(initialItem);
             var createdItem = await CrdStorage.CreateAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
@@ -43,7 +44,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task Read()
         {
-            var initialItem = new PersonStorableItem<TId>().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             FulcrumAssert.IsValidated(initialItem);
             var createdItem = await CrdStorage.CreateAsync(initialItem);
             var readItem = await CrdStorage.ReadAsync(createdItem.Id);
@@ -56,7 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task Delete()
         {
-            var initialItem = new PersonStorableItem<TId>().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             var createdItem = await CrdStorage.CreateAsync(initialItem);
             await CrdStorage.ReadAsync(createdItem.Id);
             await CrdStorage.DeleteAsync(createdItem.Id);

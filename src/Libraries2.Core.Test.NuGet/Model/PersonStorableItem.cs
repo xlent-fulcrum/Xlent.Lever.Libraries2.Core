@@ -69,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
         }
     }
 
-    public partial class PersonStorableItem<TId> : IStorableItemForTesting<PersonStorableItem<TId>, TId>, IValidatable
+    public partial class PersonStorableItem<TId> : IItemForTesting<PersonStorableItem<TId>>, IValidatable
     {
         public PersonStorableItem<TId> InitializeWithDataForTesting(TypeOfTestDataEnum typeOfTestData)
         {
