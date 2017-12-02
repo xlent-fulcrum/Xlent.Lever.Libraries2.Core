@@ -6,7 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
     /// <summary>
     /// Methods needed for automatic testing of persistant storage implementations.
     /// </summary>
-    /// <seealso cref="CrdTestdTest{TId}"/>
+    /// <seealso cref="TestICrd{TId}"/>
     /// <typeparam name="TStorableItem">The type for the items that can be stored.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/></typeparam>
     public interface IStorableItemForTesting<out TStorableItem, TId>

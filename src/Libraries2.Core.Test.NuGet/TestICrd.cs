@@ -71,12 +71,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             }
         }
 
-        #region private
-
-        private async Task PrepareTestCase()
-        {
-            await CrdStorage.DeleteAllAsync();
-        }
+        #region Support methods
 
         /// <summary>
         /// Validate that the two items are not equal, set the ETag, verify that they are equal. 
@@ -84,9 +79,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
         protected static void ValidateEtagChangeMakesItemsEqual(IStorableItem<TId> before, IStorableItem<TId> after)
         {
-            var beforeEtag = before as IOptimisticConcurrencyControlByETag;
-            var afterEtag = after as IOptimisticConcurrencyControlByETag;
-            if (beforeEtag == null || afterEtag == null) return;
+            if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
+                || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;
 
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(beforeEtag, afterEtag);
             beforeEtag.ETag = afterEtag.ETag;
@@ -99,9 +93,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
         protected static void ValidateEtagChangeMakesNotItemsEqual(IStorableItem<TId> before, IStorableItem<TId> after)
         {
-            var beforeEtag = before as IOptimisticConcurrencyControlByETag;
-            var afterEtag = after as IOptimisticConcurrencyControlByETag;
-            if (beforeEtag == null || afterEtag == null) return;
+            if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
+                || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;
 
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(beforeEtag, afterEtag);
             beforeEtag.ETag = beforeEtag.ETag;
