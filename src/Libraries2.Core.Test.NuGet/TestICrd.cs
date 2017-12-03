@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     /// </summary>
     [TestClass]
     public abstract class TestICrd<TStorableItem, TId>
-        where TStorableItem : IItemForTesting<TStorableItem>, IStorableItem<TId>, IValidatable, new() 
+        where TStorableItem : IItemForTesting<TStorableItem>, IIdentifiable<TId>, IValidatable, new() 
     {
         /// <summary>
         /// The storage that should be tested
@@ -78,7 +78,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// Validate that the two items are not equal, set the ETag, verify that they are equal. 
         /// </summary>
         [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-        protected static void ValidateEtagChangeMakesItemsEqual(IStorableItem<TId> before, IStorableItem<TId> after)
+        protected static void ValidateEtagChangeMakesItemsEqual(IIdentifiable<TId> before, IIdentifiable<TId> after)
         {
             if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
                 || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;
@@ -92,7 +92,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// Validate that the two items are not equal, set the ETag, verify that they are still not equal. 
         /// </summary>
         [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-        protected static void ValidateEtagChangeMakesNotItemsEqual(IStorableItem<TId> before, IStorableItem<TId> after)
+        protected static void ValidateEtagChangeMakesNotItemsEqual(IIdentifiable<TId> before, IIdentifiable<TId> after)
         {
             if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
                 || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;

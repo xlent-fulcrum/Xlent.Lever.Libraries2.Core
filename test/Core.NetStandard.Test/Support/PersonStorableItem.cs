@@ -4,7 +4,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Support
 {
-    public class PersonStorableItem : StorableItem, INameProperty
+    public class PersonStorableItem : StorableItem, INameable
     {
         public PersonStorableItem(string givenName, string surname)
         {

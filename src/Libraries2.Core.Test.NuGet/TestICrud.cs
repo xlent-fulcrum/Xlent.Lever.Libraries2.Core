@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     /// </summary>
     [TestClass]
     public abstract class TestICrud<TStorableItem, TId> : TestICrd<TStorableItem, TId>
-        where TStorableItem : IItemForTesting<TStorableItem>, IStorableItem<TId>, IValidatable, new()
+        where TStorableItem : IItemForTesting<TStorableItem>, IIdentifiable<TId>, IValidatable, new()
     {
         /// <summary>
         /// The storage that should be tested
@@ -32,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             var createdItem = await CrudStorage.CreateAndReturnAsync(initialItem);
             createdItem.ChangeDataToNotEqualForTesting();
-            var updatedItem = await CrudStorage.UpdateAndReturnAsync(createdItem);
+            var updatedItem = await CrudStorage.UpdateAndReturnAsync(createdItem.Id, createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(createdItem, updatedItem);
             ValidateEtagChangeMakesNotItemsEqual(createdItem, updatedItem);
         }
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             var createdItem = await CrudStorage.CreateAndReturnAsync(initialItem);
             createdItem.ChangeDataToNotEqualForTesting();
-            var updatedItem = await CrudStorage.UpdateAndReturnAsync(createdItem);
+            var updatedItem = await CrudStorage.UpdateAndReturnAsync(createdItem.Id, createdItem);
             var readItem = await CrudStorage.ReadAsync(createdItem.Id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(updatedItem, readItem);
         }

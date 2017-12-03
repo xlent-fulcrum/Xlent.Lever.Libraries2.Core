@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     [Obsolete("Renamed to MemoryGroupPersistance")]
     public class MemoryGroupStorage<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
-        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
+        where TStorableItem : class, IIdentifiable<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.

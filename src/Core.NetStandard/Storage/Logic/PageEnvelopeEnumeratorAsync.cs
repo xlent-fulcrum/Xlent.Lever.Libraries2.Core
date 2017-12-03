@@ -1,5 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -8,9 +9,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// An <see cref="IEnumerator{T}"/> for methods that return data packaged in a <see cref="PageEnvelope{T}"/>./>
     /// </summary>
     /// <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
-    public class PageEnvelopeEnumerator<T> : IEnumerator<T>
+    public class PageEnvelopeEnumeratorAsync<T> : IDisposable
     {
-        private readonly ReadMethodDelegate _readMethodDelegate;
+        private readonly ReadMethodDelegate _readMethodDelegateAsync;
         private PageEnvelope<T> _currentPageEnvelope;
         private int? _currentOffset;
         private IEnumerator<T> _dataEnumerator;
@@ -20,15 +21,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// How to get new page envelopes when required.
         /// </summary>
         /// <param name="offset"></param>
-        public delegate PageEnvelope<T> ReadMethodDelegate(int offset);
+        public delegate Task<PageEnvelope<T>> ReadMethodDelegate(int offset);
 
         /// <summary>
-        /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegate"/> method.
+        /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegateAsync"/> method.
         /// </summary>
-        /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerator(ReadMethodDelegate readMethodDelegate)
+        /// <param name="readMethodDelegateAsync">A method that returns a new page of answers for a specific offset.</param>
+        public PageEnvelopeEnumeratorAsync(ReadMethodDelegate readMethodDelegateAsync)
         {
-            _readMethodDelegate = readMethodDelegate;
+            _readMethodDelegateAsync = readMethodDelegateAsync;
         }
 
         /// <inheritdoc />
@@ -36,14 +37,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
         }
 
-        /// <inheritdoc />
-        public bool MoveNext()
+        /// <summary>
+        /// Move to the next item.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> MoveNextAsync()
         {
             if (_endOfData) return false;
             if (_currentOffset == null)
             {
                 _currentOffset = 0;
-                return ReadAndMoveNext(_currentOffset.Value);
+                return await ReadAndMoveNextAsync(_currentOffset.Value);
             }
             _currentOffset++;
             if (_dataEnumerator.MoveNext()) return true;
@@ -52,12 +56,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 _endOfData = true;
                 return false;
             }
-            return ReadAndMoveNext(_currentOffset.Value);
+            return await ReadAndMoveNextAsync(_currentOffset.Value);
         }
 
-        private bool ReadAndMoveNext(int offset)
+        private async Task<bool> ReadAndMoveNextAsync(int offset)
         {
-            _currentPageEnvelope = _readMethodDelegate(offset);
+            _currentPageEnvelope = await _readMethodDelegateAsync(offset);
             if (_currentPageEnvelope?.PageInfo == null || _currentPageEnvelope.Data == null || _currentPageEnvelope.PageInfo.Returned == 0)
             {
                 _endOfData = true;
@@ -67,7 +71,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             return _dataEnumerator.MoveNext();
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        ///  Reset the enumerator to before the first item.
+        /// </summary>
         public void Reset()
         {
             _currentOffset = null;
@@ -76,9 +82,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             _endOfData = false;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// The current value for this enumerator.
+        /// </summary>
         public T Current => _dataEnumerator == null ? default(T) : _dataEnumerator.Current;
-
-        object IEnumerator.Current => Current;
     }
 }

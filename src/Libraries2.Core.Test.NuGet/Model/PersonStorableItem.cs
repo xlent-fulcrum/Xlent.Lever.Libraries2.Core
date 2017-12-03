@@ -38,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
         public string Surname { get; set; }
 
     }
-    public partial class PersonStorableItem<TId> : StorableItem<TId>, INameProperty
+    public partial class PersonStorableItem<TId> : StorableItem<TId>, INameable
     {
         #region IPersonProperty
         /// <inheritdoc />

@@ -2350,6 +2350,46 @@
             <param name="tenant"></param>
             <returns></returns>
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.CrudBase`2">
+            <summary>
+            Abstract base class that has a default implementation for the methods <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.CreateAndReturnAsync(`0)"/>,
+            <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.DeleteAllAsync"/> and <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrudBase`2.UpdateAndReturnAsync(`1,`0)"/>.
+            </summary>
+            <typeparam name="TItem"></typeparam>
+            <typeparam name="TId"></typeparam>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrudBase`2.UpdateAsync(`1,`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrudBase`2.UpdateAndReturnAsync(`1,`0)">
+            <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2">
+            <summary>
+            Abstract base class that has a default implementation for <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.CreateAndReturnAsync(`0)"/>,
+            and <see cref="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.DeleteAllAsync"/>.
+            </summary>
+            <typeparam name="TItem"></typeparam>
+            <typeparam name="TId"></typeparam>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.CreateAsync(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.CreateAndReturnAsync(`0)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.ReadAsync(`1)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.DeleteAsync(`1)">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.ReadAllAsync(System.Int32,System.Nullable{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.CrdBase`2.DeleteAllAsync">
+            <inheritdoc />
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryGroupPersistance`3">
             <summary>
             Functionality for persisting objects in groups.
@@ -2410,15 +2450,12 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2">
             <summary>
-            General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> in memory.
+            General class for storing any <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/> in memory.
             </summary>
-            <typeparam name="TStorableItem"></typeparam>
+            <typeparam name="TItem"></typeparam>
             <typeparam name="TId"></typeparam>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAsync(`0)">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateAndReturnAsync(`0)">
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.CreateWithSpecifiedIdAsync(`1,`0)">
@@ -2432,10 +2469,7 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.ReadAsync(`1)">
             <inheritdoc />
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAsync(`0)">
-            <inheritdoc />
-        </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAndReturnAsync(`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.UpdateAsync(`1,`0)">
             <inheritdoc />
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAsync(`1)">
@@ -2450,20 +2484,75 @@
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.MemoryPersistance`2.DeleteAllAsync">
             <inheritdoc />
         </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerableAsync`1">
+            <summary>
+            An <see cref="T:System.Collections.Generic.IEnumerable`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1"/>./>
+            </summary>
+            <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerableAsync`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync{`0}.ReadMethodDelegate)">
+            <summary>
+            Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethodDelegate"/> method.
+            </summary>
+            <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerableAsync`1.GetEnumerator">
+            <summary>
+            Get the enumerator for this enumerable.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1">
             <summary>
             An <see cref="T:System.Collections.Generic.IEnumerable`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1"/>./>
             </summary>
             <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethod)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethodDelegate)">
             <summary>
-            Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethod"/> method.
+            Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethodDelegate"/> method.
             </summary>
-            <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
+            <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerable`1.GetEnumerator">
             <inheritdoc />
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1">
+            <summary>
+            An <see cref="T:System.Collections.Generic.IEnumerator`1"/> for methods that return data packaged in a <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1"/>./>
+            </summary>
+            <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
+        </member>
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.ReadMethodDelegate">
+            <summary>
+            How to get new page envelopes when required.
+            </summary>
+            <param name="offset"></param>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync{`0}.ReadMethodDelegate)">
+            <summary>
+            Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegateAsync"/> method.
+            </summary>
+            <param name="readMethodDelegateAsync">A method that returns a new page of answers for a specific offset.</param>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.MoveNextAsync">
+            <summary>
+            Move to the next item.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.Reset">
+            <summary>
+             Reset the enumerator to before the first item.
+            </summary>
+        </member>
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumeratorAsync`1.Current">
+            <summary>
+            The current value for this enumerator.
+            </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1">
             <summary>
@@ -2471,17 +2560,17 @@
             </summary>
             <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.ReadMethod">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.ReadMethodDelegate">
             <summary>
             How to get new page envelopes when required.
             </summary>
             <param name="offset"></param>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethod)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.#ctor(Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator{`0}.ReadMethodDelegate)">
             <summary>
-            Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethod"/> method.
+            Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegate"/> method.
             </summary>
-            <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
+            <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Logic.PageEnvelopeEnumerator`1.Dispose">
             <inheritdoc />
@@ -2497,10 +2586,10 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrd`2">
             <summary>
-            Interface for CR-D operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Interface for CR-D operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TItem">The typo of objects that should have CRUD operations.</typeparam>
+            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> property.</typeparam>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3">
             <summary>
@@ -2518,7 +2607,7 @@
             <summary>
             Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
             </summary>
-            <returns>The new item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> and (if it exists) an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
+            <returns>The new item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> and (if it exists) an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IGrouped`3.ReadAllAsync(`2,System.Int32,System.Nullable{System.Int32})">
             <summary>
@@ -2535,10 +2624,10 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2">
             <summary>
-            Can create items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Can create items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TStorable">The type of objects to create in persistant storage.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TItem">The type of objects to create in persistant storage.</typeparam>
+            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> property.</typeparam>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.ICreate`2.CreateAsync(`0)">
             <summary>
@@ -2552,24 +2641,26 @@
             Creates a new item in storage and returns the final result.
             </summary>
             <param name="item">The item to store.</param>
-            <returns>The new item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> and (if it exists) an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/>.</returns>
+            <returns>The new item as it was saved, see remarks below.</returns>
             <remarks>
-            The note about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
+            If the returned type implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>, then the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> is updated with the new id. 
+            If it implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>, then the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> is updated..
             </remarks>
             <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>
+            <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.ICrud`2">
             <summary>
-            Interface for CRUD operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Interface for CRUD operation on any class that implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TStorable">The typo of objects that should have CRUD operations.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TItem">The typo of objects that should have CRUD operations.</typeparam>
+            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> property.</typeparam>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IDelete`1">
             <summary>
-            Delete an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Delete an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/> property.</typeparam>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IDelete`1.DeleteAsync(`0)">
             <summary>
@@ -2578,7 +2669,7 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll">
             <summary>
-            Delete items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Delete items of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IDeleteAll.DeleteAllAsync">
@@ -2590,12 +2681,12 @@
             In that case, the method should throw a <see cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotImplementedException"/>.
             </remarks>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.INameProperty">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.INameable">
             <summary>
-            A class that inherits this interface has a <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.INameProperty.Name"/> property that can be presented to the end user to represent an instance of the class.
+            A class that inherits this interface has a <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.INameable.Name"/> property that can be presented to the end user to represent an instance of the class.
             </summary>
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.INameProperty.Name">
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.INameable.Name">
             <summary>
             A friendly name for the item, i.e. can be shown to the end user to represent the item.
             </summary>
@@ -2631,10 +2722,10 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IRead`2">
             <summary>
-            Read an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Read an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TStorable">The type of objects to read from persistant storage.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TItem">The type of objects to read from persistant storage.</typeparam>
+            <typeparam name="TId">The type for the id of the object.</typeparam>
         </member>
         <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IRead`2.ReadAsync(`1)">
             <summary>
@@ -2663,7 +2754,7 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IRecommendedStorableItem">
             <summary>
-            The recommended interfaces for a storable item. Uses a <see cref="T:System.Guid"/> as the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/>.
+            The recommended interfaces for a storable item. Uses a <see cref="T:System.Guid"/> as the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/>.
             </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IRecommendedStorableItem`1">
@@ -2694,13 +2785,13 @@
             The content as a byte array
             </summary>
         </member>
-        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1">
+        <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1">
             <summary>
             Properties required to be a storable class
             </summary>
-            <typeparam name="TId">The type for the property <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/>.</typeparam>
+            <typeparam name="TId">The type for the property <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/>.</typeparam>
         </member>
-        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id">
+        <member name="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id">
             <summary>
             A unique identifier for the item.
             </summary>
@@ -2722,32 +2813,28 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2">
             <summary>
-            Update an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/>.
+            Update an item of type <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1"/>.
             </summary>
-            <typeparam name="TStorable">The type of objects to update in persistant storage.</typeparam>
-            <typeparam name="TId">The type for the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> property.</typeparam>
+            <typeparam name="TItem">The type of objects to update in persistant storage.</typeparam>
+            <typeparam name="TId">The type for the id parameter.</typeparam>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAsync(`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAsync(`1,`0)">
             <summary>
             Updates the item uniquely identified by <paramref name="item.Id.Id"/> in storage.
             </summary>
+            <param name="id">How the object to be updated is identified.</param>
             <param name="item">The new version of the item.</param>
-            <remarks>
-            The note about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <seealso cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
-            </remarks>
-            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> for <paramref name="item"/> could not be found.</exception>
+            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <paramref name="id"/> could not be found.</exception>
             <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumConflictException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> for <paramref name="item"/> was outdated.</exception>
         </member>
-        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAndReturnAsync(`0)">
+        <member name="M:Xlent.Lever.Libraries2.Core.Storage.Model.IUpdate`2.UpdateAndReturnAsync(`1,`0)">
             <summary>
             Updates the item uniquely identified by <paramref name="item.Id.Id"/> in storage.
             </summary>
-            <param name="item">The new version of the item.</param>
-            <returns>The updated item as it was saved, including an updated <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/></returns>
-            <remarks>
-            The notes about <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> are only valid if the <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1"/> type implements <see cref="T:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag"/>.
-            </remarks>
-            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/> for <paramref name="item"/> could not be found.</exception>
+            <param name="id">How the object to be updated is identified.</param>
+            <param name="item">The new version of the item. </param>
+            <returns>The updated item as it was saved.</returns>
+            <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumNotFoundException">Thrown if the <paramref name="id"/> could not be found.</exception>
             <exception cref="T:Xlent.Lever.Libraries2.Core.Error.Logic.FulcrumConflictException">Thrown if the <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IOptimisticConcurrencyControlByETag.ETag"/> for <paramref name="item"/> was outdated.</exception>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.PageEnvelope`1">
@@ -2851,7 +2938,7 @@
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.StorableItem">
             <summary>
-            A convenience class that implements the recommended interfaces for a storable item, using a Guid as <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IStorableItem`1.Id"/>.
+            A convenience class that implements the recommended interfaces for a storable item, using a Guid as <see cref="P:Xlent.Lever.Libraries2.Core.Storage.Model.IIdentifiable`1.Id"/>.
             </summary>
         </member>
         <member name="T:Xlent.Lever.Libraries2.Core.Storage.Model.StorableItem`1">

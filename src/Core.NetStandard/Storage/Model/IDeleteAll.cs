@@ -4,7 +4,7 @@ using Xlent.Lever.Libraries2.Core.Error.Logic;
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// Delete items of type <see cref="IStorableItem{TId}"/>.
+    /// Delete items of type <see cref="IIdentifiable{TId}"/>.
     /// </summary>
     public interface IDeleteAll
     {

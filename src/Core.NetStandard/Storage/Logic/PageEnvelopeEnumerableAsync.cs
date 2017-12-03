@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -8,22 +7,23 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// An <see cref="IEnumerable{T}"/> for methods that return data packaged in a <see cref="PageEnvelope{T}"/>./>
     /// </summary>
     /// <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
-    public class PageEnvelopeEnumerable<T> : IEnumerable<T> 
+    public class PageEnvelopeEnumerableAsync<T>
     {
-        private readonly PageEnvelopeEnumerator<T> _enumerator;
+        private readonly PageEnvelopeEnumeratorAsync<T> _enumerator;
 
         /// <summary>
         /// Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethodDelegate"/> method.
         /// </summary>
         /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerable(PageEnvelopeEnumerator<T>.ReadMethodDelegate readMethodDelegate)
+        public PageEnvelopeEnumerableAsync(PageEnvelopeEnumeratorAsync<T>.ReadMethodDelegate readMethodDelegate)
         {
-            _enumerator = new PageEnvelopeEnumerator<T>(readMethodDelegate);
+            _enumerator = new PageEnvelopeEnumeratorAsync<T>(readMethodDelegate);
         }
 
-        /// <inheritdoc />
-        public IEnumerator<T> GetEnumerator() => _enumerator;
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        /// <summary>
+        /// Get the enumerator for this enumerable.
+        /// </summary>
+        /// <returns></returns>
+        public PageEnvelopeEnumeratorAsync<T> GetEnumerator() => _enumerator;
     }
 }
