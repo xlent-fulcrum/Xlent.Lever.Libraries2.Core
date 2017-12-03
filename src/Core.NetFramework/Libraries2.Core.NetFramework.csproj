@@ -97,6 +97,7 @@
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumeratorAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
+    <Compile Include="Core\Storage\Logic\StorageHelper.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
     <Compile Include="Core\Storage\Model\IGrouped.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
