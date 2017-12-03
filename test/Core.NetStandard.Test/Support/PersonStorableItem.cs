@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Support
             var person = obj as PersonStorableItem;
             if (person == null) return false;
             if (!Equals(person.Id, Id)) return false;
-            if (!string.Equals(person.ETag, ETag, StringComparison.OrdinalIgnoreCase)) return false;
+            if (!string.Equals(person.Etag, Etag, StringComparison.OrdinalIgnoreCase)) return false;
             if (!string.Equals(person.GivenName, GivenName, StringComparison.OrdinalIgnoreCase)) return false;
             // ReSharper disable once ConvertIfStatementToReturnStatement
             if (!string.Equals(person.Surname, Surname, StringComparison.OrdinalIgnoreCase)) return false;

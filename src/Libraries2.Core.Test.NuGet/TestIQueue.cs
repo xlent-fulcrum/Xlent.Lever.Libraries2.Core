@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Queue.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
@@ -9,13 +8,12 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     [TestClass]
-    public abstract class TestIQueue<T>
-        where T : IItemForTesting<T>, IValidatable, new()
+    public abstract class TestIQueue
     {
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICompleteQueue<T> Queue { get; }
+        protected abstract ICompleteQueue<TestItemBare> Queue { get; }
 
         [TestMethod]
         public async Task GetDoesNotBlock()
@@ -38,7 +36,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task MessageGetsThrough()
         {
-            var message = new T().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var message = new TestItemBare();
+            message.InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             await Queue.AddMessageAsync(message);
             var result = await Queue.GetOneMessageNoBlockAsync();
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
@@ -48,7 +47,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task PeekAndGet()
         {
-            var message = new T().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var message = new TestItemBare();
+            message.InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             await Queue.AddMessageAsync(message);
             var result = await Queue.PeekNoBlockAsync();
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
@@ -61,7 +61,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         [TestMethod]
         public async Task ClearQueue()
         {
-            var message = new T().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
+            var message = new TestItemBare();
+            message.InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
             await Queue.AddMessageAsync(message);
             await Queue.ClearAsync();
             var getTask = Queue.GetOneMessageNoBlockAsync();

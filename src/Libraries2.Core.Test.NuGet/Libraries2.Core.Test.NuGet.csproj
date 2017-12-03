@@ -48,9 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\TestItemValidated.cs" />
+    <Compile Include="Model\TestItemEtag.cs" />
+    <Compile Include="Model\TestItemId.cs" />
+    <Compile Include="Model\TestItemBare.cs" />
     <Compile Include="TestIQueue.cs" />
     <Compile Include="Model\IItemForTesting.cs" />
-    <Compile Include="Model\PersonStorableItem.cs" />
     <Compile Include="Model\TypeOfTestDataEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestICrd.cs" />

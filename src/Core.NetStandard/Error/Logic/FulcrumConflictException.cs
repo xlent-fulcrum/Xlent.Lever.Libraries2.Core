@@ -6,7 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
     /// The request conflicted with the current state of the resource.
     /// </summary>
     /// <example>
-    /// Someone else has edited the resource (The Update with ETag scenario).
+    /// Someone else has edited the resource (The Update with Etag scenario).
     /// </example>
     /// <example>
     /// Someone else has already created the resource (The Create or Insert scenario with duplicates).

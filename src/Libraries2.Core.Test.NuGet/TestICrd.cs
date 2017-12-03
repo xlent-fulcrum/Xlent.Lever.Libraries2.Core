@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
@@ -13,57 +13,216 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     /// Tests for testing any storage that implements <see cref="ICrud{TStorable,TId}"/>
     /// </summary>
     [TestClass]
-    public abstract class TestICrd<TStorableItem, TId>
-        where TStorableItem : IItemForTesting<TStorableItem>, IIdentifiable<TId>, IValidatable, new() 
+    public abstract class TestICrd<TId>
     {
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICrd<TStorableItem, TId> CrdStorage { get; }
+        protected abstract ICrd<IItemForTesting, TId> CrdStorage { get; }
+
+        #region CreateAsync_ReadAsync
 
         /// <summary>
-        /// Create an item
+        /// Try to create an item that is not valid.
         /// </summary>
         [TestMethod]
-        public async Task Create()
+        [ExpectedException(typeof(FulcrumContractException))]
+        public async Task Create_ValidationFailed_Async()
         {
-            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
-            Core.Assert.FulcrumAssert.IsValidated(initialItem);
-            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
+            var initialItem = new TestItemValidated();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.ValidationFail);
+            await CrdStorage.CreateAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected the method {nameof(CrdStorage.CreateAsync)} to detect that the data was not valid and throw the exception {nameof(FulcrumContractException)}.");
+        }
+
+        /// <summary>
+        /// Create a bare item
+        /// </summary>
+        [TestMethod]
+        public async Task Create_Read_Bare_Async()
+        {
+            var initialItem = new TestItemBare();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            var id = await CrdStorage.CreateAsync(initialItem);
+            var result = await CrdStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemBare;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
-            FulcrumAssert.IsValidated(createdItem);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(initialItem.Id,createdItem.Id);
-            initialItem.Id = createdItem.Id;
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            ValidateEtagChangeMakesItemsEqual(initialItem, createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }
 
         /// <summary>
-        /// Read an item
+        /// Create a bare item
         /// </summary>
         [TestMethod]
-        public async Task Read()
+        public async Task Create_Read_Validated_Async()
         {
-            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
-            FulcrumAssert.IsValidated(initialItem);
-            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
-            var readItem = await CrdStorage.ReadAsync(createdItem.Id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(createdItem, readItem);
+            var initialItem = new TestItemValidated();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            initialItem.Validate(null);
+            var id = await CrdStorage.CreateAsync(initialItem);
+            var result = await CrdStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemValidated;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            createdItem.Validate(null);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }
 
+        /// <summary>
+        /// Create an item with an id.
+        /// </summary>
+        [TestMethod]
+        public async Task Create_Read_Id_Async()
+        {
+            var initialItem = new TestItemId<TId>();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Id);
+            var id = await CrdStorage.CreateAsync(initialItem);
+            var result = await CrdStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemId<TId>;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(id, createdItem.Id);
+            initialItem.Id = createdItem.Id;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        /// <summary>
+        /// Create an item with an id.
+        /// </summary>
+        [TestMethod]
+        public async Task Create_Read_Etag_Async()
+        {
+            var initialItem = new TestItemEtag();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Etag);
+            var id = await CrdStorage.CreateAsync(initialItem);
+            var result = await CrdStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemEtag;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Etag);
+            initialItem.Etag = createdItem.Etag;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        #endregion
+
+        #region CreateAndReturnAsync
+
+        /// <summary>
+        /// Try to create an item that is not valid.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FulcrumContractException))]
+        public async Task CreateAndReturn_ValidationFailed_Async()
+        {
+            var initialItem = new TestItemValidated();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.ValidationFail);
+            await CrdStorage.CreateAndReturnAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected the method {nameof(CrdStorage.CreateAndReturnAsync)} to detect that the data was not valid and throw the exception {nameof(FulcrumContractException)}.");
+        }
+
+        /// <summary>
+        /// Create a bare item
+        /// </summary>
+        [TestMethod]
+        public async Task CreateAndReturn_Bare_Async()
+        {
+            var initialItem = new TestItemBare();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemBare;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        /// <summary>
+        /// Create a bare item
+        /// </summary>
+        [TestMethod]
+        public async Task CreateAndReturn_Validated_Async()
+        {
+            var initialItem = new TestItemValidated();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            initialItem.Validate(null);
+            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemValidated;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            createdItem.Validate(null);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        /// <summary>
+        /// Create an item with an id.
+        /// </summary>
+        [TestMethod]
+        public async Task CreateAndReturn_Id_Async()
+        {
+            var initialItem = new TestItemId<TId>();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Id);
+            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemId<TId>;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Id);
+            initialItem.Id = createdItem.Id;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        /// <summary>
+        /// Create an item with an id.
+        /// </summary>
+        [TestMethod]
+        public async Task CreateAndReturn_Read_Etag_Async()
+        {
+            var initialItem = new TestItemEtag();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Etag);
+            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
+            var createdItem = result as TestItemEtag;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Etag);
+            initialItem.Etag = createdItem.Etag;
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
+        }
+
+        #endregion
+
+        #region ReadAsync
+        /// <summary>
+        /// Try to read an item that doesn't exist yet.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(FulcrumNotFoundException))]
+        public async Task Read_NotFound_Async()
+        {
+            await CrdStorage.ReadAsync(StorageHelper.CreateNewId<TId>());
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("Expected an exception");
+        }
+        #endregion
+
+        #region DeleteAsync
         /// <summary>
         /// Delete an item
         /// </summary>
         [TestMethod]
-        public async Task Delete()
+        public async Task Delete_Async()
         {
-            var initialItem = new TStorableItem().InitializeWithDataForTesting(TypeOfTestDataEnum.Variant1);
-            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
-            await CrdStorage.ReadAsync(createdItem.Id);
-            await CrdStorage.DeleteAsync(createdItem.Id);
+            var initialItem = new TestItemBare();
+            initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
+            var id = await CrdStorage.CreateAsync(initialItem);
+            await CrdStorage.ReadAsync(id);
+            await CrdStorage.DeleteAsync(id);
             try
             {
-                await CrdStorage.ReadAsync(createdItem.Id);
+                await CrdStorage.ReadAsync(id);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("Expected an exception");
             }
             catch (FulcrumNotFoundException)
@@ -72,34 +231,13 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             }
         }
 
-        #region Support methods
-
         /// <summary>
-        /// Validate that the two items are not equal, set the ETag, verify that they are equal. 
+        /// Try to read an item that doesn't exist. Should not result in an exception.
         /// </summary>
-        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-        protected static void ValidateEtagChangeMakesItemsEqual(IIdentifiable<TId> before, IIdentifiable<TId> after)
+        [TestMethod]
+        public async Task Delete_NotFound()
         {
-            if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
-                || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;
-
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(beforeEtag, afterEtag);
-            beforeEtag.ETag = afterEtag.ETag;
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(beforeEtag, afterEtag);
-        }
-
-        /// <summary>
-        /// Validate that the two items are not equal, set the ETag, verify that they are still not equal. 
-        /// </summary>
-        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-        protected static void ValidateEtagChangeMakesNotItemsEqual(IIdentifiable<TId> before, IIdentifiable<TId> after)
-        {
-            if (!(before is IOptimisticConcurrencyControlByETag beforeEtag) 
-                || !(after is IOptimisticConcurrencyControlByETag afterEtag)) return;
-
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(beforeEtag, afterEtag);
-            beforeEtag.ETag = beforeEtag.ETag;
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(beforeEtag, afterEtag);
+            await CrdStorage.DeleteAsync(StorageHelper.CreateNewId<TId>());
         }
         #endregion
     }

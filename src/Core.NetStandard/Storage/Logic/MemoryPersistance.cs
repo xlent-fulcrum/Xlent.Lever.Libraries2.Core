@@ -69,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             var eTaggable = itemCopy as IOptimisticConcurrencyControlByETag;
             var identifiable = itemCopy as IIdentifiable<TId>;
 
-            if (eTaggable != null) eTaggable.ETag = Guid.NewGuid().ToString();
+            if (eTaggable != null) eTaggable.Etag = Guid.NewGuid().ToString();
             if (identifiable!= null) identifiable.Id = id;
             lock (_memoryItems)
             {
@@ -103,7 +103,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 var current = GetMemoryItem(id);
                 ValidateEtag(id, current, item);
                 var itemCopy = CopyItem(item);
-                if (itemCopy is IOptimisticConcurrencyControlByETag copyAsTaggable) copyAsTaggable.ETag = Guid.NewGuid().ToString();
+                if (itemCopy is IOptimisticConcurrencyControlByETag copyAsTaggable) copyAsTaggable.Etag = Guid.NewGuid().ToString();
                 SetMemoryItem(id, itemCopy);
             }
             await Task.Yield();
@@ -169,15 +169,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             if (!(current is IOptimisticConcurrencyControlByETag currentWithEtag) || !(item is IOptimisticConcurrencyControlByETag itemWithEtag)) return;
 
-            if (string.Equals(currentWithEtag.ETag, itemWithEtag.ETag, StringComparison.OrdinalIgnoreCase)) return;
+            if (string.Equals(currentWithEtag.Etag, itemWithEtag.Etag, StringComparison.OrdinalIgnoreCase)) return;
             throw new FulcrumConflictException(
                 $"The item of type {typeof(TItem).Name} with id {id} has been updated by someone else. Please get a fresh copy and try again.");
         }
 
-        private static TItem CopyItem(TItem item)
+        private static TItem CopyItem(TItem source)
         {
-            InternalContract.RequireNotNull(item, nameof(item));
-            var itemCopy = item?.DeepCopy();
+            InternalContract.RequireNotNull(source, nameof(source));
+            var itemCopy = source.DeepCopy();
             if (itemCopy == null)
                 throw new FulcrumAssertionFailedException("Could not copy an item.",
                     $"{Namespace}: F517B23A-CB23-4B69-A3AE-7F52CD804352");

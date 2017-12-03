@@ -39,6 +39,20 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
+        public async Task<TStorableItem> ReadAsync(TId id, TGroup groupValue)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.ReadAsync(id);
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(TId id, TGroup groupValue)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            await groupPersistance.DeleteAsync(id);
+        }
+
+        /// <inheritdoc />
         public async Task DeleteAllAsync(TGroup groupValue)
         {
             var groupPersistance = GetStorage(groupValue);

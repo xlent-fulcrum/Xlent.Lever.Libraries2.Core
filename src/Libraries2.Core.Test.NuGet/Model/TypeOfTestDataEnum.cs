@@ -6,6 +6,14 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
     public enum TypeOfTestDataEnum
     {
         /// <summary>
+        ///  A fixed set of data with "normal" values.
+        /// </summary>
+        Default,
+        /// <summary>
+        ///  Data that makes the validation fail.
+        /// </summary>
+        ValidationFail,
+        /// <summary>
         ///  A fixed set of data, not the same data as <see cref="Variant2"/>.
         /// </summary>
         Variant1,

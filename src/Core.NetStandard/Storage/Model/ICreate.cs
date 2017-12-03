@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <returns>The new item as it was saved, see remarks below.</returns>
         /// <remarks>
         /// If the returned type implements <see cref="IIdentifiable{TId}"/>, then the <see cref="IIdentifiable{TId}.Id"/> is updated with the new id. 
-        /// If it implements <see cref="IOptimisticConcurrencyControlByETag"/>, then the <see cref="IOptimisticConcurrencyControlByETag.ETag"/> is updated..
+        /// If it implements <see cref="IOptimisticConcurrencyControlByETag"/>, then the <see cref="IOptimisticConcurrencyControlByETag.Etag"/> is updated..
         /// </remarks>
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IIdentifiable{TId}"/>

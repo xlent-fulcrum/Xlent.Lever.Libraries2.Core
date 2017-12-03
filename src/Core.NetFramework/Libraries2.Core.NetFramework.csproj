@@ -90,8 +90,8 @@
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
     <Compile Include="Core\Storage\Logic\CrudBase.cs" />
     <Compile Include="Core\Storage\Logic\CrdBase.cs" />
+    <Compile Include="Core\Storage\Logic\GroupedBase.cs" />
     <Compile Include="Core\Storage\Logic\MemoryGroupPersistance.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryGroupStorage.cs" />
     <Compile Include="Core\Storage\Logic\MemoryPersistance.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerableAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
