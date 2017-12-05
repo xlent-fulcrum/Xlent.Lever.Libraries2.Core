@@ -32,6 +32,11 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
             var x = source as TestItemId<TId>;
             DeepCopy(x);
         }
+
+        IItemForTesting IDeepCopy<IItemForTesting>.DeepCopy()
+        {
+            return DeepCopy();
+        }
     }
 
     #region override object
