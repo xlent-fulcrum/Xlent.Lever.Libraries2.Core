@@ -13,32 +13,6 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
         public TId Id { get; set; }
     }
 
-    public partial class TestItemId<TId> : IDeepCopy<TestItemId<TId>>
-    {
-        public void DeepCopy(TestItemId<TId> source)
-        {
-            base.DeepCopy(source);
-            Id = source.Id;
-        }
-
-        /// <inheritdoc />
-        public new TestItemId<TId> DeepCopy()
-        {
-            return StorageHelper.DeepCopy(this);
-        }
-
-        public new void DeepCopy(IItemForTesting source)
-        {
-            var x = source as TestItemId<TId>;
-            DeepCopy(x);
-        }
-
-        IItemForTesting IDeepCopy<IItemForTesting>.DeepCopy()
-        {
-            return DeepCopy();
-        }
-    }
-
     #region override object
     public partial class TestItemId<TId>
     {

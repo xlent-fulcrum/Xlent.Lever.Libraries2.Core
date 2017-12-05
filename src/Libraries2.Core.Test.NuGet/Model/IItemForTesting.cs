@@ -6,7 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
     /// Methods needed for automatic testing of persistant storage implementations.
     /// </summary>
     /// <typeparam name="T">The type for the items that can be stored.</typeparam>
-    public interface IItemForTesting : IDeepCopy<IItemForTesting>
+    public interface IItemForTesting
     {
         /// <summary>
         /// Fills all mandatory fields  with valid data.

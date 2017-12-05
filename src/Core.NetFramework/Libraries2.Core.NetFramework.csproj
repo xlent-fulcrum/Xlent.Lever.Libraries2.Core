@@ -114,7 +114,6 @@
     <Compile Include="Core\Logging\Log.cs" />
     <Compile Include="Core\Logging\IFulcrumLogger.cs" />
     <Compile Include="Core\Logging\LogSeverityLevel.cs" />
-    <Compile Include="Core\Misc\Models\IDeepCopy.cs" />
     <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Context\TenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Model\ITenant.cs" />

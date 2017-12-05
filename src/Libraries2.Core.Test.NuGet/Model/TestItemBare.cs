@@ -16,21 +16,6 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 
     }
 
-    public partial class TestItemBare : IDeepCopy<TestItemBare>
-    {
-        /// <inheritdoc />
-        public virtual void DeepCopy(TestItemBare source)
-        {
-            Value = source.Value;
-        }
-
-        /// <inheritdoc />
-        public TestItemBare DeepCopy()
-        {
-            return StorageHelper.DeepCopy(this);
-        }
-    }
-
     public partial class TestItemBare : IItemForTesting
     {
         public virtual void InitializeWithDataForTesting(TypeOfTestDataEnum typeOfTestData)
@@ -60,17 +45,6 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
         public virtual void ChangeDataToNotEqualForTesting()
         {
             Value = Guid.NewGuid().ToString();
-        }
-
-        public void DeepCopy(IItemForTesting source)
-        {
-            var x = source as TestItemBare;
-            DeepCopy(x);
-        }
-
-        IItemForTesting IDeepCopy<IItemForTesting>.DeepCopy()
-        {
-            return DeepCopy();
         }
     }
 

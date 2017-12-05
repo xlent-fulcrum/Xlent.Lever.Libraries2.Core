@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Misc;
 using Xlent.Lever.Libraries2.Core.Misc.Models;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
@@ -15,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class MemoryPersistance<TItem, TId> : CrudBase<TItem, TId>
-            where TItem : class, IDeepCopy<TItem>
+            where TItem : class
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
         // ReSharper disable once StaticMemberInGenericType
@@ -177,10 +178,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         private static TItem CopyItem(TItem source)
         {
             InternalContract.RequireNotNull(source, nameof(source));
-            var itemCopy = source.DeepCopy();
+            var itemCopy = StorageHelper.DeepCopy(source);
             if (itemCopy == null)
-                throw new FulcrumAssertionFailedException("Could not copy an item.",
-                    $"{Namespace}: F517B23A-CB23-4B69-A3AE-7F52CD804352");
+                throw new FulcrumAssertionFailedException("Could not copy an item.");
             return itemCopy;
         }
 

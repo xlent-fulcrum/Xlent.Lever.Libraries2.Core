@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Contains a byte array
     /// </summary>
-    public class StorableByteArray<TId> : IStorableByteArray<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<StorableByteArray<TId>>
+    public class StorableByteArray<TId> : IStorableByteArray<TId>, IOptimisticConcurrencyControlByETag
     {
         /// <inheritdoc />
         public TId Id { get; set; }
