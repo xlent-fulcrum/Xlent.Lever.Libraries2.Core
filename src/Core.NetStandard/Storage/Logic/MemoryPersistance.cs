@@ -28,29 +28,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public override async Task<TId> CreateAsync(TItem item)
         {
-            var id = default(TId);
-            if (typeof(TId) == typeof(Guid))
-            {
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                id = (dynamic)Guid.NewGuid();
-            }
-            else if (typeof(TId) == typeof(string))
-            {
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                id = (dynamic)Guid.NewGuid().ToString();
-            }
-            else if (typeof(TId) == typeof(int))
-            {
-                lock (LockObject)
-                {
-                    // ReSharper disable once SuspiciousTypeConversion.Global
-                    id = (dynamic)_nextInteger++;
-                }
-            }
-            else
-            {
-                FulcrumAssert.Fail(null, $"MemoryStorage can handle Guid, string and int as type for Id, but it can't handle {typeof(TId)}.");
-            }
+            InternalContract.RequireNotNull(item, nameof(item));
+            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+            var id = StorageHelper.CreateNewId<TId>();
             await CreateWithSpecifiedIdAsync(id, item);
             return id;
         }
@@ -65,6 +45,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
+            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
 
             var itemCopy = CopyItem(item);
             var eTaggable = itemCopy as IOptimisticConcurrencyControlByETag;
@@ -95,8 +76,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public override async Task UpdateAsync(TId id, TItem item)
         {
-            InternalContract.RequireNotNull(item, nameof(item));
             InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotNull(item, nameof(item));
+            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
 
             lock (_memoryItems)
             {

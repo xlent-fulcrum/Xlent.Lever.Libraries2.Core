@@ -39,6 +39,11 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var updatedItem = new TItem();
             updatedItem.InitializeWithDataForTesting(type);
+            if (updatedItem is IOptimisticConcurrencyControlByETag etaggedItem)
+            {
+                var readItem = await ReadItemAsync(id);
+                etaggedItem.Etag = ((IOptimisticConcurrencyControlByETag)readItem).Etag;
+            }
             await CrudStorage.UpdateAsync(id, updatedItem);
             return updatedItem;
         }

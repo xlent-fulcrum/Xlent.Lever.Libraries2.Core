@@ -19,6 +19,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public virtual async Task<TItem> CreateAndReturnAsync(TItem item)
         {
+            InternalContract.RequireNotNull(item, nameof(item));
+            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
             var id = await CreateAsync(item);
             return await ReadAsync(id);
         }

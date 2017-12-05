@@ -23,13 +23,13 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var initialItem = new TestItemEtag();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Etag);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(initialItem.Etag);
             var id = await CrdStorage.CreateAsync(initialItem);
             var result = await CrdStorage.ReadAsync(id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
             var createdItem = result as TestItemEtag;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Etag);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem.Etag);
             initialItem.Etag = createdItem.Etag;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }
@@ -42,12 +42,12 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var initialItem = new TestItemEtag();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Etag);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(initialItem.Etag);
             var result = await CrdStorage.CreateAndReturnAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
             var createdItem = result as TestItemEtag;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Etag);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem.Etag);
             initialItem.Etag = createdItem.Etag;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }

@@ -24,8 +24,6 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             var id = await CreateItemAsync(TypeOfTestDataEnum.Variant1);
             var updatedItem = await UpdateItemAsync(id, TypeOfTestDataEnum.Variant2);
             var readItem = await ReadItemAsync(id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(updatedItem, readItem);
-            updatedItem.Id = readItem.Id;
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(updatedItem, readItem);
         }
     }
