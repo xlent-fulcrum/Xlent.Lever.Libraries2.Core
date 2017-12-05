@@ -51,9 +51,12 @@
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsValidated.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsEtag.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsBare.cs" />
     <Compile Include="Core\Storage\MemoryQueueTest.cs" />
     <Compile Include="Core\Storage\PageEnvelopeTest.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTests.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsId.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
     <Compile Include="Core\Support\Validatable.cs" />
     <Compile Include="Core\TestAssert\TestFulcrumAssert.cs" />

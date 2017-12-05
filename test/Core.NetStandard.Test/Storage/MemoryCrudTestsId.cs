@@ -8,16 +8,16 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage
 {
     [TestClass]
-    public class MemoryCrudTests : TestICrud<Guid>
+    public class MemoryCrudTestsId : TestICrudId<Guid>
     {
-        private MemoryPersistance<IItemForTesting, Guid> _storage;
+        private MemoryPersistance<TestItemId<Guid>, Guid> _storage;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryPersistance<IItemForTesting, Guid>();
+            _storage = new MemoryPersistance<TestItemId<Guid>, Guid>();
         }
 
-        protected override ICrud<IItemForTesting, Guid> CrudStorage => _storage;
+        protected override ICrud<TestItemId<Guid>, Guid> CrudStorage => _storage;
     }
 }
