@@ -4,7 +4,7 @@ using Xlent.Lever.Libraries2.Core.Error.Logic;
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// Update an item of type <see cref="IIdentifiable{TId}"/>.
+    /// Update an item of type <see cref="IUniquelyIdentifiable{TId}"/>.
     /// </summary>
     /// <typeparam name="TItem">The type of objects to update in persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the id parameter.</typeparam>

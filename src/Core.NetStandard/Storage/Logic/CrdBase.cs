@@ -37,8 +37,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public virtual async Task DeleteAllAsync()
         {
-            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TItem, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IIdentifiable<TId>)}";
-            FulcrumAssert.IsTrue(typeof(IIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null, 
+            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TItem, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null, 
                 errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TItem>(offset => ReadAllAsync(offset));
             var enumerator = items.GetEnumerator();
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             while (await enumerator.MoveNextAsync())
             {
                 var item = enumerator.Current;
-                var identifiable = item as IIdentifiable<TId>;
+                var identifiable = item as IUniquelyIdentifiable<TId>;
                 FulcrumAssert.IsNotNull(identifiable, null, errorMessage);
                 if (identifiable == null) continue;
                 taskList.Add(DeleteAsync(identifiable.Id));

@@ -11,7 +11,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
-    /// General class for storing any <see cref="IIdentifiable{TId}"/> in memory.
+    /// General class for storing any <see cref="IUniquelyIdentifiable{TId}"/> in memory.
     /// </summary>
     /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
             var itemCopy = CopyItem(item);
             var eTaggable = itemCopy as IOptimisticConcurrencyControlByETag;
-            var identifiable = itemCopy as IIdentifiable<TId>;
+            var identifiable = itemCopy as IUniquelyIdentifiable<TId>;
 
             if (eTaggable != null) eTaggable.Etag = Guid.NewGuid().ToString();
             if (identifiable!= null) identifiable.Id = id;

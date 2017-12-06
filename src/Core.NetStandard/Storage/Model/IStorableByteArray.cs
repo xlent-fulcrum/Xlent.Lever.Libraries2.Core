@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains a byte array
     /// </summary>
-    public interface IStorableByteArray<TId> : IIdentifiable<TId>
+    public interface IStorableByteArray<TId> : IUniquelyIdentifiable<TId>
     {
         /// <summary>
         /// The content as a byte array

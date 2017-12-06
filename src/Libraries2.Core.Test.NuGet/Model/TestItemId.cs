@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
     /// <summary>
     /// A minimal storable item to be used in testing
     /// </summary>
-    public partial class TestItemId<TId> : TestItemBare, IIdentifiable<TId>
+    public partial class TestItemId<TId> : TestItemBare, IUniquelyIdentifiable<TId>
     {
         /// <inheritdoc />
         public TId Id { get; set; }

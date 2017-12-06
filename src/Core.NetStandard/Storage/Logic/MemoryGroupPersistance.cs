@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// Functionality for persisting objects in groups.
     /// </summary>
     public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
-        where TStorableItem : class, IIdentifiable<TId>, IOptimisticConcurrencyControlByETag, IValidatable
+        where TStorableItem : class, IUniquelyIdentifiable<TId>, IOptimisticConcurrencyControlByETag, IValidatable
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.

@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Create a new <paramref name="item"/> in the group <paramref name="groupValue"/>.
         /// </summary>
-        /// <returns>The new item as it was saved, including an updated <see cref="IIdentifiable{TId}.Id"/> and (if it exists) an updated <see cref="IOptimisticConcurrencyControlByETag.Etag"/>.</returns>
+        /// <returns>The new item as it was saved, including an updated <see cref="IUniquelyIdentifiable{TId}.Id"/> and (if it exists) an updated <see cref="IOptimisticConcurrencyControlByETag.Etag"/>.</returns>
         Task<TItem> CreateAndReturnAsync(TGroup groupValue, TItem item);
 
         /// <summary>
