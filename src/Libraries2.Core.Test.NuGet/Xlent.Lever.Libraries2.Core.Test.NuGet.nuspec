@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.Test</id>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Library for testing implementation of Core interfaces.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      0.1.3 Split of test classes.
       0.1.2 Refactored ICr*d interfaces.
       0.1.1 Consolidated ICr*d interfaces.
       0.1.0 First release
