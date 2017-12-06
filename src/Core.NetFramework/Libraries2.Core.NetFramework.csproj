@@ -147,7 +147,7 @@
     <Compile Include="Core\Storage\Model\IRecommendedStorableItem.cs" />
     <Compile Include="Core\Storage\Model\IStorableAsByteArray.cs" />
     <Compile Include="Core\Storage\Model\IStorableByteArray.cs" />
-    <Compile Include="Core\Storage\Model\IIdentifiable.cs" />
+    <Compile Include="Core\Storage\Model\IUniquelyIdentifiable.cs" />
     <Compile Include="Core\Storage\Model\ITimeStamped.cs" />
     <Compile Include="Core\Storage\Model\IUpdate.cs" />
     <Compile Include="Core\Storage\Model\PageEnvelope.cs" />
