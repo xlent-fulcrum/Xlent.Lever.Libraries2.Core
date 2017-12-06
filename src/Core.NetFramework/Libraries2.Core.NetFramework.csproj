@@ -88,13 +88,17 @@
     <Compile Include="Core\Misc\AsyncLazy.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
+    <Compile Include="Core\Storage\Logic\CrudBase.cs" />
+    <Compile Include="Core\Storage\Logic\CrdBase.cs" />
+    <Compile Include="Core\Storage\Logic\GroupedBase.cs" />
     <Compile Include="Core\Storage\Logic\MemoryGroupPersistance.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryGroupStorage.cs" />
     <Compile Include="Core\Storage\Logic\MemoryPersistance.cs" />
+    <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerableAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
+    <Compile Include="Core\Storage\Logic\PageEnvelopeEnumeratorAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
+    <Compile Include="Core\Storage\Logic\StorageHelper.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
-    <Compile Include="Core\Storage\Model\ICrdAll.cs" />
     <Compile Include="Core\Storage\Model\IGrouped.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
@@ -110,7 +114,6 @@
     <Compile Include="Core\Logging\Log.cs" />
     <Compile Include="Core\Logging\IFulcrumLogger.cs" />
     <Compile Include="Core\Logging\LogSeverityLevel.cs" />
-    <Compile Include="Core\Misc\Models\IDeepCopy.cs" />
     <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Context\TenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Model\ITenant.cs" />
@@ -132,13 +135,11 @@
     <Compile Include="Core\Queue\Model\IBaseQueue.cs" />
     <Compile Include="Core\Queue\Model\IReadableQueue.cs" />
     <Compile Include="Core\Queue\Model\IWritableQueue.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryStorage.cs" />
     <Compile Include="Core\Storage\Model\ICreate.cs" />
     <Compile Include="Core\Storage\Model\ICrud.cs" />
-    <Compile Include="Core\Storage\Model\ICrudAll.cs" />
     <Compile Include="Core\Storage\Model\IDelete.cs" />
     <Compile Include="Core\Storage\Model\IDeleteAll.cs" />
-    <Compile Include="Core\Storage\Model\INameProperty.cs" />
+    <Compile Include="Core\Storage\Model\INameable.cs" />
     <Compile Include="Core\Storage\Model\IOptimisticConcurrencyControlByETag.cs" />
     <Compile Include="Core\Storage\Model\IPageEnvelope.cs" />
     <Compile Include="Core\Storage\Model\IRead.cs" />
@@ -146,7 +147,7 @@
     <Compile Include="Core\Storage\Model\IRecommendedStorableItem.cs" />
     <Compile Include="Core\Storage\Model\IStorableAsByteArray.cs" />
     <Compile Include="Core\Storage\Model\IStorableByteArray.cs" />
-    <Compile Include="Core\Storage\Model\IStorableItem.cs" />
+    <Compile Include="Core\Storage\Model\IUniquelyIdentifiable.cs" />
     <Compile Include="Core\Storage\Model\ITimeStamped.cs" />
     <Compile Include="Core\Storage\Model\IUpdate.cs" />
     <Compile Include="Core\Storage\Model\PageEnvelope.cs" />
@@ -154,9 +155,6 @@
     <Compile Include="Core\Storage\Model\StorableAsByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableItem.cs" />
-    <Compile Include="Core\Storage\Test\IStorableItemForTesting.cs" />
-    <Compile Include="Core\Storage\Test\StorageTestCrud.cs" />
-    <Compile Include="Core\Storage\Test\TypeOfTestDataEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +163,9 @@
     <None Include="Xlent.Lever.Libraries2.Core.NetFramework.nuspec">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

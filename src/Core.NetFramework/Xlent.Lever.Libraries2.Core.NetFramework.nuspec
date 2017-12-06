@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.14.0</version>
+    <version>1.15.7-rc</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.15.7-rc Refactored Storage.
       1.14.0 Changed the generic parameters for PageEnvelope.
       1.13.1 Added convenience constructor for PageEnvelope.
       1.13.0 Added logic for dealing with PageEnvelope as an IEnumerator.

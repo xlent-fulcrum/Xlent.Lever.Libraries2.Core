@@ -3,9 +3,9 @@
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// Delete an item of type <see cref="IStorableItem{TId}"/>.
+    /// Delete an item of type <see cref="IUniquelyIdentifiable{TId}"/>.
     /// </summary>
-    /// <typeparam name="TId">The type for the <see cref="IStorableItem{TId}.Id"/> property.</typeparam>
+    /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
     public interface IDelete<in TId>
     {
         /// <summary>

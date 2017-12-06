@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// </summary>
     [Obsolete("Use PageEnvelope instead.", true)]
     public interface IPageEnvelope<TData, TId>
-        where TData : IStorableItem<TId>
+        where TData : IUniquelyIdentifiable<TId>
     {
         /// <summary>
         /// The data in this segment, this "page"

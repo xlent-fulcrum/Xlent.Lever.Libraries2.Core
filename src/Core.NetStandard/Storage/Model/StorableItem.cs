@@ -3,7 +3,7 @@
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// A convenience class that implements the recommended interfaces for a storable item, using a Guid as <see cref="IStorableItem{TId}.Id"/>.
+    /// A convenience class that implements the recommended interfaces for a storable item, using a Guid as <see cref="IUniquelyIdentifiable{TId}.Id"/>.
     /// </summary>
     public abstract class StorableItem : StorableItem<Guid>
     {
@@ -19,7 +19,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         public TId Id { get; set; }
 
         /// <inheritdoc />
-        public virtual string ETag { get; set; }
+        public virtual string Etag { get; set; }
 
         /// <inheritdoc />
         public abstract void Validate(string errorLocation, string propertyPath = "");

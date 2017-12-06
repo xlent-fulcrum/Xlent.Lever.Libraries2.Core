@@ -9,8 +9,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TGroup>
-        where TStorableItem : class, IStorableItem<TId>, IOptimisticConcurrencyControlByETag, IDeepCopy<TStorableItem>, IValidatable
+    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
+        where TStorableItem : class, IUniquelyIdentifiable<TId>, IOptimisticConcurrencyControlByETag, IValidatable
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
@@ -18,10 +18,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         protected static readonly Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
 
         /// <inheritdoc />
-        public async Task<TStorableItem> CreateAsync(TGroup groupValue, TStorableItem item)
+        public async Task<TId> CreateAsync(TGroup groupValue, TStorableItem item)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAsync(item);
+        }
+
+        /// <inheritdoc />
+        public async Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.CreateAndReturnAsync(item);
         }
 
         /// <inheritdoc />
@@ -29,6 +36,20 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAllAsync(offset);
+        }
+
+        /// <inheritdoc />
+        public async Task<TStorableItem> ReadAsync(TId id, TGroup groupValue)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.ReadAsync(id);
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(TId id, TGroup groupValue)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            await groupPersistance.DeleteAsync(id);
         }
 
         /// <inheritdoc />

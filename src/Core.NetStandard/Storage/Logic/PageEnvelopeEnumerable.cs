@@ -13,12 +13,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         private readonly PageEnvelopeEnumerator<T> _enumerator;
 
         /// <summary>
-        /// Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethod"/> method.
+        /// Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethodDelegate"/> method.
         /// </summary>
-        /// <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerable(PageEnvelopeEnumerator<T>.ReadMethod readMethod)
+        /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
+        public PageEnvelopeEnumerable(PageEnvelopeEnumerator<T>.ReadMethodDelegate readMethodDelegate)
         {
-            _enumerator = new PageEnvelopeEnumerator<T>(readMethod);
+            _enumerator = new PageEnvelopeEnumerator<T>(readMethodDelegate);
         }
 
         /// <inheritdoc />

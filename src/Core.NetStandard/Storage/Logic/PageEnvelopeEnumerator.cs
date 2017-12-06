@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="T">The type for the items that are returned in the PageEnvelope.</typeparam>
     public class PageEnvelopeEnumerator<T> : IEnumerator<T>
     {
-        private readonly ReadMethod _readMethod;
+        private readonly ReadMethodDelegate _readMethodDelegate;
         private PageEnvelope<T> _currentPageEnvelope;
         private int? _currentOffset;
         private IEnumerator<T> _dataEnumerator;
@@ -20,15 +20,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// How to get new page envelopes when required.
         /// </summary>
         /// <param name="offset"></param>
-        public delegate PageEnvelope<T> ReadMethod(int offset);
+        public delegate PageEnvelope<T> ReadMethodDelegate(int offset);
 
         /// <summary>
-        /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethod"/> method.
+        /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegate"/> method.
         /// </summary>
-        /// <param name="readMethod">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerator(ReadMethod readMethod)
+        /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
+        public PageEnvelopeEnumerator(ReadMethodDelegate readMethodDelegate)
         {
-            _readMethod = readMethod;
+            _readMethodDelegate = readMethodDelegate;
         }
 
         /// <inheritdoc />
@@ -57,7 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         private bool ReadAndMoveNext(int offset)
         {
-            _currentPageEnvelope = _readMethod(offset);
+            _currentPageEnvelope = _readMethodDelegate(offset);
             if (_currentPageEnvelope?.PageInfo == null || _currentPageEnvelope.Data == null || _currentPageEnvelope.PageInfo.Returned == 0)
             {
                 _endOfData = true;
