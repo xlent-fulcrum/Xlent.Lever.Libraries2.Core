@@ -5,6 +5,7 @@ namespace Xlent.Lever.Libraries2.Core.Platform.Authentication
     /// <summary>
     /// An interface for a JWT token and some metadata for that token
     /// </summary>
+    [Obsolete("Use AuthenticationToken.")]
     public interface IAuthenticationToken
     {
 
