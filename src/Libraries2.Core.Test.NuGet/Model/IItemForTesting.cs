@@ -1,6 +1,4 @@
-﻿using Xlent.Lever.Libraries2.Core.Misc.Models;
-
-namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
+﻿namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {
     /// <summary>
     /// Methods needed for automatic testing of persistant storage implementations.

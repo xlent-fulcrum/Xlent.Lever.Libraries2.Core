@@ -28,5 +28,27 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IUniquelyIdentifiable{TId}"/>
         Task<TItem> CreateAndReturnAsync(TItem item);
+
+        /// <summary>
+        /// Same as <see cref="CreateAsync(TItem)"/>, but you can specify the new id.
+        /// </summary>
+        /// <param name="id">The id to use for the new item.</param>
+        /// <param name="item">The item to create in storage.</param>
+        /// <returns>The newly created item.</returns>
+        Task CreateWithSpecifiedIdAsync(TId id, TItem item);
+
+        /// <summary>
+        /// Same as <see cref="CreateAndReturnAsync(TItem)"/>, but you can specify the new id.
+        /// </summary>
+        /// <param name="id">The id to use for the new item.</param>
+        /// <param name="item">The item to store.</param>
+        /// <returns>The new item as it was saved, see remarks below.</returns>
+        /// <remarks>
+        /// If the returned type implements <see cref="IUniquelyIdentifiable{TId}"/>, then the <see cref="IUniquelyIdentifiable{TId}.Id"/> is updated with the new id. 
+        /// If it implements <see cref="IOptimisticConcurrencyControlByETag"/>, then the <see cref="IOptimisticConcurrencyControlByETag.Etag"/> is updated..
+        /// </remarks>
+        /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
+        /// <seealso cref="IUniquelyIdentifiable{TId}"/>
+        Task<TItem> CreateWithSpecifiedIdAndReturnAsync(TId id, TItem item);
     }
 }

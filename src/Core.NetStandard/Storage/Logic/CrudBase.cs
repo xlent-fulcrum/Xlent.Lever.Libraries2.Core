@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -17,6 +18,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public virtual async Task<TItem> UpdateAndReturnAsync(TId id, TItem item)
         {
+            InternalContract.RequireNotNull(item, nameof(item));
+            MaybeValidate(item);
             await UpdateAsync(id, item);
             return await ReadAsync(id);
         }

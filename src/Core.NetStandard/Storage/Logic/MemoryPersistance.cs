@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Misc;
-using Xlent.Lever.Libraries2.Core.Misc.Models;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -19,10 +17,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             where TItem : class
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
-        // ReSharper disable once StaticMemberInGenericType
-        private static int _nextInteger = 1;
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly object LockObject = new object();
         private readonly Dictionary<TId, TItem> _memoryItems = new Dictionary<TId, TItem>();
 
         /// <inheritdoc />
@@ -35,13 +29,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             return id;
         }
 
-        /// <summary>
-        /// Same as <see cref="CreateAsync(TItem)"/>, but you can specify the new id.
-        /// </summary>
-        /// <param name="id">The id to use for the new item.</param>
-        /// <param name="item">The item to create in storage.</param>
-        /// <returns>The newly created item.</returns>
-        public async Task CreateWithSpecifiedIdAsync(TId id, TItem item)
+        /// <inheritdoc />
+        public override async Task CreateWithSpecifiedIdAsync(TId id, TItem item)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Queue.Logic;
 using Xlent.Lever.Libraries2.Core.Queue.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet;

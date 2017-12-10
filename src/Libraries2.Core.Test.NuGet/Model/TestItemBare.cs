@@ -1,6 +1,4 @@
 ﻿using System;
-using Xlent.Lever.Libraries2.Core.Misc.Models;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {

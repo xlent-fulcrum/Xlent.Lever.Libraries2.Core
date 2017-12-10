@@ -14,14 +14,36 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     public abstract class CrdBase<TItem, TId> : ICrd<TItem, TId>
     {
         /// <inheritdoc />
-        public abstract Task<TId> CreateAsync(TItem item);
+        public virtual async Task<TId> CreateAsync(TItem item)
+        {
+            InternalContract.RequireNotNull(item, nameof(item));
+            MaybeValidate(item);
+            var id = StorageHelper.CreateNewId<TId>();
+            await CreateWithSpecifiedIdAsync(id, item);
+            return id;
+        }
 
         /// <inheritdoc />
         public virtual async Task<TItem> CreateAndReturnAsync(TItem item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
-            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+            MaybeValidate(item);
             var id = await CreateAsync(item);
+            return await ReadAsync(id);
+        }
+
+        /// <inheritdoc />
+        public virtual Task CreateWithSpecifiedIdAsync(TId id, TItem item)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public async Task<TItem> CreateWithSpecifiedIdAndReturnAsync(TId id, TItem item)
+        {
+            InternalContract.RequireNotNull(item, nameof(item));
+            MaybeValidate(item);
+            await CreateWithSpecifiedIdAsync(id, item);
             return await ReadAsync(id);
         }
 
@@ -52,6 +74,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 taskList.Add(DeleteAsync(identifiable.Id));
             }
             await Task.WhenAll(taskList);
+        }
+
+        /// <summary>
+        /// If <paramref name="item"/> implmenents <see cref="IValidatable"/>, then it is validated.
+        /// </summary>
+        protected static void MaybeValidate(TItem item)
+        {
+            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
         }
     }
 }
