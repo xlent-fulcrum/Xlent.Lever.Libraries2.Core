@@ -20,11 +20,13 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         public async Task Update_Read_Etag_Async()
         {
             var id = await CreateItemAsync(TypeOfTestDataEnum.Variant1);
-            var updatedItem = await UpdateItemAsync(id, TypeOfTestDataEnum.Variant2);
+            var updateItem = await UpdateItemAsync(id, TypeOfTestDataEnum.Variant2);
             var readItem = await ReadItemAsync(id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(updatedItem, readItem);
-            updatedItem.RecordUpdatedAt = readItem.RecordUpdatedAt;
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(updatedItem, readItem);
+            if (!updateItem.Equals(readItem))
+            {
+                updateItem.RecordUpdatedAt = readItem.RecordUpdatedAt;
+            }
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(updateItem, readItem);
         }
     }
 }
