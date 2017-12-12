@@ -24,10 +24,24 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
+        public async Task CreateWithSpecifiedIdAsync(TGroup groupValue, TId id, TStorableItem item)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            await groupPersistance.CreateWithSpecifiedIdAsync(id, item);
+        }
+
+        /// <inheritdoc />
         public async Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAndReturnAsync(item);
+        }
+
+        /// <inheritdoc />
+        public async Task<TStorableItem> CreateWithSpecifiedIdAndReturnAsync(TGroup groupValue, TId id, TStorableItem item)
+        {
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.CreateWithSpecifiedIdAndReturnAsync(id, item);
         }
 
         /// <inheritdoc />
@@ -38,14 +52,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<TStorableItem> ReadAsync(TId id, TGroup groupValue)
+        public async Task<TStorableItem> ReadAsync(TGroup groupValue, TId id)
         {
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAsync(id);
         }
 
         /// <inheritdoc />
-        public async Task DeleteAsync(TId id, TGroup groupValue)
+        public async Task DeleteAsync(TGroup groupValue, TId id)
         {
             var groupPersistance = GetStorage(groupValue);
             await groupPersistance.DeleteAsync(id);

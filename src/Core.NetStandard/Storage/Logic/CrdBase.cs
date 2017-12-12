@@ -35,10 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public virtual Task CreateWithSpecifiedIdAsync(TId id, TItem item)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract Task CreateWithSpecifiedIdAsync(TId id, TItem item);
 
         /// <inheritdoc />
         public async Task<TItem> CreateWithSpecifiedIdAndReturnAsync(TId id, TItem item)
@@ -83,29 +80,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         protected static void MaybeValidate(TItem item)
         {
-            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
-        }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
-        /// then the old value is read using <see cref="ReadAsync"/> and the values are verified to be equal.
-        /// The Etag of the item is then set to a new value.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        protected async Task MaybeVerifyEtagForUpdateAsync(TId id, TItem item)
-        {
-            if (item is IOptimisticConcurrencyControlByETag etaggable)
-            {
-                var oldItem = await ReadAsync(id);
-                if (oldItem != null)
-                {
-                    var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;
-                    if (oldEtag?.ToLowerInvariant() != etaggable.Etag?.ToLowerInvariant())
-                        throw new FulcrumConflictException($"The updated item ({item}) had an old ETag value.");
-                }
-            }
+            StorageHelper.MaybeValidate(item);
         }
 
         /// <summary>
@@ -114,7 +89,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         protected static void MaybeCreateNewEtag(TItem item)
         {
-            if (item is IOptimisticConcurrencyControlByETag eTaggable) eTaggable.Etag = Guid.NewGuid().ToString();
+            StorageHelper.MaybeCreateNewEtag(item);
         }
 
         /// <summary>
@@ -123,7 +98,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         protected static void MaybeSetId(TId id, TItem item)
         {
-            if (item is IUniquelyIdentifiable<TId> identifiable) identifiable.Id = id;
+            StorageHelper.MaybeSetId(id, item);
         }
 
         /// <summary>
@@ -137,10 +112,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <see cref="DateTimeOffset.Now"/> will be used.</param>
         protected static void MaybeUpdateTimeStamps(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
         {
-            if (!(item is ITimeStamped timeStamped)) return;
-            timeStamp = timeStamp ?? DateTimeOffset.Now;
-            timeStamped.RecordUpdatedAt = timeStamp.Value;
-            if (updateCreatedToo) timeStamped.RecordCreatedAt = timeStamp.Value;
+           StorageHelper. MaybeUpdateTimeStamps(item, updateCreatedToo, timeStamp);
         }
     }
 }
