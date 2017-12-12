@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -77,11 +79,68 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <summary>
-        /// If <paramref name="item"/> implmenents <see cref="IValidatable"/>, then it is validated.
+        /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
         protected static void MaybeValidate(TItem item)
         {
             if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+        }
+
+        /// <summary>
+        /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
+        /// then the old value is read using <see cref="ReadAsync"/> and the values are verified to be equal.
+        /// The Etag of the item is then set to a new value.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        protected async Task MaybeVerifyEtagForUpdateAsync(TId id, TItem item)
+        {
+            if (item is IOptimisticConcurrencyControlByETag etaggable)
+            {
+                var oldItem = await ReadAsync(id);
+                if (oldItem != null)
+                {
+                    var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;
+                    if (oldEtag?.ToLowerInvariant() != etaggable.Etag?.ToLowerInvariant())
+                        throw new FulcrumConflictException($"The updated item ({item}) had an old ETag value.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
+        /// then the Etag of the item is set to a new value.
+        /// </summary>
+        protected static void MaybeCreateNewEtag(TItem item)
+        {
+            if (item is IOptimisticConcurrencyControlByETag eTaggable) eTaggable.Etag = Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// If <paramref name="item"/> implements <see cref="IUniquelyIdentifiable{TId}"/>
+        /// then the Id of the item is set.
+        /// </summary>
+        protected static void MaybeSetId(TId id, TItem item)
+        {
+            if (item is IUniquelyIdentifiable<TId> identifiable) identifiable.Id = id;
+        }
+
+        /// <summary>
+        /// If <paramref name="item"/> implements <see cref="ITimeStamped"/>
+        /// then the <see cref="ITimeStamped.RecordUpdatedAt"/> is set. If <paramref name="updateCreatedToo"/> is true, 
+        /// then the <see cref="ITimeStamped.RecordCreatedAt"/> is also set.
+        /// </summary>
+        /// <param name="item">The item that will be affected.</param>
+        /// <param name="updateCreatedToo">True means that we should update the create property too.</param>
+        /// <param name="timeStamp">Optional time stamp to use when setting the time properties. If null, then 
+        /// <see cref="DateTimeOffset.Now"/> will be used.</param>
+        protected static void MaybeUpdateTimeStamps(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
+        {
+            if (!(item is ITimeStamped timeStamped)) return;
+            timeStamp = timeStamp ?? DateTimeOffset.Now;
+            timeStamped.RecordUpdatedAt = timeStamp.Value;
+            if (updateCreatedToo) timeStamped.RecordCreatedAt = timeStamp.Value;
         }
     }
 }

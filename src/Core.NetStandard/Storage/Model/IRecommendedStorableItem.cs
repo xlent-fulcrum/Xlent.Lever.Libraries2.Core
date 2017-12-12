@@ -3,7 +3,6 @@ using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
-
     /// <summary>
     /// The recommended interfaces for a storable item. Uses a <see cref="Guid"/> as the <see cref="IUniquelyIdentifiable{TId}.Id"/>.
     /// </summary>

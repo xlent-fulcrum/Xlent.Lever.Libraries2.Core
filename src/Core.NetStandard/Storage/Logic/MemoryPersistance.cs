@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public override async Task<TId> CreateAsync(TItem item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
-            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+            MaybeValidate(item);
             var id = StorageHelper.CreateNewId<TId>();
             await CreateWithSpecifiedIdAsync(id, item);
             return id;
@@ -34,17 +34,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
-            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+            MaybeValidate(item);
 
             var itemCopy = CopyItem(item);
-            var eTaggable = itemCopy as IOptimisticConcurrencyControlByETag;
-            var identifiable = itemCopy as IUniquelyIdentifiable<TId>;
 
-            if (eTaggable != null) eTaggable.Etag = Guid.NewGuid().ToString();
-            if (identifiable!= null) identifiable.Id = id;
+            MaybeCreateNewEtag(itemCopy);
+            MaybeUpdateTimeStamps(itemCopy, true);
             lock (_memoryItems)
             {
                 ValidateNotExists(id);
+                MaybeSetId(id, itemCopy);
                 _memoryItems.Add(id, itemCopy);
             }
             await Task.Yield();
@@ -67,18 +66,18 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
-            if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
+            MaybeValidate(item);
+
+            await MaybeVerifyEtagForUpdateAsync(id, item);
+            var itemCopy = CopyItem(item);
+            MaybeUpdateTimeStamps(itemCopy, false);
+            MaybeCreateNewEtag(itemCopy);
 
             lock (_memoryItems)
             {
                 ValidateExists(id);
-                var current = GetMemoryItem(id);
-                ValidateEtag(id, current, item);
-                var itemCopy = CopyItem(item);
-                if (itemCopy is IOptimisticConcurrencyControlByETag copyAsTaggable) copyAsTaggable.Etag = Guid.NewGuid().ToString();
                 SetMemoryItem(id, itemCopy);
             }
-            await Task.Yield();
         }
 
         /// <inheritdoc />
@@ -135,15 +134,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             if (_memoryItems.ContainsKey(id)) return;
             throw new FulcrumNotFoundException(
                 $"Could not find an item of type {typeof(TItem).Name} with id {id}.");
-        }
-
-        private void ValidateEtag(TId id, TItem current, TItem item)
-        {
-            if (!(current is IOptimisticConcurrencyControlByETag currentWithEtag) || !(item is IOptimisticConcurrencyControlByETag itemWithEtag)) return;
-
-            if (string.Equals(currentWithEtag.Etag, itemWithEtag.Etag, StringComparison.OrdinalIgnoreCase)) return;
-            throw new FulcrumConflictException(
-                $"The item of type {typeof(TItem).Name} with id {id} has been updated by someone else. Please get a fresh copy and try again.");
         }
 
         private static TItem CopyItem(TItem source)

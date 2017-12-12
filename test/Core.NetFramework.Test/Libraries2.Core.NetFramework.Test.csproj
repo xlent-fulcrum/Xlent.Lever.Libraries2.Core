@@ -51,6 +51,7 @@
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsEtag - Copy.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsValidated.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsEtag.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsBare.cs" />

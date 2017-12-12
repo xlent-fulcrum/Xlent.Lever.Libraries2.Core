@@ -4,7 +4,7 @@
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {
     /// <summary>
-    /// A minimal storable item to be used in testing
+    /// A minimal storable item that implements <see cref="IOptimisticConcurrencyControlByETag"/> to be used in testing
     /// </summary>
     public partial class TestItemEtag : TestItemBare, IOptimisticConcurrencyControlByETag
     {

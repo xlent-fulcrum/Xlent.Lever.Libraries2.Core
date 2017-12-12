@@ -48,14 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\TestItemTimeStamped.cs" />
     <Compile Include="Model\TestItemValidated.cs" />
     <Compile Include="Model\TestItemEtag.cs" />
     <Compile Include="Model\TestItemId.cs" />
     <Compile Include="Model\TestItemBare.cs" />
+    <Compile Include="TestICrdTimeStamped.cs" />
     <Compile Include="TestICrdValidated.cs" />
     <Compile Include="TestICrdBase.cs" />
     <Compile Include="TestICrdId.cs" />
     <Compile Include="TestICrdBare.cs" />
+    <Compile Include="TestICrudTimeStamped.cs" />
     <Compile Include="TestICrudId.cs" />
     <Compile Include="TestICrudValidated.cs" />
     <Compile Include="TestICrudEtag.cs" />

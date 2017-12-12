@@ -3,7 +3,7 @@
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {
     /// <summary>
-    /// A minimal storable item to be used in testing
+    /// A minimal storable item that implments <see cref="IValidatable"/> to be used in testing
     /// </summary>
     public class TestItemValidated : TestItemBare, IValidatable
     {
