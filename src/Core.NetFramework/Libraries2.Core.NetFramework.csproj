@@ -80,6 +80,11 @@
     <Compile Include="Core\Error\Logic\FulcrumServiceContractException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumTryAgainException.cs" />
     <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
+    <Compile Include="Core\Health\Logic\ResourceHealthAggregator2.cs" />
+    <Compile Include="Core\Health\Model\Health.cs" />
+    <Compile Include="Core\Health\Model\HealthDependency.cs" />
+    <Compile Include="Core\Health\Model\HealthInfo.cs" />
+    <Compile Include="Core\Health\Model\IResourceHealth2.cs" />
     <Compile Include="Core\Logging\LoggableExtensions.cs" />
     <Compile Include="Core\Logging\IFulcrumFullLogger.cs" />
     <Compile Include="Core\Logging\ILoggable.cs" />
