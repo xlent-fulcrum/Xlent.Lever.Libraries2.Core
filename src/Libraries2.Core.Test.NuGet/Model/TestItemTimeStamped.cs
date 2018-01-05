@@ -5,9 +5,9 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {
     /// <summary>
-    /// A minimal storable item that implements <see cref="ITimeStamped"/> to be used in testing
+    /// A uniquely identifiable item that implements <see cref="ITimeStamped"/> to be used in testing
     /// </summary>
-    public partial class TestItemTimestamped : TestItemBare, ITimeStamped
+    public partial class TestItemTimestamped<TId> : TestItemId<TId>, ITimeStamped
     {
         /// <inheritdoc />
         public DateTimeOffset RecordCreatedAt { get; set; }
@@ -17,12 +17,12 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
     }
 
     #region override object
-    public partial class TestItemTimestamped
+    public partial class TestItemTimestamped<TId>
     {
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is TestItemTimestamped o)) return false;
+            if (!(obj is TestItemTimestamped<TId> o)) return false;
             if (!base.Equals(obj)) return false;
             return RecordCreatedAt.Equals(o.RecordCreatedAt) && RecordUpdatedAt.Equals(o.RecordUpdatedAt);
         }

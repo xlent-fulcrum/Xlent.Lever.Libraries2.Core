@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     [TestClass]
     public abstract class TestICrudValidated<TId> : TestICrdValidated<TId>
     {
-        protected override ICrd<TestItemValidated, TId> CrdStorage => CrudStorage;
+        protected override ICrd<TestItemValidated<TId>, TId> CrdStorage => CrudStorage;
 
         /// <summary>
         /// Try to create an item that is not valid.
@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var id = await CreateItemAsync(TypeOfTestDataEnum.Default);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), id);
-            var updatedItem = new TestItemValidated();
+            var updatedItem = new TestItemValidated<TId>();
             updatedItem.InitializeWithDataForTesting(TypeOfTestDataEnum.ValidationFail);
             await CrudStorage.UpdateAsync(id, updatedItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected the method {nameof(CrudStorage.UpdateAsync)} to detect that the data was not valid and throw the exception {nameof(FulcrumContractException)}.");

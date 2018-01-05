@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     [TestClass]
     public abstract class TestICrudEtag<TId> : TestICrdEtag<TId>
     {
-        protected override ICrd<TestItemEtag, TId> CrdStorage => CrudStorage;
+        protected override ICrd<TestItemEtag<TId>, TId> CrdStorage => CrudStorage;
 
         /// <summary>
         /// Create an item with an id.

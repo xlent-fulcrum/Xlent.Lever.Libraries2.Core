@@ -10,14 +10,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class MemoryCrudTestsEtag : TestICrudEtag<Guid>
     {
-        private MemoryPersistance<TestItemEtag, Guid> _storage;
+        private MemoryPersistance<TestItemEtag<Guid>, Guid> _storage;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryPersistance<TestItemEtag, Guid>();
+            _storage = new MemoryPersistance<TestItemEtag<Guid>, Guid>();
         }
 
-        protected override ICrud<TestItemEtag, Guid> CrudStorage => _storage;
+        protected override ICrud<TestItemEtag<Guid>, Guid> CrudStorage => _storage;
     }
 }

@@ -4,21 +4,21 @@
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
 {
     /// <summary>
-    /// A minimal storable item that implements <see cref="IOptimisticConcurrencyControlByETag"/> to be used in testing
+    /// A  uniquely identifiable item that implements <see cref="IOptimisticConcurrencyControlByETag"/> to be used in testing
     /// </summary>
-    public partial class TestItemEtag : TestItemBare, IOptimisticConcurrencyControlByETag
+    public partial class TestItemEtag<TId> : TestItemId<TId>, IOptimisticConcurrencyControlByETag
     {
         /// <inheritdoc />
         public string Etag { get; set; }
     }
 
     #region override object
-    public partial class TestItemEtag
+    public partial class TestItemEtag<TId>
     {
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (!(obj is TestItemEtag o)) return false;
+            if (!(obj is TestItemEtag<TId> o)) return false;
             return Etag.Equals(o.Etag) && base.Equals(obj);
         }
     }
