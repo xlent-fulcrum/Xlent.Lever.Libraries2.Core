@@ -15,6 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Health.Model
         {
             Name = name;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,12 +24,12 @@ namespace Xlent.Lever.Libraries2.Core.Health.Model
         /// <summary>
         /// Timestamp of the healthresponse
         /// </summary>
-        public DateTimeOffset Timestamp { get; set; }
+        public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.Now;
 
         /// <summary>
         /// The healthresponse of the sevices subresources
         /// </summary>
-        public List<HealthInfo> Resources { get; set; }
+        public List<HealthInfo> Resources { get; } = new List<HealthInfo>();
 
     }
 }
