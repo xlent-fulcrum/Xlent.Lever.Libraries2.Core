@@ -62,7 +62,7 @@ namespace Xlent.Lever.Libraries2.Core.Health
     {
         public const string Name = "GOOMBA";
 
-        public Task<HealthInfo> GetResourceHealthAsync(ITenant tenant)
+        public Task<HealthInfo> GetResourceHealth2Async(ITenant tenant)
         {
             return Task.FromResult(new HealthInfo
             {

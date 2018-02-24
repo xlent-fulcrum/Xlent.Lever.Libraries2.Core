@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.18.0</version>
+    <version>1.18.1</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.18.0 Fixes in ServiceMetas and Health
+      1.18.1 Fixes in ServiceMetas and Health
       1.17.1 Fix in Health (initialize Resources list)
       1.17.0 Added model for ReleaseNotes
       1.16.1 Added new classes for ServiceHealth

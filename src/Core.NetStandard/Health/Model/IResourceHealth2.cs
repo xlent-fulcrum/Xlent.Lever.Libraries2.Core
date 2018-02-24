@@ -11,6 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Health.Model
         /// <summary>
         /// Get the health status for a specific <paramref name="tenant"/>.
         /// </summary>
-        Task<HealthInfo> GetResourceHealthAsync(ITenant tenant);
+        Task<HealthInfo> GetResourceHealth2Async(ITenant tenant);
     }
 }

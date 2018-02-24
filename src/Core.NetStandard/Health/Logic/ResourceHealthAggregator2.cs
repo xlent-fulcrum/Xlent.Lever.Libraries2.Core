@@ -45,7 +45,7 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         /// <param name="resource">A resource that we want to get the health for and add it to the aggregated health.</param>
         public async Task AddResourceHealthAsync(string resourceName, IResourceHealth2 resource)
         {
-            await AddResourceHealthAsync(resourceName, resource.GetResourceHealthAsync);
+            await AddResourceHealthAsync(resourceName, resource.GetResourceHealth2Async);
         }
 
         /// <summary>
