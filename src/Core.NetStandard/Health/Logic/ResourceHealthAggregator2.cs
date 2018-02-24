@@ -14,9 +14,10 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         /// The current Tenant
         /// </summary>
         public ITenant Tenant { get; }
+
+        private readonly Model.Health _health;
         private int _warnings;
         private int _errors;
-        private readonly Model.Health _health;
         private string _lastErrorMessage;
         private string _lastWarningMessage;
 
@@ -27,14 +28,14 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         public delegate Task<HealthInfo> GetResourceHealthDelegate(ITenant tenant);
 
         /// <summary>
-        /// Constructor.
+        /// Create ResourceHealthAggregator2 with an <see cref="ITenant"/> and the name of the service
         /// </summary>
         /// <param name="tenant">The tenant that we should focus on.</param>
-        /// <param name="resourceName">The name of the resource.</param>
-        public ResourceHealthAggregator2(ITenant tenant, string resourceName)
+        /// <param name="serviceName">The name of the resource.</param>
+        public ResourceHealthAggregator2(ITenant tenant, string serviceName)
         {
             Tenant = tenant;
-            _health = new Model.Health(resourceName);
+            _health = new Model.Health(serviceName);
         }
 
         /// <summary>
@@ -97,6 +98,21 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         /// <returns></returns>
         public Model.Health GetAggregatedHealthResponse()
         {
+            if (_errors > 0)
+            {
+                _health.Status = HealthInfo.StatusEnum.Error;
+                _health.Message = _errors == 1 ? _lastErrorMessage : $"Found {_errors} errors and {_warnings} warnings.";
+            }
+            else if (_warnings > 0)
+            {
+                _health.Status = HealthInfo.StatusEnum.Warning;
+                _health.Message = _errors == 1 ? _lastWarningMessage : $"Found {_warnings} warnings.";
+            }
+            else
+            {
+                _health.Status = HealthInfo.StatusEnum.Ok;
+                _health.Message = "OK";
+            }
             return _health;
         }
     }

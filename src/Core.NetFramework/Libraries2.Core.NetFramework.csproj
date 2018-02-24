@@ -82,7 +82,6 @@
     <Compile Include="Core\Error\Logic\FulcrumUnauthorizedException.cs" />
     <Compile Include="Core\Health\Logic\ResourceHealthAggregator2.cs" />
     <Compile Include="Core\Health\Model\Health.cs" />
-    <Compile Include="Core\Health\Model\HealthDependency.cs" />
     <Compile Include="Core\Health\Model\HealthInfo.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth2.cs" />
     <Compile Include="Core\Logging\LoggableExtensions.cs" />
@@ -94,6 +93,8 @@
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
+    <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
+    <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
     <Compile Include="Core\Storage\Logic\CrudBase.cs" />
     <Compile Include="Core\Storage\Logic\CrdBase.cs" />
     <Compile Include="Core\Storage\Logic\GroupedBase.cs" />
