@@ -48,7 +48,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
-        /// Recommended <see cref="IFulcrumFullLogger"/> for developing an application. For testenvironments and production, we recommend the Xlent.Lever.Logger capability.
+        /// Recommended <see cref="IFulcrumFullLogger"/> for unit testing.
         /// </summary>
         public static IFulcrumFullLogger RecommendedForUnitTest { get; } = ConsoleLogger;
 
@@ -122,7 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                Task.Run(() => LogQueue.AddMessageAsync(logInstanceInformation))
+                Task.Run(async () => await LogQueue.AddMessageAsync(logInstanceInformation))
                     .Wait();
             }
         }
