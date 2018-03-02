@@ -47,8 +47,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             UT.Assert.IsFalse(RecursiveLogger.HasFailed, RecursiveLogger.Message);
         }
 
+        // This test was supposed to verify that the logs run in parallel. We have removed that capability as long as the memory queue can't be run in parallel.
+        [Ignore]
         [TestMethod]
-        public void ManySlowLogs()
+        public void VerifyThatSlowLogsRunInParallelAreFast()
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
