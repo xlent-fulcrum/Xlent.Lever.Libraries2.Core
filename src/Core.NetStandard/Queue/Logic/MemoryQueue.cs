@@ -35,6 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     {
         private readonly ConcurrentQueue<MessageWithActivationTime<T>> _queue;
         private readonly FailSafeQueueItemActionDelegate _failSafeQueueItemAction;
+        private readonly bool _actionsCanExecuteInParallel;
         private bool _hasBackgroundWorker;
 
         /// <summary>
@@ -47,19 +48,30 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        public MemoryQueue(string name)
+        public MemoryQueue(string name) : this(name, null, false)
         {
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
-            Name = name;
-            _queue = new ConcurrentQueue<MessageWithActivationTime<T>>();
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public MemoryQueue(string name, FailSafeQueueItemActionDelegate failSafeQueueItemAction) : this(name)
+        public MemoryQueue(string name, FailSafeQueueItemActionDelegate failSafeQueueItemAction) : this(name, failSafeQueueItemAction, false)
         {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>If <paramref name="actionsCanExecuteInParallel"/> is true, then you guarantee that it is possible to run many <paramref name="failSafeQueueItemAction"/> in parallel without interference.
+        /// This will mean that the actions are run in parallel and the processing of the queue is faster.
+        /// </remarks>
+        public MemoryQueue(string name, FailSafeQueueItemActionDelegate failSafeQueueItemAction, bool actionsCanExecuteInParallel)
+        {
+            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            Name = name;
+            _queue = new ConcurrentQueue<MessageWithActivationTime<T>>();
             _failSafeQueueItemAction = failSafeQueueItemAction;
+            _actionsCanExecuteInParallel = actionsCanExecuteInParallel;
         }
 
         /// <summary>
@@ -165,6 +177,12 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
                 }
                 else
                 {
+                    if (!_actionsCanExecuteInParallel)
+                    {
+                        // We need to await earlier actions before we can start the next action
+                        await Task.WhenAll(taskList);
+                        taskList.Clear();
+                    }
                     var task = _failSafeQueueItemAction(message);
                     taskList.Add(task);
                 }
