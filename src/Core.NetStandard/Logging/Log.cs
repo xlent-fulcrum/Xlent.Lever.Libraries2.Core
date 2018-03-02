@@ -118,7 +118,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
             if (_loggingInProgress)
             {
-                FallbackToSimpleLoggingFailSafe("Recursive logging was interrupted.", logInstanceInformation);
+
+                var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
+                FallbackToSimpleLoggingFailSafe(abortMessage, logInstanceInformation);
             }
             else
             {
@@ -179,7 +181,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
-                    Tenant = logInstanceInformation.ClientTenant,
+                    Tenant = logInstanceInformation.ClientTenant ?? logInstanceInformation.ApplicationTenant,
                     CallingClientName = logInstanceInformation.ClientName
                 };
                 // ReSharper disable once ObjectCreationAsStatement
