@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -15,8 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     {
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
-        [ThreadStatic]
-        private static bool _loggingInProgress;
+        private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> {Value = false};
         private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 FulcrumAssert.IsTrue(FulcrumApplication.IsInDevelopment, null,
                     "This property must only be used in unit tests.");
-                return _loggingInProgress;
+                return LoggingInProgress.Value;
             }
         }
 
@@ -116,7 +116,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
             var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
-            if (_loggingInProgress)
+            if (LoggingInProgress.Value)
             {
 
                 var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
@@ -124,7 +124,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                Task.Run(async () => await LogQueue.AddMessageAsync(logInstanceInformation))
+                Task.Run(async () => await LogQueue.AddMessageAsync(logInstanceInformation).ConfigureAwait(false))
                     .Wait();
             }
         }
@@ -206,11 +206,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 if (FulcrumApplication.Setup.FullLogger != null)
                 {
-                    _loggingInProgress = true;
+                    LoggingInProgress.Value = true;
                     await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
                 }
                 else
                 {
+                    // TODO: Set _loggingInProgress.Value to false
 #pragma warning disable CS0618 // Type or member is obsolete
                     FulcrumApplication.Setup.Logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -227,7 +228,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             finally
             {
-                _loggingInProgress = false;
+                LoggingInProgress.Value = false;
             }
         }
 

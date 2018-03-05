@@ -25,10 +25,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         private readonly List<string> _stackTraces;
         private readonly int _callDepth;
 
-        [ThreadStatic]
-        private static int _threadCallDepth;
-        [ThreadStatic]
-        private static List<string> _threadStackTraces;
+        private static readonly AsyncLocal<int> ThreadCallDepth = new AsyncLocal<int> {Value = 0};
+        private static readonly AsyncLocal<List<string>> ThreadStackTraces = new AsyncLocal<List<string>> {Value = null};
 
         private static readonly object ClassLock = new object();
 
@@ -37,12 +35,12 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         {
             lock (ClassLock)
             {
-                _callDepth = _threadCallDepth;
+                _callDepth = ThreadCallDepth.Value;
                 _stackTraces = new List<string>
                 {
                     Environment.StackTrace
                 };
-                if (_threadStackTraces != null) _stackTraces.AddRange(_threadStackTraces);
+                if (ThreadStackTraces.Value != null) _stackTraces.AddRange(ThreadStackTraces.Value);
             }
             var tenantProvider = new TenantConfigurationValueProvider();
             _clientTenant = tenantProvider.Tenant;
@@ -61,8 +59,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
                 action(cancellationToken);
                 lock (ClassLock)
                 {
-                    if (_threadStackTraces.Count != 0) _threadStackTraces.RemoveAt(_threadStackTraces.Count - 1);
-                    _threadCallDepth--;
+                    if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
+                    ThreadCallDepth.Value--;
                 }
             }
             catch (Exception e)
@@ -97,10 +95,10 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             };
             lock (ClassLock)
             {
-                _threadStackTraces = _stackTraces;
-                _threadCallDepth = _callDepth + 1;
+                ThreadStackTraces.Value = _stackTraces;
+                ThreadCallDepth.Value = _callDepth + 1;
             }
-            FulcrumAssert.IsLessThan(MaxDepthForBackgroundThreads, _threadCallDepth, null, "Too deep nesting of background jobs.");
+            FulcrumAssert.IsLessThan(MaxDepthForBackgroundThreads, ThreadCallDepth.Value, null, "Too deep nesting of background jobs.");
         }
 
         /// <inheritdoc />
@@ -109,8 +107,8 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             var message = $"Client: {_callingClientName} {_clientTenant} CorrelationId: {_correlationId}";
             lock (ClassLock)
             {
-                if (_threadStackTraces == null) return message;
-                message = _threadStackTraces
+                if (ThreadStackTraces.Value == null) return message;
+                message = ThreadStackTraces.Value
                     .Aggregate(message, (current, stackTrace) => current + $"\r\r{stackTrace}");
             }
             return message;
