@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.18.4</version>
+    <version>1.18.5</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.18.5 Fix: Added missing dependency for Newtonsoft.Json.
       1.18.4 Bug: Attribute ThreadStatic was used in async methods. Replaced it with AsyncLocal.
       1.18.3 Bug: The memory queue could run actions in parallel that interfered with each other.
       1.18.2 Bug: False recursive logging message
@@ -98,6 +99,7 @@
     <tags>fulcrum lever</tags>
     <dependencies>
       <group targetFramework="net46">
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
       </group>
     </dependencies>
   </metadata>
