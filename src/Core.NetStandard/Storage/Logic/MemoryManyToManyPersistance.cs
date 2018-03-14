@@ -15,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TReferenceModel1">The first model of references.</typeparam>
     /// <typeparam name="TReferenceModel2">The second model of references.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToManyPersistancer<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> : MemoryPersistance<TManyToManyModel, TId>, IManyToManyRelation<TReferenceModel1, TReferenceModel2, TId> where TManyToManyModel : class
+    public class MemoryManyToManyPersistance<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> : MemoryPersistance<TManyToManyModel, TId>, IManyToManyRelation<TReferenceModel1, TReferenceModel2, TId> where TManyToManyModel : class
     {
         private readonly GetForeignKeyDelegate _getForeignKey1Delegate;
         private readonly GetForeignKeyDelegate _getForeignKey2Delegate;
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <param name="getForeignKey2Delegate">See <see cref="GetForeignKeyDelegate"/>.</param>
         /// <param name="foreignHandler1">Functionality to read a specified parent.</param>
         /// <param name="foreignHandler2">Functionality to read a specified parent.</param>
-        public MemoryManyToManyPersistancer(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, IRead<TReferenceModel1, TId> foreignHandler1, IRead<TReferenceModel2, TId> foreignHandler2)
+        public MemoryManyToManyPersistance(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, IRead<TReferenceModel1, TId> foreignHandler1, IRead<TReferenceModel2, TId> foreignHandler2)
         {
             _getForeignKey1Delegate = getForeignKey1Delegate;
             _getForeignKey2Delegate = getForeignKey2Delegate;
