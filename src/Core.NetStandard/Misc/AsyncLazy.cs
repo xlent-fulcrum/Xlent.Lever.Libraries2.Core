@@ -11,6 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Misc
     /// <remarks>
     /// The code was copied from http://blog.stephencleary.com/2012/08/asynchronous-lazy-initialization.html 
     /// </remarks>
+    [Obsolete("Use Microsoft.VisualStudio.Threading.AsyncLazy<T>.")]
     public sealed class AsyncLazy<T>
     {
         /// <summary>

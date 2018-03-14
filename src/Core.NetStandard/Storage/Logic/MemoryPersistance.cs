@@ -17,6 +17,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             where TItem : class
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
+
+        /// <summary>
+        /// The actual storage of the items.
+        /// </summary>
         protected readonly Dictionary<TId, TItem> MemoryItems = new Dictionary<TId, TItem>();
 
         /// <inheritdoc />

@@ -3,8 +3,13 @@ using System.Collections.Generic;
 
 namespace Xlent.Lever.Libraries2.Core.Health.Model
 {
+    /// <summary>
+    /// Information about the health for a service or a resource
+    /// </summary>
     public class HealthInfo
     {
+        /// <summary>
+        /// The allowed statuses
         /// </summary>
         public enum StatusEnum
         {

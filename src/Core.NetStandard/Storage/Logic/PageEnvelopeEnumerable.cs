@@ -26,10 +26,5 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public IEnumerator<T> GetEnumerator() => _enumerator;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public static implicit operator PageEnvelopeEnumerable<T>(PageEnvelopeEnumerable<object> v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
