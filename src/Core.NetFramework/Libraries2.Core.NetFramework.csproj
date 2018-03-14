@@ -105,7 +105,9 @@
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumeratorAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
     <Compile Include="Core\Storage\Logic\StorageHelper.cs" />
+    <Compile Include="Core\Storage\Model\IManyToManyRelation.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
+    <Compile Include="Core\Storage\Model\IManyToOneRelation.cs" />
     <Compile Include="Core\Storage\Model\IGrouped.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />

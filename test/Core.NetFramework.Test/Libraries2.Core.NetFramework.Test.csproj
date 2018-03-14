@@ -52,7 +52,7 @@
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsEtag - Copy.cs" />
+    <Compile Include="Core\Storage\MemoryCrudTestsTimeStamped.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsValidated.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsEtag.cs" />
     <Compile Include="Core\Storage\MemoryCrudTestsBare.cs" />
