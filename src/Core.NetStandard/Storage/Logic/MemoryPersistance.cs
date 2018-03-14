@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             where TItem : class
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
-        private readonly Dictionary<TId, TItem> _memoryItems = new Dictionary<TId, TItem>();
+        protected readonly Dictionary<TId, TItem> MemoryItems = new Dictionary<TId, TItem>();
 
         /// <inheritdoc />
         public override async Task<TId> CreateAsync(TItem item)
@@ -40,11 +40,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
             MaybeCreateNewEtag(itemCopy);
             MaybeUpdateTimeStamps(itemCopy, true);
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
                 ValidateNotExists(id);
                 MaybeSetId(id, itemCopy);
-                _memoryItems.Add(id, itemCopy);
+                MemoryItems.Add(id, itemCopy);
             }
             await Task.Yield();
         }
@@ -54,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
                 var itemCopy = GetMemoryItem(id);
                 return Task.FromResult(itemCopy);
@@ -73,7 +73,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             MaybeUpdateTimeStamps(itemCopy, false);
             MaybeCreateNewEtag(itemCopy);
 
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
                 ValidateExists(id);
                 SetMemoryItem(id, itemCopy);
@@ -87,10 +87,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public override Task DeleteAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
-                if (!_memoryItems.ContainsKey(id)) return Task.FromResult(0);
-                _memoryItems.Remove(id);
+                if (!MemoryItems.ContainsKey(id)) return Task.FromResult(0);
+                MemoryItems.Remove(id);
             }
             return Task.FromResult(0);
         }
@@ -101,11 +101,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
             InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
-                var keys = _memoryItems.Keys.Skip(offset).Take(limit.Value);
+                var keys = MemoryItems.Keys.Skip(offset).Take(limit.Value);
                 var list = keys.Select(GetMemoryItem).ToList();
-                var page = new PageEnvelope<TItem>(offset, limit.Value, _memoryItems.Count, list);
+                var page = new PageEnvelope<TItem>(offset, limit.Value, MemoryItems.Count, list);
                 return Task.FromResult(page);
             }
         }
@@ -113,9 +113,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public override Task DeleteAllAsync()
         {
-            lock (_memoryItems)
+            lock (MemoryItems)
             {
-                _memoryItems.Clear();
+                MemoryItems.Clear();
             }
             return Task.FromResult(0);
         }
@@ -124,14 +124,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         private void ValidateNotExists(TId id)
         {
-            if (!_memoryItems.ContainsKey(id)) return;
+            if (!MemoryItems.ContainsKey(id)) return;
             throw new FulcrumConflictException(
                 $"An item of type {typeof(TItem).Name} with id {id} already exists.");
         }
 
         private void ValidateExists(TId id)
         {
-            if (_memoryItems.ContainsKey(id)) return;
+            if (MemoryItems.ContainsKey(id)) return;
             throw new FulcrumNotFoundException(
                 $"Could not find an item of type {typeof(TItem).Name} with id {id}.");
         }
@@ -147,14 +147,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         private void SetMemoryItem(TId id, TItem item)
         {
-            _memoryItems[id] = CopyItem(item);
+            MemoryItems[id] = CopyItem(item);
         }
 
         private TItem GetMemoryItem(TId id)
         {
             ValidateExists(id);
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var item = _memoryItems[id];
+            var item = MemoryItems[id];
             FulcrumAssert.IsNotNull(item, $"{Namespace}: B431A6BB-4A76-4672-9607-65E1C6EBFBC9");
             return CopyItem(item);
         }

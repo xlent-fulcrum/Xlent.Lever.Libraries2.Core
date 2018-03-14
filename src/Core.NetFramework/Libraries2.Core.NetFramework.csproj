@@ -95,6 +95,8 @@
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
+    <Compile Include="Core\Storage\Logic\MemoryManyToManyPersistance.cs" />
+    <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
     <Compile Include="Core\Storage\Logic\CrudBase.cs" />
     <Compile Include="Core\Storage\Logic\CrdBase.cs" />
     <Compile Include="Core\Storage\Logic\GroupedBase.cs" />

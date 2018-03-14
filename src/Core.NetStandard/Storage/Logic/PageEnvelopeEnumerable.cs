@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
@@ -25,5 +26,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public IEnumerator<T> GetEnumerator() => _enumerator;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public static implicit operator PageEnvelopeEnumerable<T>(PageEnvelopeEnumerable<object> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
