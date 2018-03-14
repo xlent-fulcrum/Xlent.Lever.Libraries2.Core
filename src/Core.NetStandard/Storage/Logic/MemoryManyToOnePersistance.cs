@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryPersistance<TManyModel, TId>, IManyToOneRelation<TManyModel, TOneModel, TId> where TManyModel : class
+    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryPersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId> where TManyModel : class
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
         private readonly IRead<TOneModel, TId> _parentHandler;

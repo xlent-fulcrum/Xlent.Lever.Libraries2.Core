@@ -3,7 +3,7 @@
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
-    /// Functionality for persisting groups of objects.
+    /// Functionality for persisting many-to-many relations.
     /// </summary>
     public interface IManyToManyRelation<TReferenceModel1, TReferenceModel2, in TId>
     {
