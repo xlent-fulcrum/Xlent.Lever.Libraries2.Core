@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.19.1</version>
+    <version>1.19.2</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.19.2 Renamed new interface methods.
       1.19.1 Added MemoryPersistance implementations of the new interfaces.
       1.19.0 Added IManyToOneRelation and IManyToManyRelation.
       1.18.5 Fix: Added missing dependency for Newtonsoft.Json.

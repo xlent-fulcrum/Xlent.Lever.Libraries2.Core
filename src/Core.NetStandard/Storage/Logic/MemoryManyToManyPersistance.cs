@@ -44,7 +44,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate TId GetForeignKeyDelegate(TManyToManyModel item);
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByForeignKey1(TId id, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1(TId id, int offset = 0, int? limit = null)
         {
             return await ReadReferencedItemsByForeignKey(
                 id,
@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByForeignKey2(TId id, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2(TId id, int offset = 0, int? limit = null)
         {
             return await ReadReferencedItemsByForeignKey(
                 id,
@@ -66,13 +66,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByForeignKey1(TId id)
+        public async Task DeleteReferencesByReference1(TId id)
         {
             await DeleteReferencesByForeignKey(id, _getForeignKey1Delegate);
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByForeignKey2(TId id)
+        public async Task DeleteReferencesByReference2(TId id)
         {
             await DeleteReferencesByForeignKey(id, _getForeignKey2Delegate);
         }
