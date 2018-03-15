@@ -9,9 +9,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryManyToOneRecursivePersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId>
+    /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
+    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId, TReferenceId> : MemoryManyToOneRecursivePersistance<TManyModel, TId, TReferenceId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId, TReferenceId>
         where TManyModel : class
         where TOneModel : class
+        where TReferenceId : TId
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
         private readonly IRead<TOneModel, TId> _parentHandler;
@@ -19,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="getParentIdDelegate">See <see cref="MemoryManyToOneRecursivePersistance{TModel,TId}.GetParentIdDelegate"/>.</param>
+        /// <param name="getParentIdDelegate">See <see cref="MemoryManyToOneRecursivePersistance{TModel,TId,TReferenceId}.GetParentIdDelegate"/>.</param>
         /// <param name="parentHandler">Functionality to read a specified parent.</param>
         public MemoryManyToOnePersistance(GetParentIdDelegate getParentIdDelegate, IRead<TOneModel, TId> parentHandler = null)
         :base(getParentIdDelegate)

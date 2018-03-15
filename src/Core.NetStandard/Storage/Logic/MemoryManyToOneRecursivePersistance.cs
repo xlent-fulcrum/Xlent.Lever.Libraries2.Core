@@ -10,8 +10,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> 
+    /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
+    public class MemoryManyToOneRecursivePersistance<TModel, TId, TReferenceId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId, TReferenceId> 
         where TModel : class
+        where TReferenceId : TId
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
 
@@ -28,10 +30,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// A delegate method for getting the parent id from a stored item.
         /// </summary>
         /// <param name="item">The item to get the parent for.</param>
-        public delegate object GetParentIdDelegate(TModel item);
+        public delegate TReferenceId GetParentIdDelegate(TModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TReferenceId parentId, int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(parentId, nameof(parentId));
@@ -60,7 +62,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TId parentId)
+        public async Task DeleteChildrenAsync(TReferenceId parentId)
         {
             InternalContract.RequireNotNull(parentId, nameof(parentId));
             var errorMessage = $"{nameof(TModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";

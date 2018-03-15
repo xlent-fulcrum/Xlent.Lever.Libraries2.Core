@@ -5,8 +5,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Functionality for persisting a one-to-many recursive relation within the same model.
     /// </summary>
-    public interface IManyToOneRecursiveRelation<TModel, in TId>
+    public interface IManyToOneRecursiveRelation<TModel, in TId, in TReferenceId>
         where TModel : class
+        where TReferenceId : TId
     {
         /// <summary>
         /// Read all child items for a specific parent, <paramref name="parentId"/>.
@@ -14,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="parentId">The specific parent to read the child items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null);
+        Task<PageEnvelope<TModel>> ReadChildrenAsync(TReferenceId parentId, int offset = 0, int? limit = null);
 
         /// <summary>
         /// Read the parent for the child <paramref name="childId"/>.
@@ -25,6 +26,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Delete all child items for a specific parent, <paramref name="parentId"/>.
         /// </summary>
-        Task DeleteChildrenAsync(TId parentId);
+        Task DeleteChildrenAsync(TReferenceId parentId);
     }
 }

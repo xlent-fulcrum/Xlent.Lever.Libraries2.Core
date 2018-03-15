@@ -48,11 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\TestItemManyToOne.cs" />
     <Compile Include="Model\TestItemTimeStamped.cs" />
     <Compile Include="Model\TestItemValidated.cs" />
     <Compile Include="Model\TestItemEtag.cs" />
     <Compile Include="Model\TestItemId.cs" />
     <Compile Include="Model\TestItemBare.cs" />
+    <Compile Include="TestIManyToOneRecursive.cs" />
+    <Compile Include="TestIManyToOne.cs" />
+    <Compile Include="TestIManyToOneBase.cs" />
     <Compile Include="TestICrdTimeStamped.cs" />
     <Compile Include="TestICrdValidated.cs" />
     <Compile Include="TestICrdBase.cs" />

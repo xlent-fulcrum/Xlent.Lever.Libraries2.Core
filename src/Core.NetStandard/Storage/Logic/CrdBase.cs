@@ -119,9 +119,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="idAsObject"></param>
         /// <returns></returns>
-        protected static TId ConvertToTId(object idAsObject)
+        protected static TId ConvertToTId<TReferenceId>(TReferenceId idAsObject)
+            where TReferenceId : TId
         {
-            return StorageHelper.ConvertToTId<TItem, TId>(idAsObject);
+            return StorageHelper.ConvertToTId<TItem, TId, TReferenceId>(idAsObject);
         }
     }
 }
