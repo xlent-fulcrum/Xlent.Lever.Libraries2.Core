@@ -88,5 +88,27 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             timeStamped.RecordUpdatedAt = timeStamp.Value;
             if (updateCreatedToo) timeStamped.RecordCreatedAt = timeStamp.Value;
         }
+
+        /// <summary>
+        /// Helper method to convert an object to a regular id.
+        /// </summary>
+        /// <param name="idAsObject"></param>
+        /// <returns></returns>
+        public static TId ConvertToTId<TModel, TId>(object idAsObject)
+        {
+            try
+            {
+                var id = (TId)idAsObject;
+                return id;
+            }
+            catch (Exception e)
+            {
+                InternalContract.Fail(
+                    $"The model {typeof(TModel).FullName} has a field that is supposed to be a recursive id reference, but the field type ({idAsObject.GetType().Name}) can't be converted to the id type ({typeof(TId).Name}:\r" +
+                    $"{e.Message}");
+                // We should not end up at this line, but the compiler think that we can, so we add a throw here.
+                throw;
+            }
+        }
     }
 }

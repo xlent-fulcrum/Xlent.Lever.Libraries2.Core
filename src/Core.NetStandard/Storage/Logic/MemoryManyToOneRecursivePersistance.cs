@@ -11,10 +11,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// General class for storing a many to one item in memory.
     /// </summary>
-    /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> where TModel : class
+    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> 
+        where TModel : class
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
 
@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// A delegate method for getting the parent id from a stored item.
         /// </summary>
         /// <param name="item">The item to get the parent for.</param>
-        public delegate TId GetParentIdDelegate(TModel item);
+        public delegate object GetParentIdDelegate(TModel item);
 
         /// <inheritdoc />
         public Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null)
@@ -55,7 +55,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public async Task<TModel> ReadParentAsync(TId childId)
         {
             var child = await ReadAsync(childId);
-            return await ReadAsync(_getParentIdDelegate(child));
+            var parentIdAsObject = _getParentIdDelegate(child);
+            if (parentIdAsObject == null) return null;
+            var parentId = ConvertToTId(parentIdAsObject);
+
+            return await ReadAsync(parentId);
         }
 
         /// <inheritdoc />

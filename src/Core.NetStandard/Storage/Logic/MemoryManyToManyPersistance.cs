@@ -15,7 +15,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TReferenceModel1">The first model of references.</typeparam>
     /// <typeparam name="TReferenceModel2">The second model of references.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToManyPersistance<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> : MemoryPersistance<TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> where TManyToManyModel : class
+    public class MemoryManyToManyPersistance<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> : MemoryPersistance<TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+        where TManyToManyModel : class
     {
         private readonly GetForeignKeyDelegate _getForeignKey1Delegate;
         private readonly GetForeignKeyDelegate _getForeignKey2Delegate;

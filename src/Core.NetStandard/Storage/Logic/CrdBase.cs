@@ -114,5 +114,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
            StorageHelper. MaybeUpdateTimeStamps(item, updateCreatedToo, timeStamp);
         }
+
+        /// <summary>
+        /// Helper method to convert an object to a regular id.
+        /// </summary>
+        /// <param name="idAsObject"></param>
+        /// <returns></returns>
+        protected static TId ConvertToTId(object idAsObject)
+        {
+            return StorageHelper.ConvertToTId<TItem, TId>(idAsObject);
+        }
     }
 }

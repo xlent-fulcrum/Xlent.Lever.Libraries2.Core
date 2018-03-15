@@ -14,7 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryManyToOneRecursivePersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId> where TManyModel : class
+    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryManyToOneRecursivePersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId>
+        where TManyModel : class
+        where TOneModel : class
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
         private readonly IRead<TOneModel, TId> _parentHandler;
@@ -35,7 +37,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public new async Task<TOneModel> ReadParentAsync(TId childId)
         {
             var child = await ReadAsync(childId);
-            return await _parentHandler.ReadAsync(_getParentIdDelegate(child));
+            var parentIdAsObject = _getParentIdDelegate(child);
+            if (parentIdAsObject == null) return null;
+            var parentId = ConvertToTId(parentIdAsObject);
+            return await _parentHandler.ReadAsync(parentId);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TItem"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class MemoryPersistance<TItem, TId> : CrudBase<TItem, TId>
-            where TItem : class
     {
         private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
 

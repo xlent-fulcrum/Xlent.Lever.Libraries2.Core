@@ -6,6 +6,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// Functionality for persisting a one-to-many recursive relation within the same model.
     /// </summary>
     public interface IManyToOneRecursiveRelation<TModel, in TId>
+        where TModel : class
     {
         /// <summary>
         /// Read all child items for a specific parent, <paramref name="parentId"/>.
