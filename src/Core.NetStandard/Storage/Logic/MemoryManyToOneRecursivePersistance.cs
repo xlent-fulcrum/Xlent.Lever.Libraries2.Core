@@ -10,8 +10,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> 
+    /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
+    public class MemoryManyToOneRecursivePersistance<TModel, TId, TReferenceId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId, TReferenceId> 
         where TModel : class
+        
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
 
@@ -21,6 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <param name="getParentIdDelegate">See <see cref="GetParentIdDelegate"/>.</param>
         public MemoryManyToOneRecursivePersistance(GetParentIdDelegate getParentIdDelegate)
         {
+            InternalContract.RequireNotNull(getParentIdDelegate, nameof(getParentIdDelegate));
             _getParentIdDelegate = getParentIdDelegate;
         }
 
@@ -28,10 +31,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// A delegate method for getting the parent id from a stored item.
         /// </summary>
         /// <param name="item">The item to get the parent for.</param>
-        public delegate object GetParentIdDelegate(TModel item);
+        public delegate TReferenceId GetParentIdDelegate(TModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TReferenceId parentId, int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(parentId, nameof(parentId));
@@ -51,18 +54,22 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public async Task<TModel> ReadParentAsync(TId childId)
         {
+            InternalContract.RequireNotNull(childId, nameof(childId));
+            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
             var child = await ReadAsync(childId);
-            var parentIdAsObject = _getParentIdDelegate(child);
-            if (parentIdAsObject == null) return null;
-            var parentId = ConvertToTId(parentIdAsObject);
+            var parentIdAsReference = _getParentIdDelegate(child);
+            if (parentIdAsReference == null) return null;
+            if (parentIdAsReference.Equals(default(TReferenceId))) return null;
+            var parentIdAsId = ConvertBetweenParameterTypes<TId, TReferenceId>(parentIdAsReference);
 
-            return await ReadAsync(parentId);
+            return await ReadAsync(parentIdAsId);
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TId parentId)
+        public async Task DeleteChildrenAsync(TReferenceId parentId)
         {
             InternalContract.RequireNotNull(parentId, nameof(parentId));
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             var errorMessage = $"{nameof(TModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
             InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TModel>((o) => ReadAllAsync(o));
