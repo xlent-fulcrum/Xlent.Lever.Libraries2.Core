@@ -5,7 +5,6 @@
     /// </summary>
     public interface IManyToOneRecursiveRelationComplete<TModel, TId, in TReferenceId> : ICrud<TModel, TId>, IManyToOneRecursiveRelation<TModel, TId, TReferenceId> 
         where TModel : class
-        where TReferenceId : TId
     {
     }
 }

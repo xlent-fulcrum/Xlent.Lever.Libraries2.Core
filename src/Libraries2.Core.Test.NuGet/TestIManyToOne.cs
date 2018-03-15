@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     /// </summary>
     [TestClass]
     public abstract class TestIManyToOne<TId, TReferenceId> : TestIManyToOneBase<TId, TReferenceId> 
-        where TReferenceId : TId
+        
     { 
         /// <summary>
         /// Create a recursive relation
@@ -19,7 +19,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         public async Task SimpleRelationAsync()
         {
             var parent = await CreateItemAsync(TypeOfTestDataEnum.Variant1);
-            var child = await CreateItemAsync(ManyStorageNonRecursive, TypeOfTestDataEnum.Variant1, (TReferenceId) parent.Id);
+            var child = await CreateItemAsync(ManyStorageNonRecursive, TypeOfTestDataEnum.Variant2, parent.Id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(child.ParentId);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TReferenceId), child.ParentId);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(parent.Value, child.Value);

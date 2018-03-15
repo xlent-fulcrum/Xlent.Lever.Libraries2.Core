@@ -58,7 +58,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public virtual async Task DeleteAllAsync()
         {
             var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TItem, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
-            FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null, 
+            FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null,
                 errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TItem>(offset => ReadAllAsync(offset));
             var enumerator = items.GetEnumerator();
@@ -111,18 +111,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <see cref="DateTimeOffset.Now"/> will be used.</param>
         protected static void MaybeUpdateTimeStamps(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
         {
-           StorageHelper. MaybeUpdateTimeStamps(item, updateCreatedToo, timeStamp);
+            StorageHelper.MaybeUpdateTimeStamps(item, updateCreatedToo, timeStamp);
         }
 
         /// <summary>
-        /// Helper method to convert an object to a regular id.
+        /// Helper method to convert from one parameter type to another.
         /// </summary>
-        /// <param name="idAsObject"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        protected static TId ConvertToTId<TReferenceId>(TReferenceId idAsObject)
-            where TReferenceId : TId
+        protected static TTarget ConvertBetweenParameterTypes<TTarget, TSource>(TSource source)
         {
-            return StorageHelper.ConvertToTId<TItem, TId, TReferenceId>(idAsObject);
+            return StorageHelper.ConvertBetweenParameterTypes<TTarget, TSource>(source);
         }
     }
 }

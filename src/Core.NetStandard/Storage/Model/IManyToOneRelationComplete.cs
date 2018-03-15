@@ -5,7 +5,6 @@
     /// </summary>
     public interface IManyToOneRelationComplete<TManyModel, TOneModel, TId, in TReferenceId> : ICrud<TManyModel, TId>, IManyToOneRelation<TManyModel, TOneModel, TId, TReferenceId> 
         where TManyModel : class
-        where TReferenceId : TId
     {
     }
 }

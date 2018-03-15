@@ -90,22 +90,22 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <summary>
-        /// Helper method to convert an object to a regular id.
+        /// Helper method to convert from one parameter type to another.
         /// </summary>
-        /// <param name="referenceId"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        public static TId ConvertToTId<TModel, TId, TReferenceId>(TReferenceId referenceId)
-            where TReferenceId : TId
+        public static TTarget ConvertBetweenParameterTypes<TTarget, TSource>(TSource source)
         {
+            object referenceIdAsObject = source;
             try
             {
-                var id = (TId)referenceId;
-                return id;
+                var target = (TTarget)referenceIdAsObject;
+                return target;
             }
             catch (Exception e)
             {
                 InternalContract.Fail(
-                    $"The model {typeof(TModel).FullName} has a field that is supposed to be a recursive id reference, but the field type ({referenceId.GetType().Name}) with value\"{referenceId}\" can't be converted to the id type ({typeof(TId).Name}:\r" +
+                    $"The value \"{source}\" of type {source.GetType().Name} can't be converted into type {source.GetType().Name}:\r" +
                     $"{e.Message}");
                 // We should not end up at this line, but the compiler think that we can, so we add a throw here.
                 throw;

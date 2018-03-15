@@ -7,7 +7,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// </summary>
     public interface IManyToOneRelation<TManyModel, TOneModel, in TId, in TReferenceId> : IManyToOneRecursiveRelation<TManyModel, TId, TReferenceId>
         where TManyModel : class
-        where TReferenceId : TId
     {
         /// <summary>
         /// Read the parent for the child <paramref name="childId"/>.
