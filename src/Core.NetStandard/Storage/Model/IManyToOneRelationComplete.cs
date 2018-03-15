@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Xlent.Lever.Libraries2.Core.Storage.Model
+﻿namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
     /// Functionality for persisting many-to-many relations.

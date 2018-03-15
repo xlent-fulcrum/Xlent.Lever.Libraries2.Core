@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Xlent.Lever.Libraries2.Core.Health.Model
+﻿namespace Xlent.Lever.Libraries2.Core.Health.Model
 {
     /// <summary>
     /// Information about the health for a service or a resource

@@ -28,9 +28,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 
         protected async Task<TItem> ReadItemAsync(TId id)
         {
-            var result = await CrdStorage.ReadAsync(id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
-            var readItem = (TItem)result;
+            var readItem = await CrdStorage.ReadAsync(id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(readItem);
             return readItem;
         }
