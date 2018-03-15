@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.19.7</version>
+    <version>1.19.8</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.19.7 Fix for many-to-one reference being declared as nullable.
+      1.19.8 Fix for many-to-one reference being declared as nullable.
       1.19.6 Introduced recursive interfaces and memory implementations.
       1.19.5 More interfaces for storage.
       1.19.4 Bug: Misspelled interface name.

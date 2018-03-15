@@ -27,8 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Support
 
         public override bool Equals(object obj)
         {
-            var person = obj as PersonStorableItem;
-            if (person == null) return false;
+            if (!(obj is PersonStorableItem person)) return false;
             if (!Equals(person.Id, Id)) return false;
             if (!string.Equals(person.Etag, Etag, StringComparison.OrdinalIgnoreCase)) return false;
             if (!string.Equals(person.GivenName, GivenName, StringComparison.OrdinalIgnoreCase)) return false;

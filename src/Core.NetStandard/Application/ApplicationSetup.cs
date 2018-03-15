@@ -47,8 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             set
             {
                 _logger = value;
-                var fullLogger = value as IFulcrumFullLogger;
-                if (fullLogger != null) FullLogger = fullLogger;
+                if (value is IFulcrumFullLogger fullLogger) FullLogger = fullLogger;
             }
         }
 

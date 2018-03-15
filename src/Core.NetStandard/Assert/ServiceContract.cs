@@ -11,7 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Assert
     /// </summary>
     public static class ServiceContract
     {
-        private static readonly string Namespace = typeof(ServiceContract).Namespace;
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
         /// </summary>

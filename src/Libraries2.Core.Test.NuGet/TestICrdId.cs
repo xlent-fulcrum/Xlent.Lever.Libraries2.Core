@@ -21,9 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Id);
             var id = await CrdStorage.CreateAsync(initialItem);
-            var result = await CrdStorage.ReadAsync(id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
-            var createdItem = result as TestItemId<TId>;
+            var createdItem = await CrdStorage.ReadAsync(id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(id, createdItem.Id);
@@ -40,9 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             var initialItem = new TestItemId<TId>();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(default(TId), initialItem.Id);
-            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
-            var createdItem = result as TestItemId<TId>;
+            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem.Id);
             initialItem.Id = createdItem.Id;

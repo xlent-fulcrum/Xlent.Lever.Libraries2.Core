@@ -81,8 +81,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         protected FulcrumException(string message, Exception innerException) : base(message, innerException)
         {
             TechnicalMessage = message;
-            var error = innerException as FulcrumException;
-            if (error == null)
+            if (!(innerException is FulcrumException error))
             {
                 InstanceId = Guid.NewGuid().ToString();
                 return;

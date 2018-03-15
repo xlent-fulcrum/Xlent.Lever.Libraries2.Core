@@ -11,12 +11,12 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Constructor
         /// </summary>
-        public ValidationException() : this(null, (Exception)null) { }
+        public ValidationException() : this(null, null) { }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ValidationException(string message) : this(message, (Exception)null) { }
+        public ValidationException(string message) : this(message, null) { }
 
         /// <summary>
         /// Constructor

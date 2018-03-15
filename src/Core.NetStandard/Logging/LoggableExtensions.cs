@@ -85,8 +85,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 var formatted = $"{value.GetType().FullName} {value.Message}";
-                var fulcrumvalue = value as FulcrumException;
-                if (fulcrumvalue != null) formatted += $"\r{fulcrumvalue.ToLogString()}";
+                if (value is FulcrumException fulcrumvalue) formatted += $"\r{fulcrumvalue.ToLogString()}";
                 if (!hideStackTrace) formatted += $"\r{value.StackTrace}";
                 formatted += AddInnerExceptions(value, hideStackTrace);
                 return formatted;
@@ -100,8 +99,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static string AddInnerExceptions(Exception exception, bool hideStackTrace)
         {
             var formatted = "";
-            var aggregateException = exception as AggregateException;
-            if (aggregateException != null)
+            if (exception is AggregateException aggregateException)
             {
                 formatted += "\rAggregated exceptions:";
                 formatted = aggregateException
