@@ -119,9 +119,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected static TTarget ConvertBetweenParameterTypes<TTarget, TSource>(TSource source)
+        protected static T ConvertToParameterType<T>(Object source)
         {
-            return StorageHelper.ConvertBetweenParameterTypes<TTarget, TSource>(source);
+            return StorageHelper.ConvertToParameterType<T>(source);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
     /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId, TReferenceId> : MemoryManyToOneRecursivePersistance<TManyModel, TId, TReferenceId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId, TReferenceId>
+    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryManyToOneRecursivePersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId>
         where TManyModel : class
         where TOneModel : class
     {
@@ -21,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="getParentIdDelegate">See <see cref="MemoryManyToOneRecursivePersistance{TModel,TId,TReferenceId}.GetParentIdDelegate"/>.</param>
+        /// <param name="getParentIdDelegate">See <see cref="MemoryManyToOneRecursivePersistance{TModel,TId}.GetParentIdDelegate"/>.</param>
         /// <param name="parentHandler">Functionality to read a specified parent.</param>
         public MemoryManyToOnePersistance(GetParentIdDelegate getParentIdDelegate, IRead<TOneModel, TId> parentHandler)
         :base(getParentIdDelegate)
@@ -38,10 +38,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             InternalContract.RequireNotNull(childId, nameof(childId));
             InternalContract.RequireNotDefaultValue(childId, nameof(childId));
             var child = await ReadAsync(childId);
-            var parentIdAsReference = _getParentIdDelegate(child);
-            if (parentIdAsReference == null) return null;
-            if (parentIdAsReference.Equals(default(TReferenceId))) return null;
-            var parentIdAsId = ConvertBetweenParameterTypes<TId, TReferenceId>(parentIdAsReference);
+            var parentIdAsObject = _getParentIdDelegate(child);
+            if (parentIdAsObject == null) return null;
+            if (parentIdAsObject.Equals(default(TId))) return null;
+            var parentIdAsId = ConvertToParameterType<TId>(parentIdAsObject);
             return await _parentHandler.ReadAsync(parentIdAsId);
         }
     }

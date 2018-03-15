@@ -94,18 +94,18 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static TTarget ConvertBetweenParameterTypes<TTarget, TSource>(TSource source)
+        public static T ConvertToParameterType<T>(object source)
         {
             object referenceIdAsObject = source;
             try
             {
-                var target = (TTarget)referenceIdAsObject;
+                var target = (T)referenceIdAsObject;
                 return target;
             }
             catch (Exception e)
             {
                 InternalContract.Fail(
-                    $"The value \"{source}\" of type {source.GetType().Name} can't be converted into type {source.GetType().Name}:\r" +
+                    $"The value \"{source}\" of type {source.GetType().Name} can't be converted into type {typeof(T).Name}:\r" +
                     $"{e.Message}");
                 // We should not end up at this line, but the compiler think that we can, so we add a throw here.
                 throw;

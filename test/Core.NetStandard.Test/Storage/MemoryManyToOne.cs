@@ -11,21 +11,21 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     public class MemoryManyToOne : TestIManyToOne<Guid, Guid?>
     {
         private ICrud<TestItemId<Guid>, Guid> _oneStorage;
-        private IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid, Guid?> _manyStorage;
+        private IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid> _manyStorage;
 
         [TestInitialize]
         public void Inititalize()
         {
             _oneStorage = new MemoryPersistance<TestItemId<Guid>, Guid>();
-            _manyStorage = new MemoryManyToOnePersistance<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid, Guid?>(item => item.ParentId, _oneStorage);
+            _manyStorage = new MemoryManyToOnePersistance<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid>(item => item.ParentId, _oneStorage);
         }
 
         /// <inheritdoc />
-        protected override IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid, Guid?>
+        protected override IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid>
             ManyStorageRecursive => null;
 
         /// <inheritdoc />
-        protected override IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid, Guid?>
+        protected override IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid>
             ManyStorageNonRecursive => _manyStorage;
 
         /// <inheritdoc />

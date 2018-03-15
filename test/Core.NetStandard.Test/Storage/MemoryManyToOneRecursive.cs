@@ -10,20 +10,20 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class MemoryManyToOneRecursive : TestIManyToOneRecursive<Guid, Guid?>
     {
-        private IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid, Guid?> _storage;
+        private IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid> _storage;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryManyToOneRecursivePersistance<TestItemManyToOne<Guid, Guid?>, Guid, Guid?>(item => item.ParentId);
+            _storage = new MemoryManyToOneRecursivePersistance<TestItemManyToOne<Guid, Guid?>, Guid>(item => item.ParentId);
         }
 
         /// <inheritdoc />
-        protected override IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid, Guid?>
+        protected override IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid>
             ManyStorageRecursive => _storage;
 
         /// <inheritdoc />
-        protected override IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid, Guid?>
+        protected override IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemId<Guid>, Guid>
             ManyStorageNonRecursive => null;
 
         /// <inheritdoc />

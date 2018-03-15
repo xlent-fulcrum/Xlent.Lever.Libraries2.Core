@@ -10,8 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
-    public class MemoryManyToOneRecursivePersistance<TModel, TId, TReferenceId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId, TReferenceId> 
+    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> 
         where TModel : class
         
     {
@@ -31,10 +30,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// A delegate method for getting the parent id from a stored item.
         /// </summary>
         /// <param name="item">The item to get the parent for.</param>
-        public delegate TReferenceId GetParentIdDelegate(TModel item);
+        public delegate object GetParentIdDelegate(TModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TReferenceId parentId, int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(parentId, nameof(parentId));
@@ -57,16 +56,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             InternalContract.RequireNotNull(childId, nameof(childId));
             InternalContract.RequireNotDefaultValue(childId, nameof(childId));
             var child = await ReadAsync(childId);
-            var parentIdAsReference = _getParentIdDelegate(child);
-            if (parentIdAsReference == null) return null;
-            if (parentIdAsReference.Equals(default(TReferenceId))) return null;
-            var parentIdAsId = ConvertBetweenParameterTypes<TId, TReferenceId>(parentIdAsReference);
+            var parentIdAsObject = _getParentIdDelegate(child);
+            if (parentIdAsObject == null) return null;
+            if (parentIdAsObject.Equals(default(TId))) return null;
+            var parentId = ConvertToParameterType<TId>(parentIdAsObject);
 
-            return await ReadAsync(parentIdAsId);
+            return await ReadAsync(parentId);
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TReferenceId parentId)
+        public async Task DeleteChildrenAsync(TId parentId)
         {
             InternalContract.RequireNotNull(parentId, nameof(parentId));
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));

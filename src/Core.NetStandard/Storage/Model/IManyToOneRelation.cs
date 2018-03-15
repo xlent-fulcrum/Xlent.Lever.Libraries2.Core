@@ -5,7 +5,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Functionality for persisting groups of objects.
     /// </summary>
-    public interface IManyToOneRelation<TManyModel, TOneModel, in TId, in TReferenceId> : IManyToOneRecursiveRelation<TManyModel, TId, TReferenceId>
+    public interface IManyToOneRelation<TManyModel, TOneModel, in TId> : IManyToOneRecursiveRelation<TManyModel, TId>
         where TManyModel : class
     {
         /// <summary>

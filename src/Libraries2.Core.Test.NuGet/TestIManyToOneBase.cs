@@ -10,14 +10,14 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract IManyToOneRecursiveRelationComplete<TestItemManyToOne<TId, TReferenceId>, TId, TReferenceId>
+        protected abstract IManyToOneRecursiveRelationComplete<TestItemManyToOne<TId, TReferenceId>, TId>
             ManyStorageRecursive { get; }
 
         /// <summary>
         /// The storage that should be tested
         /// </summary>
         protected abstract
-            IManyToOneRelationComplete<TestItemManyToOne<TId, TReferenceId>, TestItemId<TId>, TId, TReferenceId>
+            IManyToOneRelationComplete<TestItemManyToOne<TId, TReferenceId>, TestItemId<TId>, TId>
             ManyStorageNonRecursive { get; }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             ICrd<TestItemManyToOne<TId, TReferenceId>, TId> storage, TypeOfTestDataEnum type, TId parentId)
         {
             return await CreateItemAsync(storage, type,
-                StorageHelper.ConvertBetweenParameterTypes<TReferenceId, TId>(parentId));
+                StorageHelper.ConvertToParameterType<TReferenceId>(parentId));
         }
 
         protected async Task<TestItemManyToOne<TId, TReferenceId>> CreateItemAsync(
