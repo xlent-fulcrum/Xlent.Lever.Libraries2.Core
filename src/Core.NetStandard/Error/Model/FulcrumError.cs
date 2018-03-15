@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Error.Model
 {
@@ -45,10 +46,15 @@ namespace Xlent.Lever.Libraries2.Core.Error.Model
         /// <inheritdoc />
         public string CorrelationId { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// NOT USED ANYMORE
+        /// </summary>
+        [Obsolete("Is not used anymore", true)]
         public string FriendlyMessageId { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Something like an inner exception; if this fulcrum error happens when dealing with another error, this is that error.
+        /// </summary>
         public FulcrumError InnerError { get; set; }
 
         /// <inheritdoc />

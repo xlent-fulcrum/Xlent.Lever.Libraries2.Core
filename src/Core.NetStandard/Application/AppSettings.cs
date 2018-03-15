@@ -46,8 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
             var valueAsString = GetString(name, isMandatory);
             if (valueAsString == null) return default(T);
-            T value;
-            FulcrumAssert.IsTrue(Enum.TryParse(valueAsString, out value), null, $"App setting {name} ({valueAsString}) must have one of the values for {typeof(T).FullName}.");
+            FulcrumAssert.IsTrue(Enum.TryParse(valueAsString, out T value), null, $"App setting {name} ({valueAsString}) must have one of the values for {typeof(T).FullName}.");
             return value;
         }
 

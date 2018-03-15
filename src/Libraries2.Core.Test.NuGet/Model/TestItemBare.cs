@@ -52,8 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Model
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var person = obj as TestItemBare;
-            if (person == null) return false;
+            if (!(obj is TestItemBare person)) return false;
             if (!string.Equals(person.Value, Value)) return false;
             return true;
         }

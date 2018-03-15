@@ -23,9 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             var initialItem = new TestItemBare();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
             var id = await CrdStorage.CreateAsync(initialItem);
-            var result = await CrdStorage.ReadAsync(id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
-            var createdItem = result as TestItemBare;
+            var createdItem = await CrdStorage.ReadAsync(id);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }
@@ -38,9 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var initialItem = new TestItemBare();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
-            var result = await CrdStorage.CreateAndReturnAsync(initialItem);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(result);
-            var createdItem = result as TestItemBare;
+            var createdItem = await CrdStorage.CreateAndReturnAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(createdItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(initialItem, createdItem);
         }

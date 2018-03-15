@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
@@ -17,7 +18,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <inheritdoc />
         public string Etag { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Copy another object of the same type.
+        /// </summary>
+        /// <param name="source"></param>
+        [Obsolete("Use StorageHelper.DeepCopy")]
         public void DeepCopy(StorableByteArray<TId> source)
         {
             InternalContract.RequireNotNull(source, nameof(source));
@@ -26,7 +31,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
             Etag = source.Etag;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Clone this object.
+        /// </summary>
+        [Obsolete("Use StorageHelper.DeepCopy")]
         public StorableByteArray<TId> DeepCopy()
         {
             return StorageHelper.DeepCopy(this);

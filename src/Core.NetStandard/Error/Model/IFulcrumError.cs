@@ -84,6 +84,11 @@ namespace Xlent.Lever.Libraries2.Core.Error.Model
         string CorrelationId { get; }
 
         /// <summary>
+        /// Something like an inner exception; if this fulcrum error happens when dealing with another error, this is that error.
+        /// </summary>
+        FulcrumError InnerError { get; set; }
+
+        /// <summary>
         /// Copies all fields from <paramref name="fulcrumError"/>.
         /// </summary>
         IFulcrumError CopyFrom(IFulcrumError fulcrumError);

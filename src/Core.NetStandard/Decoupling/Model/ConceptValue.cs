@@ -25,15 +25,21 @@ namespace Xlent.Lever.Libraries2.Core.Decoupling.Model
             return $"({ConceptName}!{clientOrContext}!{Value})";
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Parse a string into a <see cref="IConceptValue"/> object.
+        /// </summary>
+        /// <param name="path">The string to parse</param>
         public static IConceptValue Parse(string path)
         {
-            IConceptValue result;
-            if (!TryParse(path, out result)) InternalContract.Fail($"The path ({path}) could not be parsed as a concept value path.");
+            if (!TryParse(path, out var result)) InternalContract.Fail($"The path ({path}) could not be parsed as a concept value path.");
             return result;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Parse a string into a <see cref="IConceptValue"/> object.
+        /// </summary>
+        /// <param name="path">The string to parse</param>
+        /// <param name="conceptValue">The concept value that was parsed from <paramref name="path"/>.</param>
         public static bool TryParse(string path, out IConceptValue conceptValue)
         {
             conceptValue = null;

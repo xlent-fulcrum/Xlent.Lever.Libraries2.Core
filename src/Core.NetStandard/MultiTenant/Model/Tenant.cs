@@ -48,8 +48,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            var tenant = obj as Tenant;
-            return tenant != null && ToString().Equals(tenant.ToString());
+            return obj is Tenant tenant && ToString().Equals(tenant.ToString());
         }
 
         /// <inheritdoc />
