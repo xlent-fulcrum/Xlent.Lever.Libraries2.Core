@@ -58,6 +58,11 @@
     <Compile Include="Core\Assert\InternalContract.cs" />
     <Compile Include="Core\Assert\IValidatable.cs" />
     <Compile Include="Core\Assert\ServiceContract.cs" />
+    <Compile Include="Core\Cache\AutoCacheOptions.cs" />
+    <Compile Include="Core\Cache\CachedItemInformation.cs" />
+    <Compile Include="Core\Cache\CacheEnvelope.cs" />
+    <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\DistributedCacheEntryOptions.cs" />
+    <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\IDistributedCache.cs" />
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
     <Compile Include="Core\Context\ContextValueProvider.cs" />
     <Compile Include="Core\Context\CorrelationIdValueProvider.cs" />
@@ -95,6 +100,7 @@
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
+    <Compile Include="Core\Cache\AutoCache.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToManyPersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOneRecursivePersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
