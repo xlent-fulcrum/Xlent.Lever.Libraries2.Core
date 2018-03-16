@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Logging;
@@ -38,6 +37,48 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// A delegate for flushing the cache, ie remove all items in the cache.
         /// </summary>
         public delegate Task<TId> FlushCacheDelegateAsync();
+
+        /// <summary>
+        /// A <see cref="AutoCache{TModel,TId}.UseCacheStrategyDelegateAsync"/> should return one of these values.
+        /// </summary>
+        public enum UseCacheStrategyEnum
+        {
+            /// <summary>
+            /// Use the cached value
+            /// </summary>
+            Use,
+            /// <summary>
+            /// Ignore the cached value, but keep it in the cache
+            /// </summary>
+            Ignore,
+            /// <summary>
+            /// Ignore the cached value, and remove it from the cache
+            /// </summary>
+            Remove
+        }
+
+        /// <summary>
+        /// The delegate will receive information about a cached item. Based on that information, the delegate should decide if the cached data should be deleted, ignored or used.
+        /// Before the delegate is called, the cached item has already been vetted according to the <see cref="AutoCacheOptions"/>.
+        /// This means for example that you will not have to check if the data is too old in the general sense.
+        /// </summary>
+        /// <param name="cachedItemInformation">Information about the cached item.</param>
+        public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync(CachedItemInformation<TId> cachedItemInformation);
+
+        /// <summary>
+        /// The delegate should decide if we should even should try to get the data from the cache, or if we should go directly to the storage.
+        /// </summary>
+        public delegate Task<bool> UseCacheAtAllDelegateAsync(Type cachedItemType);
+
+        /// <summary>
+        /// If you want to have your own method for discarding cache values, set this property to a method that returns how you want to deal with the cached value.
+        /// </summary>
+        public UseCacheStrategyDelegateAsync UseCacheStrategyMethodAsync { get; set; }
+
+        /// <summary>
+        /// If you want to be able to sometimes totally ignore the cache (saving yourself from a call to the cache), use this method to decide what to do.
+        /// </summary>
+        public UseCacheAtAllDelegateAsync UseCacheAtAllMethodAsync { get; set; }
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -200,19 +241,48 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private async Task<TModel> CacheGetAsync(TId id)
         {
             InternalContract.RequireNotNull(id, nameof(id));
+            if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
             var key = GetKeyFromId(id);
             var byteArray = await _cache.GetAsync(key);
             var cacheEnvelope = Deserialize<CacheEnvelope>(byteArray);
-            if (IsItemFresh(cacheEnvelope)) return Deserialize<TModel>(cacheEnvelope.Data);
-            // The item was not regareded as fresh, remove it
-            await CacheRemoveAsync(id);
-            return default(TModel);
+            var cacheItemStrategy = await GetCacheItemStrategyAsync(id, cacheEnvelope);
+            switch (cacheItemStrategy)
+            {
+                case UseCacheStrategyEnum.Use:
+                    return Deserialize<TModel>(cacheEnvelope.Data);
+                case UseCacheStrategyEnum.Ignore:
+                    return default(TModel);
+                case UseCacheStrategyEnum.Remove:
+                    await CacheRemoveAsync(id);
+                    return default(TModel);
+                default:
+                    FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
+                    return default(TModel);
+            }
         }
 
-        private bool IsItemFresh(CacheEnvelope cacheEnvelope)
+        private async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope)
         {
-            return cacheEnvelope.CacheIdentity == _cacheIdentity &&
-                   cacheEnvelope.UpdatedAt.Add(_options.AbsoluteExpirationRelativeToNow) <= DateTimeOffset.Now;
+            InternalContract.RequireNotNull(id, nameof(id));
+            InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
+
+            if (cacheEnvelope.CacheIdentity != _cacheIdentity) return UseCacheStrategyEnum.Remove;
+            if (TooOld(cacheEnvelope)) return UseCacheStrategyEnum.Remove;
+            if (UseCacheStrategyMethodAsync != null)
+            {
+                var cachedItemInformation = new CachedItemInformation<TId>
+                {
+                    Id = id,
+                    UpdatedAt = cacheEnvelope.UpdatedAt
+                };
+                return await UseCacheStrategyMethodAsync(cachedItemInformation);
+            }
+            return UseCacheStrategyEnum.Use;
+        }
+
+        private bool TooOld(CacheEnvelope cacheEnvelope)
+        {
+            return cacheEnvelope.UpdatedAt.Add(_options.AbsoluteExpirationRelativeToNow) <= DateTimeOffset.Now;
         }
 
         private async Task CacheSetAsync(TModel item)
