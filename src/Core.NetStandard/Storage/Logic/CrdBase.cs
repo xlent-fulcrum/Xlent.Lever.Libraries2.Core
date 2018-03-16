@@ -52,7 +52,23 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public abstract Task DeleteAsync(TId id);
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TItem>> ReadAllAsync(int offset = 0, int? limit = null);
+        public abstract Task<PageEnvelope<TItem>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
+
+        /// <inheritdoc />
+        public virtual async Task<IEnumerable<TItem>> ReadAllAsync(int limit = 0)
+        {
+            var result = new List<TItem>();
+            int offset = 0;
+            while (true)
+            {
+                var page = await ReadAllWithPagingAsync(offset);
+                if (page.PageInfo.Returned == 0) break;
+                    result.AddRange(page.Data);
+                offset += page.PageInfo.Returned;
+            }
+
+            return result;
+        }
 
         /// <inheritdoc />
         public virtual async Task DeleteAllAsync()
@@ -60,7 +76,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TItem, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TItem>(offset => ReadAllAsync(offset));
+            var items = new PageEnvelopeEnumerableAsync<TItem>(offset => ReadAllWithPagingAsync(offset));
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())

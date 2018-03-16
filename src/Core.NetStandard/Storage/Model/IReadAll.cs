@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
@@ -10,15 +11,26 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     public interface IReadAll<T>
     {
         /// <summary>
-        /// Reads all the items from storage.
+        /// Reads all the items from storage and return them as pages.
         /// </summary>
-        /// <returns>A list of the found objects. Can be empty, but never null.</returns>
+        /// <returns>A page of the found items.</returns>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
         /// <remarks>
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<PageEnvelope<T>> ReadAllAsync(int offset = 0, int? limit = null);
+        Task<PageEnvelope<T>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
+
+        /// <summary>
+        /// Reads all the items from storage and return them as a collection of items.
+        /// </summary>
+        /// <returns>A list of the found objects. Can be empty, but never null.</returns>
+        /// <param name="limit">The maximum number of items to return. 0 means no limit.</param>
+        /// <remarks>
+        /// The implementor of this method can decide that it is not a valid method to expose.
+        /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
+        /// </remarks>
+        Task<IEnumerable<T>> ReadAllAsync(int limit = 0);
     }
 }

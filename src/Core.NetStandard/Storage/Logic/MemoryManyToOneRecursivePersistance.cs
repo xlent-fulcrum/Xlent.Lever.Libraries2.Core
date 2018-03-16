@@ -71,7 +71,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             var errorMessage = $"{nameof(TModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
             InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>((o) => ReadAllAsync(o));
+            var items = new PageEnvelopeEnumerableAsync<TModel>((o) => ReadAllWithPagingAsync(o));
             var enumerator = items.GetEnumerator();
             while (await enumerator.MoveNextAsync())
             {
