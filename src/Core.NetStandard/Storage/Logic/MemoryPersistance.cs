@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -19,7 +19,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// The actual storage of the items.
         /// </summary>
-        protected readonly Dictionary<TId, TItem> MemoryItems = new Dictionary<TId, TItem>();
+        protected readonly ConcurrentDictionary<TId, TItem> MemoryItems = new ConcurrentDictionary<TId, TItem>();
 
         /// <inheritdoc />
         public override async Task<TId> CreateAsync(TItem item)
@@ -46,7 +46,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             {
                 ValidateNotExists(id);
                 MaybeSetId(id, itemCopy);
-                MemoryItems.Add(id, itemCopy);
+                var success = MemoryItems.TryAdd(id, itemCopy);
+                if (!success) throw new FulcrumConflictException($"Item with id {id} already exists.");
             }
             await Task.Yield();
         }
@@ -86,15 +87,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <remarks>
         /// Idempotent, i.e. will not throw an exception if the item does not exist.
         /// </remarks>
-        public override Task DeleteAsync(TId id)
+        public override async Task DeleteAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             lock (MemoryItems)
             {
-                if (!MemoryItems.ContainsKey(id)) return Task.FromResult(0);
-                MemoryItems.Remove(id);
+                if (!MemoryItems.ContainsKey(id)) return;
+                MemoryItems.TryRemove(id, out var value);
             }
-            return Task.FromResult(0);
+
+            await Task.Yield();
         }
 
         /// <inheritdoc />

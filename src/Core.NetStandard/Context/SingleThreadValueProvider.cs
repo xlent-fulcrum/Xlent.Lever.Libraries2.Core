@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Context
@@ -9,7 +9,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
     /// <remarks>Provided to use in tests, as many other context </remarks>
     public class SingleThreadValueProvider : IValueProvider
     {
-        private static readonly Dictionary<string, object> Dictionary = new Dictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> Dictionary = new ConcurrentDictionary<string, object>();
 
         /// <inheritdoc />
         public T GetValue<T>(string key)

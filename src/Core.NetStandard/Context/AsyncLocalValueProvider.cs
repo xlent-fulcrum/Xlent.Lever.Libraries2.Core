@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 using Xlent.Lever.Libraries2.Core.Assert;
 
@@ -11,14 +11,14 @@ namespace Xlent.Lever.Libraries2.Core.Context
     public class AsyncLocalValueProvider : IValueProvider
     {
         private static readonly string Namespace = typeof(AsyncLocalValueProvider).Namespace;
-        private static readonly AsyncLocal<Dictionary<string, object>> Holder;
+        private static readonly AsyncLocal<ConcurrentDictionary<string, object>> Holder;
 
         /// <summary>
         /// Constructor
         /// </summary>
         static AsyncLocalValueProvider()
         {
-            Holder = new AsyncLocal<Dictionary<string, object>>();
+            Holder = new AsyncLocal<ConcurrentDictionary<string, object>>();
         }
 
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
             FulcrumAssert.IsNotNull(Holder, $"{Namespace}: 07B2EC29-9231-4DC1-82FF-09DCB6EC87FA");
             if (Holder.Value == null)
             {
-                Holder.Value = new Dictionary<string, object>();
+                Holder.Value = new ConcurrentDictionary<string, object>();
             }
             Holder.Value[name] = data;
         }

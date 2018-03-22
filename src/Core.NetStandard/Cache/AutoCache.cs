@@ -87,7 +87,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCache(ICrud<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync, AutoCacheOptions options)
+        public AutoCache(ICrud<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         :this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -101,12 +101,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCache(ICrud<TModel, TId> storage, GetIdDelegate getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync, AutoCacheOptions options)
+        public AutoCache(ICrud<TModel, TId> storage, GetIdDelegate getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         {
             InternalContract.RequireNotNull(storage, nameof(storage));
             InternalContract.RequireNotNull(getIdDelegate, nameof(getIdDelegate));
             InternalContract.RequireNotNull(cache, nameof(cache));
-            InternalContract.RequireNotNull(options, nameof(options));
+            if (options == null)
+            {
+                options = new AutoCacheOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1)
+                };
+            }
 
             _cacheIdentity = Guid.NewGuid().ToString();
             _cache = cache;
@@ -244,6 +250,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
             var key = GetKeyFromId(id);
             var byteArray = await _cache.GetAsync(key);
+            if (byteArray == null) return default(TModel);
             var cacheEnvelope = Deserialize<CacheEnvelope>(byteArray);
             var cacheItemStrategy = await GetCacheItemStrategyAsync(id, cacheEnvelope);
             switch (cacheItemStrategy)
@@ -289,6 +296,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             InternalContract.RequireNotNull(item, nameof(item));
             var key = GetKeyFromId(_getIdDelegate(item));
+            var serializedCacheEnvelope = ToSerializedCacheEnvelope(item);
+            await _cache.SetAsync(key, serializedCacheEnvelope, _cacheOptions, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Serialize the <paramref name="item"/>, put it into an envelope and serialize the envelope
+        /// </summary>
+        public byte[] ToSerializedCacheEnvelope(TModel item)
+        {
             var serializedItem = Serialize(item);
             var cacheEnvelope = new CacheEnvelope
             {
@@ -296,8 +312,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 UpdatedAt = DateTimeOffset.Now,
                 Data = serializedItem
             };
-            await _cache.SetAsync(key, Serialize(cacheEnvelope), _cacheOptions, CancellationToken.None);
+            var serializedCacheEnvelope = Serialize(cacheEnvelope);
+            return serializedCacheEnvelope;
         }
+
         private async Task CacheRemoveAsync(TId id)
         {
             InternalContract.RequireNotNull(id, nameof(id));

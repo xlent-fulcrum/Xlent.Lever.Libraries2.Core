@@ -42,7 +42,7 @@ namespace Microsoft.Extensions.Caching.Distributed
             }
             set
             {
-                if (value <= TimeSpan.Zero)
+                if (value != null && value <= TimeSpan.Zero)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(AbsoluteExpirationRelativeToNow),
@@ -66,7 +66,7 @@ namespace Microsoft.Extensions.Caching.Distributed
             }
             set
             {
-                if (value <= TimeSpan.Zero)
+                if (value != null && value <= TimeSpan.Zero)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(SlidingExpiration),
