@@ -59,7 +59,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 {
                     await ItemStorage.CreateWithSpecifiedIdAsync(key, value);
                 }
-                catch (FulcrumConflictException e)
+                catch (FulcrumConflictException)
                 {
                     await ItemStorage.UpdateAsync(key, value);
                 }

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Support;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,130 +22,68 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private IDistributedCache _cache;
 
-        private MemoryPersistance<PersonStorableItem, Guid> _memoryPersistance;
-        private AutoCache<PersonStorableItem, Guid> _autoCache;
+        private MemoryPersistance<string, Guid> _storage;
+        private AutoCache<string, Guid> _autoCache;
+        private DistributedCacheEntryOptions _distributedCacheOptions;
 
         [TestInitialize]
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCache).FullName);
-            _memoryPersistance = new MemoryPersistance<PersonStorableItem, Guid>();
+            _storage = new MemoryPersistance<string, Guid>();
             _cache = new MemoryDistributedCache();
-            var options = new AutoCacheOptions
+            _distributedCacheOptions = new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(1000)
-
             };
-            _autoCache = new AutoCache<PersonStorableItem, Guid>(_memoryPersistance, _cache, null, options);
-        }
-
-        [TestMethod]
-        public async Task FromStorageTest()
-        {
-            var storageOnlyId = await SetupStorageOnlyAsync();
-            var person = await _autoCache.ReadAsync(storageOnlyId);
-            UT.Assert.AreEqual("A", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
-        }
-
-        [TestMethod]
-        public async Task FromCacheTest()
-        {
-            var cacheOnlyId = await SetupCacheOnlyAsync();
-            var person = await _autoCache.ReadAsync(cacheOnlyId);
-            UT.Assert.AreEqual("B", person.GivenName);
-            UT.Assert.AreEqual(FromCache, person.Surname);
-        }
-
-        [TestMethod]
-        public async Task CacheFirstThenStorageAfterTimeOut()
-        {
-            var cacheOrStorageId = await SetupStorageAndCacheAsync();
-            var person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromCache, person.Surname);
-            await Task.Delay(TimeSpan.FromMilliseconds(1000));
-            person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
-        }
-
-        [TestMethod]
-        public async Task DoNotUseCacheAtAll()
-        {
-            _autoCache.UseCacheAtAllMethodAsync = type => Task.FromResult(false);
-            var cacheOrStorageId = await SetupStorageAndCacheAsync();
-            var person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
-        }
-
-        [TestMethod]
-        public async Task UseCache()
-        {
-            var cacheOrStorageId = await SetupStorageAndCacheAsync();
-            _autoCache.UseCacheStrategyMethodAsync = information => Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Use);
-            var person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromCache, person.Surname);
-        }
-
-        [TestMethod]
-        public async Task IgnoreCacheThenUse()
-        {
-            var cacheOrStorageId = await SetupStorageAndCacheAsync();
-            _autoCache.UseCacheStrategyMethodAsync = information => Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Ignore);
-            var person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
-            _autoCache.UseCacheStrategyMethodAsync = information =>
+            var options = new AutoCacheOptions
             {
-                return Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Use);
+                AbsoluteExpirationRelativeToNow = _distributedCacheOptions.AbsoluteExpirationRelativeToNow
+
             };
-            person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromCache, person.Surname);
+            _autoCache = new AutoCache<string, Guid>(_storage, item =>
+            {
+                FulcrumAssert.Fail("This method should never be called, because we always provide an id");
+                return Guid.Empty;
+            }, _cache, null, options);
         }
 
         [TestMethod]
-        public async Task RemoveCacheThenUse()
+        public async Task ReadWithNoCache()
         {
-            var cacheOrStorageId = await SetupStorageAndCacheAsync();
-            _autoCache.UseCacheStrategyMethodAsync = information => Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Remove);
-            var person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
-            _autoCache.UseCacheStrategyMethodAsync = information => Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Use);
-            person = await _autoCache.ReadAsync(cacheOrStorageId);
-            UT.Assert.AreEqual("C", person.GivenName);
-            UT.Assert.AreEqual(FromStorage, person.Surname);
+            var id = Guid.NewGuid();
+            // Objective: Storage=A Cache=null
+            await PrepareStorageAndCache(id, "A", null);
+            var value = await _autoCache.ReadAsync(id);
+            UT.Assert.AreEqual("A", value);
         }
 
-        private async Task<Guid> SetupStorageOnlyAsync()
+        private async Task PrepareStorageAndCache(Guid id, string storageValue, string cacheValue)
         {
-            var storagePerson = new PersonStorableItem("A", FromStorage);
-            var storageOnlyId = Guid.NewGuid();
-            await _memoryPersistance.CreateWithSpecifiedIdAsync(storageOnlyId, storagePerson);
-            return storageOnlyId;
-        }
-
-        private async Task<Guid> SetupCacheOnlyAsync()
-        {
-            var cachePerson = new PersonStorableItem("B", FromCache);
-            var cacheOnlyId = Guid.NewGuid();
-            var serializedCacheEnvelope = _autoCache.ToSerializedCacheEnvelope(cachePerson);
-            await _cache.SetAsync(cacheOnlyId.ToString(), serializedCacheEnvelope, null, CancellationToken.None);
-            return await Task.FromResult(cacheOnlyId);
-        }
-
-        private async Task<Guid> SetupStorageAndCacheAsync()
-        {
-            var cacheOrStorageId = Guid.NewGuid();
-            var cachePerson = new PersonStorableItem("C", FromCache);
-            await _autoCache.CreateWithSpecifiedIdAsync(cacheOrStorageId, cachePerson);
-            var storagePerson = await _memoryPersistance.ReadAsync(cacheOrStorageId);
-            await _memoryPersistance.UpdateAsync(cacheOrStorageId, storagePerson);
-            return cacheOrStorageId;
+            if (storageValue == null)
+            {
+                await _storage.DeleteAsync(id);
+            }
+            else
+            {
+                try
+                {
+                    var value = await _storage.ReadAsync(id);
+                    if (value != storageValue) await _storage.UpdateAsync(id, storageValue);
+                }
+                catch (FulcrumNotFoundException)
+                {
+                    await _storage.CreateWithSpecifiedIdAsync(id, storageValue);
+                }
+            }
+            if (cacheValue == null)
+            {
+                await _cache.RemoveAsync(id.ToString());
+            }
+            else
+            {
+                await _cache.SetAsync(id.ToString(), Encoding.UTF8.GetBytes(cacheValue), _distributedCacheOptions);
+            }
         }
     }
 }

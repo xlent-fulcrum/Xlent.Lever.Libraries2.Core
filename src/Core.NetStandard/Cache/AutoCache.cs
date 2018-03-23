@@ -18,6 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class AutoCache<TModel, TId> : ICrud<TModel, TId>
+    where TModel : class
     {
         private readonly IDistributedCache _cache;
         private readonly FlushCacheDelegateAsync _flushCacheDelegateAsync;
@@ -130,6 +131,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<TModel> CreateAndReturnAsync(TModel item)
         {
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var createdItem = await _storage.CreateAndReturnAsync(item);
             await CacheSetAsync(createdItem);
             return createdItem;
@@ -138,6 +140,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<TId> CreateAsync(TModel item)
         {
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var id = await _storage.CreateAsync(item);
             await CacheMaybeSetAsync(id);
             return id;
@@ -146,14 +149,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item)); 
             var createdItem = await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item);
-            await CacheSetAsync(createdItem);
+            await CacheSetAsync(id, createdItem);
             return createdItem;
         }
 
         /// <inheritdoc />
         public async Task CreateWithSpecifiedIdAsync(TId id, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             await _storage.CreateWithSpecifiedIdAsync(id, item);
             await CacheMaybeSetAsync(id);
         }
@@ -177,6 +184,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task DeleteAsync(TId id)
         {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             var task1 = CacheRemoveAsync(id);
             var task2 = _storage.DeleteAsync(id);
             await Task.WhenAll(task1, task2);
@@ -205,18 +213,21 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<TModel> ReadAsync(TId id)
         {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             var item = await CacheGetAsync(id);
             if (item != null) return item;
             item = await _storage.ReadAsync(id);
-            await CacheSetAsync(item);
+            await CacheSetAsync(id, item);
             return item;
         }
 
         /// <inheritdoc />
         public async Task<TModel> UpdateAndReturnAsync(TId id, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var updatedItem = await _storage.UpdateAndReturnAsync(id, item);
-            await CacheSetAsync(updatedItem);
+            await CacheSetAsync(id, updatedItem);
             return updatedItem;
 
         }
@@ -233,20 +244,20 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var getAndSave = _options.SaveAll || _options.GetToUpdate && await CacheItemExistsAsync(id);
             if (!getAndSave) return;
             var item = await _storage.ReadAsync(id);
-            await CacheSetAsync(item);
+            await CacheSetAsync(id, item);
         }
 
         private async Task<bool> CacheItemExistsAsync(TId id)
         {
-            InternalContract.RequireNotNull(id, nameof(id));
-            var key = id.ToString();
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            var key = GetKeyFromId(id);
             var cachedItem = await _cache.GetAsync(key);
             return cachedItem != null;
         }
 
         private async Task<TModel> CacheGetAsync(TId id)
         {
-            InternalContract.RequireNotNull(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
             var key = GetKeyFromId(id);
             var byteArray = await _cache.GetAsync(key);
@@ -270,7 +281,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope)
         {
-            InternalContract.RequireNotNull(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
 
             if (cacheEnvelope.CacheIdentity != _cacheIdentity) return UseCacheStrategyEnum.Remove;
@@ -289,15 +300,23 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private bool TooOld(CacheEnvelope cacheEnvelope)
         {
-            return cacheEnvelope.UpdatedAt.Add(_options.AbsoluteExpirationRelativeToNow) <= DateTimeOffset.Now;
+            if (_options.AbsoluteExpirationRelativeToNow == null) return false;
+            return cacheEnvelope.UpdatedAt.Add(_options.AbsoluteExpirationRelativeToNow.Value) <= DateTimeOffset.Now;
         }
 
-        private async Task CacheSetAsync(TModel item)
+        private async Task CacheSetAsync(TId id, TModel item)
         {
-            InternalContract.RequireNotNull(item, nameof(item));
-            var key = GetKeyFromId(_getIdDelegate(item));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
+            var key = GetKeyFromId(id);
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(item);
             await _cache.SetAsync(key, serializedCacheEnvelope, _cacheOptions, CancellationToken.None);
+        }
+
+        private Task CacheSetAsync(TModel item)
+        {
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
+            return CacheSetAsync(_getIdDelegate(item), item);
         }
 
         /// <summary>
@@ -318,7 +337,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private async Task CacheRemoveAsync(TId id)
         {
-            InternalContract.RequireNotNull(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             var key = GetKeyFromId(id);
             await _cache.RemoveAsync(key);
         }

@@ -21,10 +21,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// When is an item considered too old? Will be used for <see cref="DistributedCacheEntryOptions.AbsoluteExpirationRelativeToNow"/>
         /// </summary>
-        public TimeSpan AbsoluteExpirationRelativeToNow { get; set; }
+        public TimeSpan? AbsoluteExpirationRelativeToNow { get; set; }
 
         /// <summary>
-        /// How often must the item be accessed to stay in the cache? Will be used for <see cref="DistributedCacheEntryOptions.SlidingExpiration"./>
+        /// How often must the item be accessed to stay in the cache? Will be used for <see cref="DistributedCacheEntryOptions.SlidingExpiration"/>.
         /// </summary>
         public TimeSpan? SlidingExpiration { get; set; }
     }
