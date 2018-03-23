@@ -28,8 +28,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<byte[]> GetAsync(string key, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
-            return await ItemStorage.ReadAsync(key);
+            try
+            {
+                InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
+                return await ItemStorage.ReadAsync(key);
+            }
+            catch (FulcrumNotFoundException)
+            {
+                return null;
+            }
         }
 
         /// <inheritdoc />

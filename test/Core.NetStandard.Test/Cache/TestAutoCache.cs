@@ -17,8 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private const string FromStorage = "FromStorage";
         private const string FromCache = "FromCache";
 
-        private Mock<IDistributedCache> _cacheMock
-            ;
+        private IDistributedCache _cache;
 
         private MemoryPersistance<PersonStorableItem, Guid> _memoryPersistance;
         private AutoCache<PersonStorableItem, Guid> _autoCache;
@@ -28,15 +27,13 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCache).FullName);
             _memoryPersistance = new MemoryPersistance<PersonStorableItem, Guid>();
-            _cacheMock = new Mock<IDistributedCache>();
-            _cacheMock.Setup(cache => cache.SetAsync(It.IsAny<string>(), It.IsAny<byte[]>(),
-                It.IsAny<DistributedCacheEntryOptions>(), CancellationToken.None)).Returns(Task.FromResult((string)null));
+            _cache = new MemoryDistributedCache();
             var options = new AutoCacheOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMilliseconds(1000)
 
             };
-            _autoCache = new AutoCache<PersonStorableItem, Guid>(_memoryPersistance, _cacheMock.Object, null, options);
+            _autoCache = new AutoCache<PersonStorableItem, Guid>(_memoryPersistance, _cache, null, options);
         }
 
         [TestMethod]
@@ -98,7 +95,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var person = await _autoCache.ReadAsync(cacheOrStorageId);
             UT.Assert.AreEqual("C", person.GivenName);
             UT.Assert.AreEqual(FromStorage, person.Surname);
-            _autoCache.UseCacheStrategyMethodAsync = information => Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Use);
+            _autoCache.UseCacheStrategyMethodAsync = information =>
+            {
+                return Task.FromResult(AutoCache<PersonStorableItem, Guid>.UseCacheStrategyEnum.Use);
+            };
             person = await _autoCache.ReadAsync(cacheOrStorageId);
             UT.Assert.AreEqual("C", person.GivenName);
             UT.Assert.AreEqual(FromCache, person.Surname);
@@ -123,7 +123,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var storagePerson = new PersonStorableItem("A", FromStorage);
             var storageOnlyId = Guid.NewGuid();
             await _memoryPersistance.CreateWithSpecifiedIdAsync(storageOnlyId, storagePerson);
-            _cacheMock.Setup(cache => cache.GetAsync(storageOnlyId.ToString(), CancellationToken.None)).ReturnsAsync(() => null);
             return storageOnlyId;
         }
 
@@ -131,18 +130,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             var cachePerson = new PersonStorableItem("B", FromCache);
             var cacheOnlyId = Guid.NewGuid();
-            _cacheMock.Setup(cache => cache.GetAsync(cacheOnlyId.ToString(), CancellationToken.None)).ReturnsAsync(() => _autoCache.ToSerializedCacheEnvelope(cachePerson));
+            var serializedCacheEnvelope = _autoCache.ToSerializedCacheEnvelope(cachePerson);
+            await _cache.SetAsync(cacheOnlyId.ToString(), serializedCacheEnvelope, null, CancellationToken.None);
             return await Task.FromResult(cacheOnlyId);
         }
 
         private async Task<Guid> SetupStorageAndCacheAsync()
         {
-            var storagePerson2 = new PersonStorableItem("C", FromStorage);
             var cacheOrStorageId = Guid.NewGuid();
-            await _memoryPersistance.CreateWithSpecifiedIdAsync(cacheOrStorageId, storagePerson2);
-            var cachePerson2 = new PersonStorableItem("C", FromCache);
-            var serializedCacheEnvelope = _autoCache.ToSerializedCacheEnvelope(cachePerson2);
-            _cacheMock.Setup(cache => cache.GetAsync(cacheOrStorageId.ToString(), CancellationToken.None)).ReturnsAsync(() => serializedCacheEnvelope);
+            var cachePerson = new PersonStorableItem("C", FromCache);
+            await _autoCache.CreateWithSpecifiedIdAsync(cacheOrStorageId, cachePerson);
+            var storagePerson = await _memoryPersistance.ReadAsync(cacheOrStorageId);
+            await _memoryPersistance.UpdateAsync(cacheOrStorageId, storagePerson);
             return cacheOrStorageId;
         }
     }
