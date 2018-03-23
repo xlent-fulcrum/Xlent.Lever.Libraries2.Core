@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// When we just happen to have an Id to an item om the cache - should we get it from the storage to add it to the cache?
         /// </summary>
-        public bool GetToUpdate { get; set; }
+        public bool DoGetToUpdate { get; set; }
 
         /// <summary>
         /// When is an item considered too old? Will be used for <see cref="DistributedCacheEntryOptions.AbsoluteExpirationRelativeToNow"/>

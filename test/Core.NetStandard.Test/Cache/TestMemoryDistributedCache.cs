@@ -1,13 +1,9 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using Xlent.Lever.Libraries2.Core.Application;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
-using Xlent.Lever.Libraries2.Core.Support;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache

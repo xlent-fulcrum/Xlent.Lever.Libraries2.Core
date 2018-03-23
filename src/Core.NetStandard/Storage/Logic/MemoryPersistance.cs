@@ -93,7 +93,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             lock (MemoryItems)
             {
                 if (!MemoryItems.ContainsKey(id)) return;
-                MemoryItems.TryRemove(id, out var value);
+                MemoryItems.TryRemove(id, out var _);
             }
 
             await Task.Yield();

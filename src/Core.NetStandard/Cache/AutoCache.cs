@@ -18,7 +18,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
     public class AutoCache<TModel, TId> : ICrud<TModel, TId>
-    where TModel : class
     {
         private readonly IDistributedCache _cache;
         private readonly FlushCacheDelegateAsync _flushCacheDelegateAsync;
@@ -241,7 +240,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private async Task CacheMaybeSetAsync(TId id)
         {
-            var getAndSave = _options.SaveAll || _options.GetToUpdate && await CacheItemExistsAsync(id);
+            async Task<bool> IsAlreadyCachedAndGetIsOkToUpdate()
+            {
+                return _options.DoGetToUpdate && await CacheItemExistsAsync(id);
+            }
+
+            var getAndSave = _options.SaveAll || await IsAlreadyCachedAndGetIsOkToUpdate();
             if (!getAndSave) return;
             var item = await _storage.ReadAsync(id);
             await CacheSetAsync(id, item);
@@ -333,6 +337,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             };
             var serializedCacheEnvelope = Serialize(cacheEnvelope);
             return serializedCacheEnvelope;
+        }
+
+        /// <summary>
+        ///Deserialize the <paramref name="serializedEnvelope"/> and deserialize the data in it.
+        /// </summary>
+        public TModel ToItem(byte[] serializedEnvelope)
+        {
+            var cacheEnvelope = Deserialize<CacheEnvelope>(serializedEnvelope);
+            return Deserialize<TModel>(cacheEnvelope.Data);
         }
 
         private async Task CacheRemoveAsync(TId id)
