@@ -19,8 +19,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private MemoryPersistance<string, Guid> _storage;
         private AutoCache<string, Guid> _autoCache;
         private DistributedCacheEntryOptions _distributedCacheOptions;
-        private static readonly Guid _baseGuid = Guid.NewGuid();
-        private static readonly string BaseGuidString = _baseGuid.ToString();
+        private static readonly Guid BaseGuid = Guid.NewGuid();
+        private static readonly string BaseGuidString = BaseGuid.ToString();
         private AutoCacheOptions _autoCacheOptions;
 
         [TestInitialize]

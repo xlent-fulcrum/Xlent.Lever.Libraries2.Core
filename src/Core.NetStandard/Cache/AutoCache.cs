@@ -255,7 +255,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private async Task StoreAllItemsInCache(TModel[] itemsArray)
         {
-            lock (_cache)
+            lock (_lockReadAllCache)
             {
                 if (SaveReadAllToCacheThreadIsActive) return;
                 SaveReadAllToCacheThreadIsActive = true;
@@ -291,7 +291,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             finally
             {
-                lock (_cache)
+                lock (_lockReadAllCache)
                 {
                     SaveReadAllToCacheThreadIsActive = false;
                 }
