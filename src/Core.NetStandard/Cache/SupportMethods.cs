@@ -1,8 +1,54 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
+
+    /// <summary>
+    /// A <see cref="UseCacheStrategyDelegateAsync{TId}"/> should return one of these values.
+    /// </summary>
+    public enum UseCacheStrategyEnum
+    {
+        /// <summary>
+        /// Use the cached value
+        /// </summary>
+        Use,
+        /// <summary>
+        /// Ignore the cached value, but keep it in the cache
+        /// </summary>
+        Ignore,
+        /// <summary>
+        /// Ignore the cached value, and remove it from the cache
+        /// </summary>
+        Remove
+    }
+
+    /// <summary>
+    /// A delegate for flushing the cache, ie remove all items in the cache.
+    /// </summary>
+    public delegate Task FlushCacheDelegateAsync();
+
+    /// <summary>
+    /// The delegate should decide if we should even should try to get the data from the cache, or if we should go directly to the storage.
+    /// </summary>
+    public delegate Task<bool> UseCacheAtAllDelegateAsync(Type cachedItemType);
+
+    /// <summary>
+    /// The delegate will receive information about a cached item. Based on that information, the delegate should decide if the cached data should be deleted, ignored or used.
+    /// Before the delegate is called, the cached item has already been vetted according to the <see cref="AutoCacheOptions"/>.
+    /// This means for example that you will not have to check if the data is too old in the general sense.
+    /// </summary>
+    /// <param name="cachedItemInformation">Information about the cached item.</param>
+    public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync<TId>(CachedItemInformation<TId> cachedItemInformation);
+
+    /// <summary>
+    /// A delegate for getting a unique cache key from an item.
+    /// </summary>
+    /// <param name="item">The item to get the key for</param>
+    public delegate TId GetIdDelegate<in TModel, out TId>(TModel item);
+
     internal static class SupportMethods
     {
 

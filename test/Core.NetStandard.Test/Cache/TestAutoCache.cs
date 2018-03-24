@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private IDistributedCache _cache;
 
         private MemoryPersistance<string, Guid> _storage;
-        private AutoCache<string, Guid> _autoCache;
+        private AutoCacheCrud<string, Guid> _autoCache;
         private DistributedCacheEntryOptions _distributedCacheOptions;
         private static readonly Guid BaseGuid = Guid.NewGuid();
         private static readonly string BaseGuidString = BaseGuid.ToString();
@@ -37,7 +37,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 AbsoluteExpirationRelativeToNow = _distributedCacheOptions.AbsoluteExpirationRelativeToNow
             };
-            _autoCache = new AutoCache<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task CreateStorageWithIdWith_SaveOption_ReadCache()
         {
             _autoCacheOptions.SaveAll = true;
-            _autoCache = new AutoCache<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
             var id = Guid.NewGuid();
             await _autoCache.CreateWithSpecifiedIdAsync(id, "A"); // Will update cache thanks to SaveAll
             await PrepareStorageAsync(id, "B");
@@ -173,7 +173,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task CreateStorage_SaveOption_ReadCache()
         {
             _autoCacheOptions.SaveAll = true;
-            _autoCache = new AutoCache<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
             var id = await _autoCache.CreateAsync("A"); // Will update cache thanks to SaveAll
             await PrepareStorageAsync(id, "B");
             await VerifyAsync(id, "B", "A");
@@ -202,7 +202,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task UpdateStorage_GetOption_ReadCache()
         {
             _autoCacheOptions.DoGetToUpdate = true;
-            _autoCache = new AutoCache<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", "A");
             await _autoCache.UpdateAsync(id, "B"); // Will update cache thanks to DoGetToUpdate
@@ -214,7 +214,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task UpdateStorage_SaveOption_ReadCache()
         {
             _autoCacheOptions.SaveAll = true;
-            _autoCache = new AutoCache<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, FromStringToGuid, _cache, null, _autoCacheOptions);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", "A");
             await _autoCache.UpdateAsync(id, "B"); // Will update cache thanks to SaveAll
@@ -260,7 +260,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             _autoCacheOptions.SaveResultFromReadAll = true;
             _autoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new AutoCache<string, Guid>(_storage, item => FromStringToGuid(item, 1), _cache, null, _autoCacheOptions);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => FromStringToGuid(item, 1), _cache, null, _autoCacheOptions);
             var id1 = FromStringToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
             var id2 = FromStringToGuid("B1", 1);

@@ -7,8 +7,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Read items"/>.
     /// </summary>
-    /// <typeparam name="T">The type of objects to read from persistant storage.</typeparam>
-    public interface IReadAll<T>
+    /// <typeparam name="TModel">The type of objects to read from persistant storage.</typeparam>
+    /// <typeparam name="TId">The type for the id of the object.</typeparam>
+    public interface IReadAll<TModel, in TId> : IRead<TModel, TId>
     {
         /// <summary>
         /// Reads all the items from storage and return them as pages.
@@ -20,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<PageEnvelope<T>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
+        Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
 
         /// <summary>
         /// Reads all the items from storage and return them as a collection of items.
@@ -31,6 +32,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<IEnumerable<T>> ReadAllAsync(int limit = 0);
+        Task<IEnumerable<TModel>> ReadAllAsync(int limit = 0);
     }
 }

@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TItem">The typo of objects that should have CRUD operations.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
-    public interface ICrd<TItem, TId> : ICreate<TItem, TId>, IRead<TItem, TId>, IDelete<TId>, IReadAll<TItem>, IDeleteAll
+    public interface ICrd<TItem, TId> : ICreate<TItem, TId>, IReadAll<TItem, TId>, IDeleteAll<TId>
     {
     }
 }

@@ -6,7 +6,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Delete items of type <see cref="IUniquelyIdentifiable{TId}"/>.
     /// </summary>
-    public interface IDeleteAll
+    /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
+    public interface IDeleteAll<TId> : IDelete<TId>
     {
         /// <summary>
         /// Delete all the items from storage.

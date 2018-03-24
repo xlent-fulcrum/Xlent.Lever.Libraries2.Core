@@ -58,6 +58,8 @@
     <Compile Include="Core\Assert\InternalContract.cs" />
     <Compile Include="Core\Assert\IValidatable.cs" />
     <Compile Include="Core\Assert\ServiceContract.cs" />
+    <Compile Include="Core\Cache\AutoCacheCrd.cs" />
+    <Compile Include="Core\Cache\AutoCacheRead.cs" />
     <Compile Include="Core\Cache\AutoCacheOptions.cs" />
     <Compile Include="Core\Cache\CachedItemInformation.cs" />
     <Compile Include="Core\Cache\CacheEnvelope.cs" />
@@ -104,7 +106,7 @@
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
-    <Compile Include="Core\Cache\AutoCache.cs" />
+    <Compile Include="Core\Cache\AutoCacheCrud.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToManyPersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOneRecursivePersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
