@@ -27,5 +27,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// How often must the item be accessed to stay in the cache? Will be used for <see cref="DistributedCacheEntryOptions.SlidingExpiration"/>.
         /// </summary>
         public TimeSpan? SlidingExpiration { get; set; }
+
+        /// <summary>
+        /// When someone calls ReadAll, AutoCache will always save the individual items in the cache. If this property is true, then AutoCache will also save the entire array.
+        /// </summary>
+        public bool SaveResultFromReadAll { get; set; }
     }
 }

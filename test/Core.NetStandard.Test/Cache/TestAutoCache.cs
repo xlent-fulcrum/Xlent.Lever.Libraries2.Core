@@ -258,6 +258,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadAll()
         {
+            _autoCacheOptions.SaveResultFromReadAll = true;
             _autoCache = new AutoCache<string, Guid>(_storage, item => FromStringToGuid(item, 1), _cache, null, _autoCacheOptions);
             var id1 = FromStringToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
@@ -278,7 +279,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
             await VerifyAsync(id1, "A2", "A1");
-            await VerifyAsync(id2, "A2", "B1");
+            await VerifyAsync(id2, "B2", "B1");
             UT.Assert.IsNotNull(result);
             enumerable = result as string[] ?? result.ToArray();
             UT.Assert.AreEqual(2, enumerable.Length);
@@ -380,7 +381,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             else
             {
-                var actualCacheValue = _autoCache.ToItem(actualCacheSerializedValue);
+                var actualCacheValue = _autoCache.ToItem<string>(actualCacheSerializedValue);
                 UT.Assert.AreEqual(expectedCacheValue, actualCacheValue, $"Cache verification {beforeOrAfter} read failed.");
             }
         }
