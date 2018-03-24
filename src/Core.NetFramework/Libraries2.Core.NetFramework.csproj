@@ -61,6 +61,7 @@
     <Compile Include="Core\Cache\AutoCacheOptions.cs" />
     <Compile Include="Core\Cache\CachedItemInformation.cs" />
     <Compile Include="Core\Cache\CacheEnvelope.cs" />
+    <Compile Include="Core\Cache\MemoryDistributedCache.cs" />
     <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\DistributedCacheEntryOptions.cs" />
     <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\IDistributedCache.cs" />
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />

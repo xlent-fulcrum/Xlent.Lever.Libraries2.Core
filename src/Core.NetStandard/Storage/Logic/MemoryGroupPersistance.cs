@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
         /// </summary>
-        protected static readonly Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new Dictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
+        protected static readonly ConcurrentDictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new ConcurrentDictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
 
         /// <inheritdoc />
         public async Task<TId> CreateAsync(TGroup groupValue, TStorableItem item)

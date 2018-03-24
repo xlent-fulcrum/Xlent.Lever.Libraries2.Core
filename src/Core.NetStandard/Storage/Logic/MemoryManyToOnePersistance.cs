@@ -10,7 +10,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    /// <typeparam name="TReferenceId">The type for the reference field of the model.</typeparam>
     public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryManyToOneRecursivePersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId>
         where TManyModel : class
         where TOneModel : class

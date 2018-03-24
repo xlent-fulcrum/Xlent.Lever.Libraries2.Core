@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
     /// <summary>
     /// A paging envelope for returning segments of data.
     /// </summary>
-    public class PageEnvelope<T>
+    public class PageEnvelope<T> : IValidatable
     {
         /// <summary>
         /// Empty constructor.
@@ -42,5 +44,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// Information about this segment of the data
         /// </summary>
         public IEnumerable<T> Data { get; set; }
+
+        /// <inheritdoc />
+        public void Validate(string errorLocation, string propertyPath = "")
+        {
+            FulcrumValidate.IsValidated(PageInfo, propertyPath, nameof(PageInfo), errorLocation);
+            if (!FulcrumApplication.IsInProduction)
+            {
+                FulcrumValidate.AreEqual(PageInfo.Returned, Data.Count(), nameof(Data), $"Validation of {nameof(PageEnvelope<T>)} failed. The number of items in {nameof(Data)} ({Data.Count()}) must be the same as {nameof(PageInfo.Returned)} ({PageInfo.Returned}).");
+            }
+        }
     }
 }
