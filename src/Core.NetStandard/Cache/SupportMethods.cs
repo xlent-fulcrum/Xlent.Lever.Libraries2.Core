@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <param name="item">The item to get the key for</param>
     public delegate TId GetIdDelegate<in TModel, out TId>(TModel item);
 
-    internal static class SupportMethods
+    public static class SupportMethods
     {
 
         /// <summary>
@@ -69,6 +69,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             var itemAsJsonString = Encoding.UTF8.GetString(itemAsBytes);
             return JsonConvert.DeserializeObject<T>(itemAsJsonString);
+        }
+
+        /// <summary>
+        ///Deserialize the <paramref name="serializedEnvelope"/> and deserialize the data in it.
+        /// </summary>
+        public static T ToItem<T>(byte[] serializedEnvelope)
+        {
+            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(serializedEnvelope);
+            return SupportMethods.Deserialize<T>(cacheEnvelope.Data);
         }
     }
 }

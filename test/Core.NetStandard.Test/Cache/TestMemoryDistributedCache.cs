@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestInitialize]
         public async Task Initialize()
         {
-            FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCache).FullName);
+            FulcrumApplicationHelper.UnitTestSetup(typeof(TestMemoryDistributedCache).FullName);
             var storage = new MemoryPersistance<MemoryDistributedCache, string>();
             var factory = new MemoryDistributedCacheFactory(storage);
             _cache = await factory.CreateOrGetDistributedCacheAsync(typeof(TestMemoryDistributedCache).FullName);

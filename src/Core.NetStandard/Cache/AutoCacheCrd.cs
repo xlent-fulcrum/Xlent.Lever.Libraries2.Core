@@ -20,6 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     public class AutoCacheCrd<TModel, TId> : AutoCacheRead<TModel, TId>, ICrd<TModel, TId>
     {
         private readonly ICrd<TModel, TId> _storage;
+        protected readonly FlushCacheDelegateAsync FlushCacheDelegateAsync;
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
         /// </summary>
@@ -42,9 +43,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
         public AutoCacheCrd(ICrd<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
-        :base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
+        :base(storage, getIdDelegate, cache, options)
         {
             _storage = storage;
+            FlushCacheDelegateAsync = flushCacheDelegateAsync;
         }
 
         /// <inheritdoc />

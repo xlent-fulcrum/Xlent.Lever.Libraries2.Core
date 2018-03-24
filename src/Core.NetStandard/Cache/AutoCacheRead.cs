@@ -23,12 +23,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private readonly object _lockReadAllCache = new object();
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
         protected readonly IDistributedCache Cache;
-        protected readonly FlushCacheDelegateAsync FlushCacheDelegateAsync;
         protected readonly GetIdDelegate<TModel, TId> GetIdDelegate;
         protected readonly AutoCacheOptions Options;
         protected readonly DistributedCacheEntryOptions CacheOptions;
-        protected string CacheIdentity;
+        protected string CacheIdentity { get; set; }
         protected const string ReadAllCacheKey = "ReadAllCacheKey";
+
 
         /// <summary>
         /// If you want to have your own method for discarding cache values, set this property to a method that returns how you want to deal with the cached value.
@@ -50,10 +50,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// </summary>
         /// <param name="storage"></param>
         /// <param name="cache"></param>
-        /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheRead(IReadAll<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
-        : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
+        public AutoCacheRead(IReadAll<TModel, TId> storage, IDistributedCache cache, AutoCacheOptions options = null)
+        : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, options)
         {
         }
 
@@ -64,9 +63,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="storage"></param>
         /// <param name="cache"></param>
         /// <param name="getIdDelegate"></param>
-        /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheRead(IReadAll<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public AutoCacheRead(IReadAll<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, AutoCacheOptions options = null)
         {
             InternalContract.RequireNotNull(storage, nameof(storage));
             InternalContract.RequireNotNull(getIdDelegate, nameof(getIdDelegate));
@@ -81,7 +79,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
             CacheIdentity = Guid.NewGuid().ToString();
             Cache = cache;
-            FlushCacheDelegateAsync = flushCacheDelegateAsync;
             Options = options;
             _storage = storage;
             GetIdDelegate = getIdDelegate;
@@ -332,6 +329,21 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return $"{ReadAllCacheKey}-{offset}-{limit}";
         }
 
+        protected async Task CacheRemoveAsync(TId id)
+        {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            var key = GetCacheKeyFromId(id);
+            await Cache.RemoveAsync(key);
+        }
+
+        protected static string GetCacheKeyFromId(TId id)
+        {
+            var key = id?.ToString();
+            InternalContract.Require(key != null,
+                $"Could not extract a cache key for an item of type {typeof(TModel).FullName}.");
+            return key;
+        }
+
         /// <summary>
         /// Serialize the <paramref name="item"/>, put it into an envelope and serialize the envelope
         /// </summary>
@@ -346,30 +358,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             };
             var serializedCacheEnvelope = SupportMethods.Serialize(cacheEnvelope);
             return serializedCacheEnvelope;
-        }
-
-        /// <summary>
-        ///Deserialize the <paramref name="serializedEnvelope"/> and deserialize the data in it.
-        /// </summary>
-        public T ToItem<T>(byte[] serializedEnvelope)
-        {
-            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(serializedEnvelope);
-            return SupportMethods.Deserialize<T>(cacheEnvelope.Data);
-        }
-
-        protected async Task CacheRemoveAsync(TId id)
-        {
-            InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var key = GetCacheKeyFromId(id);
-            await Cache.RemoveAsync(key);
-        }
-
-        protected static string GetCacheKeyFromId(TId id)
-        {
-            var key = id?.ToString();
-            InternalContract.Require(key != null,
-                $"Could not extract a cache key for an item of type {typeof(TModel).FullName}.");
-            return key;
         }
     }
 }
