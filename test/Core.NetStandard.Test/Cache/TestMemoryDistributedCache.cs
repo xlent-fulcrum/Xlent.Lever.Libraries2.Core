@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
@@ -14,10 +15,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private IDistributedCache _cache;
 
         [TestInitialize]
-        public void Initialize()
+        public async Task Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCache).FullName);
-            _cache = new MemoryDistributedCache();
+            var storage = new MemoryPersistance<MemoryDistributedCache, string>();
+            var factory = new MemoryDistributedCacheFactory(storage);
+            _cache = await factory.CreateOrGetDistributedCacheAsync(typeof(TestMemoryDistributedCache).FullName);
         }
 
         [TestMethod]

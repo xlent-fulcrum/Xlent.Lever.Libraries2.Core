@@ -1,0 +1,39 @@
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
+
+namespace Xlent.Lever.Libraries2.Core.Cache
+{
+    /// <summary>
+    /// A factory for creating new caches.
+    /// </summary>
+    public class MemoryDistributedCacheFactory : IDistributedCacheFactory
+    {
+        private readonly ICrd<MemoryDistributedCache, string> _storage;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="storage"></param>
+        public MemoryDistributedCacheFactory(ICrd<MemoryDistributedCache, string> storage)
+        {
+            _storage = storage;
+        }
+
+        /// <inheritdoc />
+        public async Task<IDistributedCache> CreateOrGetDistributedCacheAsync(string key)
+        {
+            try
+            {
+                return await _storage.ReadAsync(key);
+            }
+            catch (FulcrumNotFoundException)
+            {
+                var cache = new MemoryDistributedCache();
+                await _storage.CreateWithSpecifiedIdAsync(key, cache);
+                return cache;
+            }
+        }
+    }
+}

@@ -130,14 +130,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             if (!MemoryItems.ContainsKey(id)) return;
             throw new FulcrumConflictException(
-                $"An item of type {typeof(TItem).Name} with id {id} already exists.");
+                $"An item of type {typeof(TItem).Name} with id \"{id}\" already exists.");
         }
 
         private void ValidateExists(TId id)
         {
             if (MemoryItems.ContainsKey(id)) return;
             throw new FulcrumNotFoundException(
-                $"Could not find an item of type {typeof(TItem).Name} with id {id}.");
+                $"Could not find an item of type {typeof(TItem).Name} with id \"{id}\".");
         }
 
         private static TItem CopyItem(TItem source)

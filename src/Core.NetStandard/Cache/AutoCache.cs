@@ -2,10 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Logging;
@@ -14,6 +12,50 @@ using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
+
+    /// <summary>
+    /// A <see cref="UseCacheStrategyDelegateAsync{TId}"/> should return one of these values.
+    /// </summary>
+    public enum UseCacheStrategyEnum
+    {
+        /// <summary>
+        /// Use the cached value
+        /// </summary>
+        Use,
+        /// <summary>
+        /// Ignore the cached value, but keep it in the cache
+        /// </summary>
+        Ignore,
+        /// <summary>
+        /// Ignore the cached value, and remove it from the cache
+        /// </summary>
+        Remove
+    }
+
+    /// <summary>
+    /// A delegate for flushing the cache, ie remove all items in the cache.
+    /// </summary>
+    public delegate Task FlushCacheDelegateAsync();
+
+    /// <summary>
+    /// The delegate should decide if we should even should try to get the data from the cache, or if we should go directly to the storage.
+    /// </summary>
+    public delegate Task<bool> UseCacheAtAllDelegateAsync(Type cachedItemType);
+
+    /// <summary>
+    /// The delegate will receive information about a cached item. Based on that information, the delegate should decide if the cached data should be deleted, ignored or used.
+    /// Before the delegate is called, the cached item has already been vetted according to the <see cref="AutoCacheOptions"/>.
+    /// This means for example that you will not have to check if the data is too old in the general sense.
+    /// </summary>
+    /// <param name="cachedItemInformation">Information about the cached item.</param>
+    public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync<TId>(CachedItemInformation<TId> cachedItemInformation);
+
+    /// <summary>
+    /// A delegate for getting a unique cache key from an item.
+    /// </summary>
+    /// <param name="item">The item to get the key for</param>
+    public delegate TId GetIdDelegate<in TModel, out TId>(TModel item);
+
     /// <summary>
     /// Use this to put an "intelligent" cache between you and your ICrud storage.
     /// </summary>
@@ -23,7 +65,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         private readonly IDistributedCache _cache;
         private readonly FlushCacheDelegateAsync _flushCacheDelegateAsync;
-        private readonly GetIdDelegate _getIdDelegate;
+        private readonly GetIdDelegate<TModel, TId> _getIdDelegate;
         private readonly AutoCacheOptions _options;
         private readonly ICrud<TModel, TId> _storage;
         private readonly DistributedCacheEntryOptions _cacheOptions;
@@ -33,52 +75,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
 
         /// <summary>
-        /// A delegate for getting a unique cache key from an item.
-        /// </summary>
-        /// <param name="item">The item to get the key for</param>
-        public delegate TId GetIdDelegate(TModel item);
-
-        /// <summary>
-        /// A delegate for flushing the cache, ie remove all items in the cache.
-        /// </summary>
-        public delegate Task<TId> FlushCacheDelegateAsync();
-
-        /// <summary>
-        /// A <see cref="AutoCache{TModel,TId}.UseCacheStrategyDelegateAsync"/> should return one of these values.
-        /// </summary>
-        public enum UseCacheStrategyEnum
-        {
-            /// <summary>
-            /// Use the cached value
-            /// </summary>
-            Use,
-            /// <summary>
-            /// Ignore the cached value, but keep it in the cache
-            /// </summary>
-            Ignore,
-            /// <summary>
-            /// Ignore the cached value, and remove it from the cache
-            /// </summary>
-            Remove
-        }
-
-        /// <summary>
-        /// The delegate will receive information about a cached item. Based on that information, the delegate should decide if the cached data should be deleted, ignored or used.
-        /// Before the delegate is called, the cached item has already been vetted according to the <see cref="AutoCacheOptions"/>.
-        /// This means for example that you will not have to check if the data is too old in the general sense.
-        /// </summary>
-        /// <param name="cachedItemInformation">Information about the cached item.</param>
-        public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync(CachedItemInformation<TId> cachedItemInformation);
-
-        /// <summary>
-        /// The delegate should decide if we should even should try to get the data from the cache, or if we should go directly to the storage.
-        /// </summary>
-        public delegate Task<bool> UseCacheAtAllDelegateAsync(Type cachedItemType);
-
-        /// <summary>
         /// If you want to have your own method for discarding cache values, set this property to a method that returns how you want to deal with the cached value.
         /// </summary>
-        public UseCacheStrategyDelegateAsync UseCacheStrategyMethodAsync { get; set; }
+        public UseCacheStrategyDelegateAsync<TId> UseCacheStrategyMethodAsync { get; set; }
 
         /// <summary>
         /// If you want to be able to sometimes totally ignore the cache (saving yourself from a call to the cache), use this method to decide what to do.
@@ -111,7 +110,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCache(ICrud<TModel, TId> storage, GetIdDelegate getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public AutoCache(ICrud<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         {
             InternalContract.RequireNotNull(storage, nameof(storage));
             InternalContract.RequireNotNull(getIdDelegate, nameof(getIdDelegate));
@@ -206,6 +205,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (itemsArray != null) return itemsArray;
             var itemsCollection = await _storage.ReadAllAsync(limit);
             itemsArray = itemsCollection as TModel[] ?? itemsCollection.ToArray();
+            lock (_lockReadAllCache)
+            {
+                if (SaveReadAllToCacheThreadIsActive) return itemsArray;
+                SaveReadAllToCacheThreadIsActive = true;
+            }
             ThreadHelper.FireAndForget(async () => await StoreAllItemsInCache(itemsArray).ConfigureAwait(false));
             return itemsArray;
         }
@@ -218,9 +222,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (result != null) return result;
             result = await _storage.ReadAllWithPagingAsync(offset, limit.Value);
             if (result?.Data == null) return null;
-            ThreadHelper.FireAndForget(async () => await StoreAllItemsInCache(result, false).ConfigureAwait(false));
-            var tasks = result.Data.Select(CacheSetAsync);
-            await Task.WhenAll(tasks);
+            ThreadHelper.FireAndForget(async () =>
+                        await StoreAllItemsInCache(result, false).ConfigureAwait(false));
             return result;
         }
 
@@ -255,12 +258,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private async Task StoreAllItemsInCache(TModel[] itemsArray)
         {
-            lock (_lockReadAllCache)
-            {
-                if (SaveReadAllToCacheThreadIsActive) return;
-                SaveReadAllToCacheThreadIsActive = true;
-            }
-
             try
             {
                 if (_options.SaveResultFromReadAll)
@@ -303,7 +300,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             // Give up if this is an individual page being saved while we are saving a total read all, 
             // because that could lead to inconsistencies in the data
             if (!inSaveReadAllThread && SaveReadAllToCacheThreadIsActive) return;
-
 
             var key = GetCacheKeyForPage(pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
 
@@ -351,12 +347,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var key = GetCacheKeyForPage(offset, limit);
             var byteArray = await _cache.GetAsync(key);
             if (byteArray == null) return null;
-            var cacheEnvelope = Deserialize<CacheEnvelope>(byteArray);
+            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
             var cacheItemStrategy = GetCacheItemStrategy(cacheEnvelope);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
-                    return Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data);
+                    return SupportMethods.Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data);
                 case UseCacheStrategyEnum.Ignore:
                     return null;
                 case UseCacheStrategyEnum.Remove:
@@ -374,12 +370,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 !await UseCacheAtAllMethodAsync(typeof(TModel[]))) return null;
             var byteArray = await _cache.GetAsync(ReadAllCacheKey);
             if (byteArray == null) return null;
-            var cacheEnvelope = Deserialize<CacheEnvelope>(byteArray);
+            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
             var cacheItemStrategy = GetCacheItemStrategy(cacheEnvelope);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
-                    return Deserialize<TModel[]>(cacheEnvelope.Data);
+                    return SupportMethods.Deserialize<TModel[]>(cacheEnvelope.Data);
                 case UseCacheStrategyEnum.Ignore:
                     return null;
                 case UseCacheStrategyEnum.Remove:
@@ -398,12 +394,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var key = GetCacheKeyFromId(id);
             var byteArray = await _cache.GetAsync(key);
             if (byteArray == null) return default(TModel);
-            var cacheEnvelope = Deserialize<CacheEnvelope>(byteArray);
+            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
             var cacheItemStrategy = await GetCacheItemStrategyAsync(id, cacheEnvelope);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
-                    return Deserialize<TModel>(cacheEnvelope.Data);
+                    return SupportMethods.Deserialize<TModel>(cacheEnvelope.Data);
                 case UseCacheStrategyEnum.Ignore:
                     return default(TModel);
                 case UseCacheStrategyEnum.Remove:
@@ -436,7 +432,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
 
             if (cacheEnvelope.CacheIdentity != _cacheIdentity) return UseCacheStrategyEnum.Remove;
-            return TooOld(cacheEnvelope) ?  UseCacheStrategyEnum.Remove :  UseCacheStrategyEnum.Use;
+            return TooOld(cacheEnvelope) ? UseCacheStrategyEnum.Remove : UseCacheStrategyEnum.Use;
         }
 
         private bool TooOld(CacheEnvelope cacheEnvelope)
@@ -486,14 +482,14 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// </summary>
         public byte[] ToSerializedCacheEnvelope<T>(T item)
         {
-            var serializedItem = Serialize(item);
+            var serializedItem = SupportMethods.Serialize(item);
             var cacheEnvelope = new CacheEnvelope
             {
                 CacheIdentity = _cacheIdentity,
                 UpdatedAt = DateTimeOffset.Now,
                 Data = serializedItem
             };
-            var serializedCacheEnvelope = Serialize(cacheEnvelope);
+            var serializedCacheEnvelope = SupportMethods.Serialize(cacheEnvelope);
             return serializedCacheEnvelope;
         }
 
@@ -502,8 +498,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// </summary>
         public T ToItem<T>(byte[] serializedEnvelope)
         {
-            var cacheEnvelope = Deserialize<CacheEnvelope>(serializedEnvelope);
-            return Deserialize<T>(cacheEnvelope.Data);
+            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(serializedEnvelope);
+            return SupportMethods.Deserialize<T>(cacheEnvelope.Data);
         }
 
         private async Task CacheRemoveAsync(TId id)
@@ -519,18 +515,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             InternalContract.Require(key != null,
                 $"Could not extract a cache key for an item of type {typeof(TModel).FullName}.");
             return key;
-        }
-
-        private static byte[] Serialize<T>(T item)
-        {
-            var itemAsJsonString = JsonConvert.SerializeObject(item);
-            return Encoding.UTF8.GetBytes(itemAsJsonString);
-        }
-
-        private static T Deserialize<T>(byte[] itemAsBytes)
-        {
-            var itemAsJsonString = Encoding.UTF8.GetString(itemAsBytes);
-            return JsonConvert.DeserializeObject<T>(itemAsJsonString);
         }
     }
 }

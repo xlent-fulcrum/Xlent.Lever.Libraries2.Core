@@ -70,7 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadStorage_MethodIgnore_ReadStorage()
         {
-            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(AutoCache<string, Guid>.UseCacheStrategyEnum.Ignore);
+            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(UseCacheStrategyEnum.Ignore);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", null);
             await VerifyAsync(id, "A", null, "A");
@@ -81,7 +81,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadStorage_MethodRemove_ReadStorage()
         {
-            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(AutoCache<string, Guid>.UseCacheStrategyEnum.Remove);
+            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(UseCacheStrategyEnum.Remove);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", null);
             await VerifyAsync(id, "A", null, "A");
@@ -259,6 +259,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task ReadAll()
         {
             _autoCacheOptions.SaveResultFromReadAll = true;
+            _autoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
             _autoCache = new AutoCache<string, Guid>(_storage, item => FromStringToGuid(item, 1), _cache, null, _autoCacheOptions);
             var id1 = FromStringToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
@@ -266,6 +267,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
+            while (_autoCache.SaveReadAllToCacheThreadIsActive) await Task.Delay(TimeSpan.FromMilliseconds(10));
             await VerifyAsync(id1, "A1");
             await VerifyAsync(id2, "B1");
             UT.Assert.IsNotNull(result);
