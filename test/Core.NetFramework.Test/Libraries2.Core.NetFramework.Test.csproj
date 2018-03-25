@@ -64,10 +64,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Cache\ItemWithId.cs" />
+    <Compile Include="Core\Cache\ItemWithParentId.cs" />
     <Compile Include="Core\Cache\TestAutoCacheCrud.cs" />
     <Compile Include="Core\Cache\TestAutoCacheCrd.cs" />
     <Compile Include="Core\Cache\TestAutoCacheBase.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheManyToOneRecursive.cs" />
     <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
     <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />

@@ -58,7 +58,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public virtual async Task<IEnumerable<TItem>> ReadAllAsync(int limit = 0)
         {
             var result = new List<TItem>();
-            int offset = 0;
+            var offset = 0;
             while (true)
             {
                 var page = await ReadAllWithPagingAsync(offset);

@@ -5,24 +5,29 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     [TestClass]
-    public class TestAutoCacheRead : TestAutoCacheBase
+    public class TestAutoCacheRead : TestAutoCacheBase<string>
     {
         private AutoCacheRead<string, Guid> _autoCache;
 
         /// <inheritdoc />
         public override AutoCacheRead<string, Guid> AutoCacheRead => _autoCache;
-        
+
+        private ICrud<string, Guid> _storage;
+        /// <inheritdoc />
+        protected override ICrud<string, Guid> CrudStorage => _storage;
+
 
         [TestInitialize]
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCacheRead).FullName);
-            Storage = new MemoryPersistance<string, Guid>();
+            _storage = new MemoryPersistance<string, Guid>();
             Cache = new MemoryDistributedCache();
             DistributedCacheOptions = new DistributedCacheEntryOptions
             {
@@ -32,7 +37,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 AbsoluteExpirationRelativeToNow = DistributedCacheOptions.AbsoluteExpirationRelativeToNow
             };
-            _autoCache = new AutoCacheCrud<string, Guid>(Storage, FromStringToGuid, Cache, null, AutoCacheOptions);
+            _autoCache = new AutoCacheRead<string, Guid>(_storage, ToGuid, Cache, AutoCacheOptions);
         }
 
         [TestMethod]
@@ -108,16 +113,16 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             VerifyFromStringToGuidAreEqual("A1", "A2", 1);
         }
 
-        private static void VerifyFromStringToGuidAreNotEqual(string a, string b, int maxLength = Int32.MaxValue)
+        private void VerifyFromStringToGuidAreNotEqual(string a, string b, int maxLength = Int32.MaxValue)
         {
-            var id1 = FromStringToGuid(a, maxLength);
-            var id2 = FromStringToGuid(b, maxLength);
+            var id1 = ToGuid(a, maxLength);
+            var id2 = ToGuid(b, maxLength);
             UT.Assert.AreNotEqual(id1, id2);
         }
-        private static void VerifyFromStringToGuidAreEqual(string a, string b, int maxLength = Int32.MaxValue)
+        private void VerifyFromStringToGuidAreEqual(string a, string b, int maxLength = Int32.MaxValue)
         {
-            var id1 = FromStringToGuid(a, maxLength);
-            var id2 = FromStringToGuid(b, maxLength);
+            var id1 = ToGuid(a, maxLength);
+            var id2 = ToGuid(b, maxLength);
             UT.Assert.AreEqual(id1, id2);
         }
 
@@ -126,10 +131,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveResultFromReadAll = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new AutoCacheCrud<string, Guid>(Storage, item => FromStringToGuid(item, 1), Cache, null, AutoCacheOptions);
-            var id1 = FromStringToGuid("A1", 1);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            var id1 = ToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
-            var id2 = FromStringToGuid("B1", 1);
+            var id2 = ToGuid("B1", 1);
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);

@@ -239,11 +239,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task<TModel> CacheGetAsync(TId id)
+        protected async Task<TModel> CacheGetAsync(TId id, string key = null)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
-            var key = GetCacheKeyFromId(id);
+            key = key ?? GetCacheKeyFromId(id);
             var byteArray = await Cache.GetAsync(key);
             if (byteArray == null) return default(TModel);
             var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
@@ -299,11 +299,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return CacheSetAsync(GetIdDelegate(item), item);
         }
 
-        protected async Task CacheSetAsync(TId id, TModel item)
+        protected async Task CacheSetAsync(TId id, TModel item, string key = null)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var key = GetCacheKeyFromId(id);
+            key = key ?? GetCacheKeyFromId(id);
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(item);
             await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
         }

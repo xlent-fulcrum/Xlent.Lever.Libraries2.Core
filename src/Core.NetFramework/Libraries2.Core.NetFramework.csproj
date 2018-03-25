@@ -59,6 +59,8 @@
     <Compile Include="Core\Assert\IValidatable.cs" />
     <Compile Include="Core\Assert\ServiceContract.cs" />
     <Compile Include="Core\Cache\AutoCacheCrd.cs" />
+    <Compile Include="Core\Cache\AutoCacheManyToOne.cs" />
+    <Compile Include="Core\Cache\AutoCacheManyToOneRecursive.cs" />
     <Compile Include="Core\Cache\AutoCacheRead.cs" />
     <Compile Include="Core\Cache\AutoCacheOptions.cs" />
     <Compile Include="Core\Cache\CachedItemInformation.cs" />

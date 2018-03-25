@@ -3,28 +3,33 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
-    public abstract class TestAutoCacheBase
+    public abstract class TestAutoCacheBase<TModel>
     {
         protected IDistributedCache Cache;
 
-        protected MemoryPersistance<string, Guid> Storage;
+        protected virtual ICrud<TModel, Guid> CrudStorage { get; }
         protected DistributedCacheEntryOptions DistributedCacheOptions;
-        protected static readonly Guid BaseGuid = Guid.NewGuid();
-        protected static readonly string BaseGuidString = BaseGuid.ToString();
+        protected readonly string BaseGuidString;
         protected AutoCacheOptions AutoCacheOptions;
 
-        public virtual AutoCacheRead<string, Guid> AutoCacheRead { get; }
+        public virtual AutoCacheRead<TModel, Guid> AutoCacheRead { get; }
 
-        protected async Task PrepareStorageAndCacheAsync(Guid id, string storageValue, string cacheValue)
+        protected TestAutoCacheBase()
+        {
+            BaseGuidString = Guid.NewGuid().ToString();
+        }
+
+        protected async Task PrepareStorageAndCacheAsync(Guid id, TModel storageValue, TModel cacheValue)
         {
             await PrepareStorageAsync(id, storageValue);
             await PrepareCacheAsync(id, cacheValue);
         }
 
-        protected async Task PrepareCacheAsync(Guid id, string cacheValue)
+        protected async Task PrepareCacheAsync(Guid id, TModel cacheValue)
         {
             if (cacheValue == null)
             {
@@ -36,27 +41,27 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task PrepareStorageAsync(Guid id, string storageValue)
+        protected async Task PrepareStorageAsync(Guid id, TModel storageValue)
         {
             if (storageValue == null)
             {
-                await Storage.DeleteAsync(id);
+                await CrudStorage.DeleteAsync(id);
             }
             else
             {
                 try
                 {
-                    var value = await Storage.ReadAsync(id);
-                    if (value != storageValue) await Storage.UpdateAsync(id, storageValue);
+                    var value = await CrudStorage.ReadAsync(id);
+                    if (!Equals(value,storageValue)) await CrudStorage.UpdateAsync(id, storageValue);
                 }
                 catch (FulcrumNotFoundException)
                 {
-                    await Storage.CreateWithSpecifiedIdAsync(id, storageValue);
+                    await CrudStorage.CreateWithSpecifiedIdAsync(id, storageValue);
                 }
             }
         }
 
-        protected async Task VerifyAsync(Guid id, string expectedStorageValue, string expectedCacheValueBefore, string expectedReadValue, string expectedCacheValueAfter)
+        protected async Task VerifyAsync(Guid id, TModel expectedStorageValue, TModel expectedCacheValueBefore, TModel expectedReadValue, TModel expectedCacheValueAfter)
         {
             await VerifyStorage(id, expectedStorageValue);
             await VerifyCache(id, expectedCacheValueBefore, true);
@@ -64,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await VerifyCache(id, expectedCacheValueAfter, false);
         }
 
-        protected async Task VerifyAsync(Guid id, string expectedStorageValue, string expectedCacheValueBefore, string expectedReadValue)
+        protected async Task VerifyAsync(Guid id, TModel expectedStorageValue, TModel expectedCacheValueBefore, TModel expectedReadValue)
         {
             await VerifyStorage(id, expectedStorageValue);
             await VerifyCache(id, expectedCacheValueBefore, true);
@@ -72,7 +77,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await VerifyCache(id, expectedReadValue, false);
         }
 
-        protected async Task VerifyAsync(Guid id, string expectedStorageValue, string expectedCacheValueBefore)
+        protected async Task VerifyAsync(Guid id, TModel expectedStorageValue, TModel expectedCacheValueBefore)
         {
             await VerifyStorage(id, expectedStorageValue);
             await VerifyCache(id, expectedCacheValueBefore, true);
@@ -80,7 +85,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await VerifyCache(id, expectedCacheValueBefore, false);
         }
 
-        protected async Task VerifyAsync(Guid id, string expectedStorageValue)
+        protected async Task VerifyAsync(Guid id, TModel expectedStorageValue)
         {
             await VerifyStorage(id, expectedStorageValue);
             await VerifyCache(id, expectedStorageValue, true);
@@ -88,11 +93,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await VerifyCache(id, expectedStorageValue, false);
         }
 
-        protected async Task VerifyStorage(Guid id, string expectedStorageValue)
+        protected async Task VerifyStorage(Guid id, TModel expectedStorageValue)
         {
             try
             {
-                var actualStorageValue = await Storage.ReadAsync(id);
+                var actualStorageValue = await CrudStorage.ReadAsync(id);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedStorageValue, actualStorageValue, "Storage verification failed.");
             }
             catch (FulcrumNotFoundException)
@@ -101,7 +106,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task VerifyCache(Guid id, string expectedCacheValue, bool isBeforeRead)
+        protected async Task VerifyCache(Guid id, TModel expectedCacheValue, bool isBeforeRead)
         {
             var beforeOrAfter = isBeforeRead ? "before" : "after";
             var actualCacheSerializedValue = await Cache.GetAsync(id.ToString());
@@ -111,12 +116,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             else
             {
-                var actualCacheValue = SupportMethods.ToItem<string>(actualCacheSerializedValue);
+                var actualCacheValue = SupportMethods.ToItem<TModel>(actualCacheSerializedValue);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedCacheValue, actualCacheValue, $"Cache verification {beforeOrAfter} read failed.");
             }
         }
 
-        protected async Task VerifyRead(Guid id, string expectedReadValue)
+        protected async Task VerifyRead(Guid id, TModel expectedReadValue)
         {
             try
             {
@@ -129,18 +134,19 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected static Guid FromStringToGuid(string item)
+        protected Guid ToGuid(TModel item)
         {
-            return FromStringToGuid(item, int.MaxValue);
+            return ToGuid(item, int.MaxValue);
         }
 
-        protected static Guid FromStringToGuid(string item, int maxLength)
+        protected Guid ToGuid(TModel item, int maxLength)
         {
-            if (item.Length > maxLength)
+            var itemAsString = item.ToString(); 
+            if (itemAsString.Length > maxLength)
             {
-                item = item.Substring(0, maxLength);
+                itemAsString = itemAsString.Substring(0, maxLength);
             }
-            var itemAsInt = item.GetHashCode();
+            var itemAsInt = itemAsString.GetHashCode();
             var itemAsHex = itemAsInt.ToString("X");
             var itemLength = itemAsHex.Length;
             var totalLength = BaseGuidString.Length;
