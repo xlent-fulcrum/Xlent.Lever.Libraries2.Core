@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -33,7 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate object GetParentIdDelegate(TModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TModel>> ReadChildrenAsync(TId parentId, int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId parentId, int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(parentId, nameof(parentId));
@@ -48,6 +50,26 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 var page = new PageEnvelope<TModel>(offset, limit.Value, MemoryItems.Count, list);
                 return Task.FromResult(page);
             }
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue)
+        {
+            InternalContract.RequireNotNull(parentId, nameof(parentId));
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+
+
+            var result = new List<TModel>();
+            var offset = 0;
+            while (true)
+            {
+                var page = await ReadChildrenWithPagingAsync(parentId, offset);
+                if (page.PageInfo.Returned == 0) break;
+                result.AddRange(page.Data);
+                offset += page.PageInfo.Returned;
+            }
+
+            return result;
         }
 
         /// <inheritdoc />

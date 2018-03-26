@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     /// <summary>
-    ///  Options that are rules for the <see cref="AutoCache{TModel,TId}"/>.
+    ///  Options that are rules for the <see cref="AutoCacheCrud{TModel,TId}"/>.
     /// </summary>
     public class AutoCacheOptions
     {
@@ -31,6 +31,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// When someone calls ReadAll, AutoCache will always save the individual items in the cache. If this property is true, then AutoCache will also save the entire array.
         /// </summary>
-        public bool SaveResultFromReadAll { get; set; }
+        public bool SaveCollections { get; set; }
     }
 }

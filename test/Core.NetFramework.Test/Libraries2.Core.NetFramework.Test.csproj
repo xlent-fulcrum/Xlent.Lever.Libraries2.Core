@@ -64,8 +64,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Cache\ItemWithParentId.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheCrud.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheCrd.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheBase.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheManyToOneRecursive.cs" />
+    <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
     <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
-    <Compile Include="Core\Cache\TestAutoCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
