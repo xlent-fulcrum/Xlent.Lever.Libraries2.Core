@@ -166,7 +166,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
-            while (_autoCache.GetSaveReadAllToCacheThreadIsActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
             await VerifyAsync(id1, "A1");
             await VerifyAsync(id2, "B1");
         }

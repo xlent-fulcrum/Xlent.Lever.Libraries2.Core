@@ -5,6 +5,7 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
+using System;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
@@ -47,26 +48,23 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        public bool GetSaveReadAllToCacheThreadIsActive(TId parentId)
+        public bool IsCollectionOperationActive(TId parentId)
         {
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
-            return GetSaveReadAllToCacheThreadIsActive(CacheKeyForChildrenCollection(parentId));
+            return IsCollectionOperationActive(CacheKeyForChildrenCollection(parentId));
         }
 
         /// <inheritdoc />
         public async Task DeleteChildrenAsync(TId parentId)
         {
             await _storage.DeleteChildrenAsync(parentId);
-            // TODO: Do this work in the background
+            await RemoveCachedChildrenInBackgroundAsync(parentId);
+        }
+
+        private async Task RemoveCachedChildrenInBackgroundAsync(TId parentId)
+        {
             var key = CacheKeyForChildrenCollection(parentId);
-            var children = await CacheGetAsync(int.MaxValue, key);
-            if (children == null) return;
-            await Cache.RemoveAsync(key);
-            foreach (var child in children)
-            {
-                var childKey = GetCacheKeyFromId(GetIdDelegate(child));
-                await Cache.RemoveAsync(childKey);
-            }
+            await RemoveCacheItemsInBackgroundAsync(key, async () => await CacheGetAsync(int.MaxValue, key));
         }
 
         /// <inheritdoc />

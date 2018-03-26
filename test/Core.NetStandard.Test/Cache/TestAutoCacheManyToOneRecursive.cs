@@ -110,7 +110,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(childId2, child2A, null);
             var result = await _autoCache.ReadChildrenAsync(parentId);
             UT.Assert.IsNotNull(result);
-            while (_autoCache.GetSaveReadAllToCacheThreadIsActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            while (_autoCache.IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
             await VerifyAsync(childId1, child1A);
             await VerifyAsync(childId2, child2A);
         }
@@ -133,6 +133,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             // Read into cache
             await _autoCache.ReadChildrenAsync(parentId);
             await _autoCache.DeleteChildrenAsync(parentId);
+            while (_autoCache.IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
 
             // Even though the items have been updated, the result will be fetched from the cache.
             var result = await _autoCache.ReadChildrenAsync(parentId);

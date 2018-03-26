@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private readonly object _lockReadAllCache = new object();
         private int _limitOfItemsInReadAllCache;
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
-        private readonly ConcurrentDictionary<string, bool> _saveReadAllToCacheThreadIsActive = new ConcurrentDictionary<string, bool>();
+        private readonly ConcurrentDictionary<string, bool> _collectionOperations = new ConcurrentDictionary<string, bool>();
         protected readonly IDistributedCache Cache;
         protected readonly GetIdDelegate<TModel, TId> GetIdDelegate;
         protected readonly AutoCacheOptions Options;
@@ -44,17 +44,17 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        protected bool GetSaveReadAllToCacheThreadIsActive(string key)
+        protected bool IsCollectionOperationActive(string key)
         {
-            return _saveReadAllToCacheThreadIsActive.ContainsKey(key);
+            return _collectionOperations.ContainsKey(key);
         }
 
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        public bool GetSaveReadAllToCacheThreadIsActive()
+        public bool IsCollectionOperationActive()
         {
-            return GetSaveReadAllToCacheThreadIsActive(ReadAllCacheKey);
+            return IsCollectionOperationActive(ReadAllCacheKey);
         }
 
         /// <summary>
@@ -139,27 +139,75 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         protected void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
         {
-            if (!_saveReadAllToCacheThreadIsActive.TryAdd(key, true)) return;
+            if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () =>
-                await StoreAllItemsInCache(itemsArray, limit, key).ConfigureAwait(false));
+                await CacheItemCollectionOperationAsync(itemsArray, limit, key, true).ConfigureAwait(false));
         }
 
         protected void CacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
         {
+            // Give up if this is an individual page being saved while we are operating on a larger scale, 
+            // because that could lead to inconsistencies in the data
+            if (IsCollectionOperationActive(keyPrefix)) return;
+
+            var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
+            // Give up if a save of the same page is already active
+            if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
+
             ThreadHelper.FireAndForget(async () =>
-                await StoreAllItemsInCache(pageEnvelope, limit, keyPrefix, false).ConfigureAwait(false));
+                await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, false, true).ConfigureAwait(false));
         }
 
-        private async Task StoreAllItemsInCache(TModel[] itemsArray, int limit, string key)
+        protected async Task RemoveCacheItemsInBackgroundAsync(string key, Func<Task<TModel[]>> getItemsToDelete)
+        {
+            if (!_collectionOperations.TryAdd(key, true)) return;
+            ThreadHelper.FireAndForget(async () => await ReadAndDelete(key, getItemsToDelete));
+        }
+
+        private async Task ReadAndDelete(string key, Func<Task<TModel[]>> getItemsToDelete)
+        {
+            var itemsArray = await getItemsToDelete();
+            if (itemsArray == null || itemsArray.Length == 0) return;
+            await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false);
+        }
+
+        protected void RemoveCacheItemsInBackground(TModel[] itemsArray, string key)
+        {
+            if (!_collectionOperations.TryAdd(key, true)) return;
+            ThreadHelper.FireAndForget(async () =>
+                await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false));
+        }
+
+        protected void RemoveCacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
+        {
+            // Give up if this is an individual page being saved while we are operating on a larger scale, 
+            // because that could lead to inconsistencies in the data
+            if (IsCollectionOperationActive(keyPrefix)) return;
+
+            var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
+            // Give up if a save of the same page is already active
+            if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
+
+            ThreadHelper.FireAndForget(async () =>
+                await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false, false).ConfigureAwait(false));
+        }
+
+        private async Task CacheItemCollectionOperationAsync(TModel[] itemsArray, int limit, string key, bool isSetOperation)
         {
             InternalContract.RequireNotNull(itemsArray, nameof(itemsArray));
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+            if (!isSetOperation)
+            {
+                InternalContract.Require(limit == int.MaxValue, $"When {nameof(isSetOperation)} is false, then {nameof(limit)} must be set to int.MaxValue ({int.MaxValue}), but it was set to {limit}.");
+            }
             try
             {
                 if (Options.SaveCollections)
                 {
-                    // Maybe cache the entire array
-                    var cacheArrayTask = CacheSetAsync(itemsArray, limit, key);
+
+                    var cacheArrayTask = isSetOperation 
+                        ? CacheSetAsync(itemsArray, limit, key)
+                        : Cache.RemoveAsync(key);
                     var cachePageTasks = new List<Task>();
 
                     // Cache individual pages
@@ -168,7 +216,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                     {
                         var data = itemsArray.Skip(offset).Take(PageInfo.DefaultLimit);
                         var pageEnvelope = new PageEnvelope<TModel>(offset, PageInfo.DefaultLimit, itemsArray.Length, data);
-                        var task = StoreAllItemsInCache(pageEnvelope, limit, key, true);
+                        var task = CacheItemPageOperationAsync(pageEnvelope, limit, key, true, isSetOperation);
                         cachePageTasks.Add(task);
                         offset += PageInfo.DefaultLimit;
                     }
@@ -178,33 +226,30 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 else
                 {
                     // Cache individual items
-                    var cacheIndividualItemTasks = itemsArray.Select(CacheSetAsync);
+                    var cacheIndividualItemTasks = isSetOperation 
+                    ? itemsArray.Select(CacheSetAsync)
+                        : itemsArray.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item)));
                     await Task.WhenAll(cacheIndividualItemTasks);
                 }
             }
             finally
             {
-                _saveReadAllToCacheThreadIsActive.TryRemove(key, out _);
+                _collectionOperations.TryRemove(key, out _);
             }
         }
 
-        private async Task StoreAllItemsInCache(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool inSaveReadAllThread)
+        private async Task CacheItemPageOperationAsync(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool inCollectionOperation, bool isSetOperation)
         {
-            // Give up if this is an individual page being saved while we are saving a total read all, 
-            // because that could lead to inconsistencies in the data
-            if (!inSaveReadAllThread && GetSaveReadAllToCacheThreadIsActive(keyPrefix)) return;
-
             var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
-
-            // Give up if a save of the same page is already active
-            if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
-
             try
             {
-                var cacheIndividualItemTasks = pageEnvelope.Data.Select(CacheSetAsync);
+                var cacheIndividualItemTasks = isSetOperation
+                    ? pageEnvelope.Data.Select(CacheSetAsync)
+                    : pageEnvelope.Data.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item)));
                 if (!PageWasTruncated(pageEnvelope.PageInfo, limit))
                 {
-                    await CacheSetAsync(pageEnvelope, keyPrefix);
+                    if (isSetOperation) await CacheSetAsync(pageEnvelope, keyPrefix);
+                    else await Cache.RemoveAsync(key);
                 }
                 await Task.WhenAll(cacheIndividualItemTasks);
             }
@@ -289,7 +334,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 case UseCacheStrategyEnum.Ignore:
                     return default(TModel);
                 case UseCacheStrategyEnum.Remove:
-                    await CacheRemoveAsync(id);
+                    await CacheRemoveByIdAsync(id);
                     return default(TModel);
                 default:
                     FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
@@ -364,7 +409,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return $"{prefix}-{offset}-{limit}";
         }
 
-        protected async Task CacheRemoveAsync(TId id)
+        protected async Task CacheRemoveByIdAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             var key = GetCacheKeyFromId(id);

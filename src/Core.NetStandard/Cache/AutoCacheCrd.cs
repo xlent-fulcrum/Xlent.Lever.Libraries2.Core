@@ -101,7 +101,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task DeleteAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var task1 = CacheRemoveAsync(id);
+            var task1 = CacheRemoveByIdAsync(id);
             var task2 = _storage.DeleteAsync(id);
             await Task.WhenAll(task1, task2);
         }
