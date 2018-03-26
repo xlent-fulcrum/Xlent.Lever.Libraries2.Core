@@ -57,6 +57,16 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task DeleteChildrenAsync(TId parentId)
         {
             await _storage.DeleteChildrenAsync(parentId);
+            // TODO: Do this work in the background
+            var key = CacheKeyForChildrenCollection(parentId);
+            var children = await CacheGetAsync(int.MaxValue, key);
+            if (children == null) return;
+            await Cache.RemoveAsync(key);
+            foreach (var child in children)
+            {
+                var childKey = GetCacheKeyFromId(GetIdDelegate(child));
+                await Cache.RemoveAsync(childKey);
+            }
         }
 
         /// <inheritdoc />

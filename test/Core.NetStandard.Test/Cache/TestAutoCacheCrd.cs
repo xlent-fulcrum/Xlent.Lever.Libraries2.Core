@@ -137,10 +137,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             await _autoCache.ReadAllAsync();
             await _autoCache.DeleteAllAsync();
-
-            await _storage.UpdateAsync(id1, "A2");
-            await _storage.UpdateAsync(id2, "B2");
-            // Even though the items have been updated, the result will be fetched from the cache.
+            
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
             var enumerable = result as string[] ?? result.ToArray();
