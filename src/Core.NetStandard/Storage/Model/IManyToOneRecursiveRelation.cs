@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// </summary>
         /// <param name="parentId">The specific parent to read the child items for.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = 0);
+        Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue);
 
         /// <summary>
         /// Read the parent for the child <paramref name="childId"/>.

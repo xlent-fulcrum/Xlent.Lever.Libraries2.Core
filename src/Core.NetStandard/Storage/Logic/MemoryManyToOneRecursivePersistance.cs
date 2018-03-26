@@ -53,10 +53,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = 0)
+        public async Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue)
         {
             InternalContract.RequireNotNull(parentId, nameof(parentId));
-            InternalContract.RequireGreaterThanOrEqualTo(0, limit, nameof(limit));
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
 
 
             var result = new List<TModel>();

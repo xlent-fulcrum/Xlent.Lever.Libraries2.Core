@@ -44,18 +44,101 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task ReadParentAsync()
         {
             var parentId = Guid.NewGuid();
-            var parent = new ItemWithParentId("ParentA");
+            var parent = new ItemWithParentId(parentId, "ParentA");
             await PrepareStorageAndCacheAsync(parentId, parent, null);
             var childId = Guid.NewGuid();
-            var child = new ItemWithParentId("ChildA", parentId);
+            var child = new ItemWithParentId(childId, "ChildA", parentId);
             await PrepareStorageAndCacheAsync(childId, child, null);
             var readParent = await _autoCache.ReadParentAsync(childId);
             UT.Assert.IsNotNull(readParent);
             UT.Assert.AreEqual(parent, readParent);
-            var updatedParent = new ItemWithParentId("ParentB");
+            var updatedParent = new ItemWithParentId(parentId, "ParentB");
             await _storage.UpdateAsync(parentId, updatedParent);
             await VerifyAsync(parentId, updatedParent, readParent);
             await VerifyAsync(childId, child, null, child);
+        }
+
+        [TestMethod]
+        public async Task ReadChildren()
+        {
+            AutoCacheOptions.SaveCollections = true;
+            AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
+            _autoCache = new AutoCacheManyToOneRecursive<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            var parentId = Guid.NewGuid();
+            var parent = new ItemWithParentId(parentId, "ParentA");
+            await PrepareStorageAndCacheAsync(parentId, parent, null);
+            var childId1 = Guid.NewGuid();
+            var child1A = new ItemWithParentId(childId1, "Child1A", parentId);
+            await PrepareStorageAndCacheAsync(childId1, child1A, null);
+            var childId2 = Guid.NewGuid();
+            var child2A = new ItemWithParentId(childId2, "Child2A", parentId);
+            await PrepareStorageAndCacheAsync(childId2, child2A, null);
+            var result = await _autoCache.ReadChildrenAsync(parentId);
+            UT.Assert.IsNotNull(result);
+            var enumerable = result as ItemWithParentId[] ?? result.ToArray();
+            UT.Assert.AreEqual(2, enumerable.Length);
+            UT.Assert.IsTrue(enumerable.Contains(child1A));
+            UT.Assert.IsTrue(enumerable.Contains(child2A));
+
+            var child1B = new ItemWithParentId(childId1, "Child1B", parentId);
+            await _storage.UpdateAsync(childId1, child1B);
+            var child2B = new ItemWithParentId(childId2, "Child2B", parentId);
+            await _storage.UpdateAsync(childId2, child2B);
+            // Even though the items have been updated, the result will be fetched from the cache.
+            result = await _autoCache.ReadChildrenAsync(parentId);
+            UT.Assert.IsNotNull(result);
+            enumerable = result as ItemWithParentId[] ?? result.ToArray();
+            UT.Assert.AreEqual(2, enumerable.Length);
+            UT.Assert.IsTrue(enumerable.Contains(child1A));
+            UT.Assert.IsTrue(enumerable.Contains(child2A));
+        }
+
+        [TestMethod]
+        public async Task ReadChildrenUpdatesIndividualItems()
+        {
+            AutoCacheOptions.SaveCollections = true;
+            AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
+            _autoCache = new AutoCacheManyToOneRecursive<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            var parentId = Guid.NewGuid();
+            var parent = new ItemWithParentId(parentId, "ParentA");
+            await PrepareStorageAndCacheAsync(parentId, parent, null);
+            var childId1 = Guid.NewGuid();
+            var child1A = new ItemWithParentId(childId1, "Child1A", parentId);
+            await PrepareStorageAndCacheAsync(childId1, child1A, null);
+            var childId2 = Guid.NewGuid();
+            var child2A = new ItemWithParentId(childId2, "Child2A", parentId);
+            await PrepareStorageAndCacheAsync(childId2, child2A, null);
+            var result = await _autoCache.ReadChildrenAsync(parentId);
+            UT.Assert.IsNotNull(result);
+            while (_autoCache.GetSaveReadAllToCacheThreadIsActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await VerifyAsync(childId1, child1A);
+            await VerifyAsync(childId2, child2A);
+        }
+
+        [TestMethod]
+        public async Task DeleteChildren()
+        {
+            AutoCacheOptions.SaveCollections = true;
+            AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
+            _autoCache = new AutoCacheManyToOneRecursive<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            var parentId = Guid.NewGuid();
+            var parent = new ItemWithParentId(parentId, "ParentA");
+            await PrepareStorageAndCacheAsync(parentId, parent, null);
+            var childId1 = Guid.NewGuid();
+            var child1A = new ItemWithParentId(childId1, "Child1A", parentId);
+            await PrepareStorageAndCacheAsync(childId1, child1A, null);
+            var childId2 = Guid.NewGuid();
+            var child2A = new ItemWithParentId(childId2, "Child2A", parentId);
+            await PrepareStorageAndCacheAsync(childId2, child2A, null);
+            // Read into cache
+            await _autoCache.ReadChildrenAsync(parentId);
+            await _autoCache.DeleteChildrenAsync(parentId);
+
+            // Even though the items have been updated, the result will be fetched from the cache.
+            var result = await _autoCache.ReadChildrenAsync(parentId);
+            UT.Assert.IsNotNull(result);
+            var enumerable = result as ItemWithParentId[] ?? result.ToArray();
+            UT.Assert.AreEqual(0, enumerable.Length);
         }
     }
 }

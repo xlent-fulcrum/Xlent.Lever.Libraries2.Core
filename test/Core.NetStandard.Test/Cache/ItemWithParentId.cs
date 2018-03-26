@@ -9,8 +9,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
         }
 
-        public ItemWithParentId(string value, Guid? parentId = null)
+        public ItemWithParentId(Guid id, string value, Guid? parentId = null)
         {
+            Id = id;
             Value = value;
             ParentId = parentId;
         }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
-using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
 
@@ -48,6 +44,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             _storage = storage;
         }
 
+        /// <summary>
+        /// True while a background thread is active saving results from a ReadAll() operation.
+        /// </summary>
+        public bool GetSaveReadAllToCacheThreadIsActive(TId parentId)
+        {
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
+            return GetSaveReadAllToCacheThreadIsActive(CacheKeyForChildrenCollection(parentId));
+        }
+
         /// <inheritdoc />
         public async Task DeleteChildrenAsync(TId parentId)
         {
@@ -57,13 +62,31 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId parentId, int offset = 0, int? limit = null)
         {
-            return await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit);
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
+            InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(limit));
+            if (limit == null) limit = PageInfo.DefaultLimit;
+            InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
+            var key = CacheKeyForChildrenCollection(parentId);
+            var result = await CacheGetAsync(offset, limit.Value, key);
+            if (result != null) return result;
+            result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit);
+            if (result?.Data == null) return null;
+            CacheItemsInBackground(result, limit.Value, key);
+            return result;
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = 0)
+        public async Task<IEnumerable<TModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue)
         {
-            return await _storage.ReadChildrenAsync(parentId, limit);
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+            var key = CacheKeyForChildrenCollection(parentId);
+            var itemsArray = await CacheGetAsync(limit, key);
+            if (itemsArray != null) return itemsArray;
+            var itemsCollection = await _storage.ReadChildrenAsync(parentId, limit);
+            itemsArray = itemsCollection as TModel[] ?? itemsCollection.ToArray();
+            CacheItemsInBackground(itemsArray, limit, key);
+            return itemsArray;
         }
 
         /// <inheritdoc />
@@ -78,6 +101,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             var task2 = CacheSetAsync(childId, item, key);
             await Task.WhenAll(task1, task2);
             return item;
+        }
+
+        private static string CacheKeyForChildrenCollection(TId parentId)
+        {
+            return $"childrenOf-{parentId}";
         }
     }
 }

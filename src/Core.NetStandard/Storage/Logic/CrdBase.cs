@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public abstract Task<PageEnvelope<TItem>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TItem>> ReadAllAsync(int limit = 0)
+        public virtual async Task<IEnumerable<TItem>> ReadAllAsync(int limit = int.MaxValue)
         {
             var result = new List<TItem>();
             var offset = 0;

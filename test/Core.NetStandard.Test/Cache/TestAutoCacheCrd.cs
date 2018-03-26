@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -122,6 +123,28 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id, "A", "A");
             await _autoCache.DeleteAsync(id);
             await VerifyAsync(id, null);
+        }
+
+        [TestMethod]
+        public async Task DeleteAllRemovesCache()
+        {
+            AutoCacheOptions.SaveCollections = true;
+            AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            var id1 = ToGuid("A1", 1);
+            await PrepareStorageAndCacheAsync(id1, "A1", null);
+            var id2 = ToGuid("B1", 1);
+            await PrepareStorageAndCacheAsync(id2, "B1", null);
+            await _autoCache.ReadAllAsync();
+            await _autoCache.DeleteAllAsync();
+
+            await _storage.UpdateAsync(id1, "A2");
+            await _storage.UpdateAsync(id2, "B2");
+            // Even though the items have been updated, the result will be fetched from the cache.
+            var result = await _autoCache.ReadAllAsync();
+            UT.Assert.IsNotNull(result);
+            var enumerable = result as string[] ?? result.ToArray();
+            UT.Assert.AreEqual(0, enumerable.Length);
         }
     }
 }

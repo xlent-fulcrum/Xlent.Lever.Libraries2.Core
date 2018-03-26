@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
-using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
 
@@ -21,13 +20,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         private readonly IReadAll<TModel, TId> _storage;
         private readonly object _lockReadAllCache = new object();
+        private int _limitOfItemsInReadAllCache;
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
+        private readonly ConcurrentDictionary<string, bool> _saveReadAllToCacheThreadIsActive = new ConcurrentDictionary<string, bool>();
         protected readonly IDistributedCache Cache;
         protected readonly GetIdDelegate<TModel, TId> GetIdDelegate;
         protected readonly AutoCacheOptions Options;
         protected readonly DistributedCacheEntryOptions CacheOptions;
         protected string CacheIdentity { get; set; }
-        protected const string ReadAllCacheKey = "ReadAllCacheKey";
+        private const string ReadAllCacheKey = "ReadAllCacheKey";
 
 
         /// <summary>
@@ -43,7 +44,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        public bool SaveReadAllToCacheThreadIsActive { get; protected set; }
+        protected bool GetSaveReadAllToCacheThreadIsActive(string key)
+        {
+            return _saveReadAllToCacheThreadIsActive.ContainsKey(key);
+        }
+
+        /// <summary>
+        /// True while a background thread is active saving results from a ReadAll() operation.
+        /// </summary>
+        public bool GetSaveReadAllToCacheThreadIsActive()
+        {
+            return GetSaveReadAllToCacheThreadIsActive(ReadAllCacheKey);
+        }
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -90,18 +102,15 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TModel>> ReadAllAsync(int limit = 0)
+        public async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue)
         {
-            var itemsArray = await CacheGetAsync();
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+            if (limit == 0) limit = int.MaxValue;
+            var itemsArray = await CacheGetAsync(limit, ReadAllCacheKey);
             if (itemsArray != null) return itemsArray;
             var itemsCollection = await _storage.ReadAllAsync(limit);
             itemsArray = itemsCollection as TModel[] ?? itemsCollection.ToArray();
-            lock (_lockReadAllCache)
-            {
-                if (SaveReadAllToCacheThreadIsActive) return itemsArray;
-                SaveReadAllToCacheThreadIsActive = true;
-            }
-            ThreadHelper.FireAndForget(async () => await StoreAllItemsInCache(itemsArray).ConfigureAwait(false));
+            CacheItemsInBackground(itemsArray, limit, ReadAllCacheKey);
             return itemsArray;
         }
 
@@ -109,12 +118,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null)
         {
             if (limit == null) limit = PageInfo.DefaultLimit;
-            var result = await CacheGetAsync(offset, limit.Value);
+            var result = await CacheGetAsync(offset, limit.Value, ReadAllCacheKey);
             if (result != null) return result;
             result = await _storage.ReadAllWithPagingAsync(offset, limit.Value);
             if (result?.Data == null) return null;
-            ThreadHelper.FireAndForget(async () =>
-                        await StoreAllItemsInCache(result, false).ConfigureAwait(false));
+            CacheItemsInBackground(result, limit.Value, ReadAllCacheKey);
             return result;
         }
 
@@ -129,14 +137,29 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return item;
         }
 
-        protected async Task StoreAllItemsInCache(TModel[] itemsArray)
+        protected void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
         {
+            if (!_saveReadAllToCacheThreadIsActive.TryAdd(key, true)) return;
+            ThreadHelper.FireAndForget(async () =>
+                await StoreAllItemsInCache(itemsArray, limit, key).ConfigureAwait(false));
+        }
+
+        protected void CacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
+        {
+            ThreadHelper.FireAndForget(async () =>
+                await StoreAllItemsInCache(pageEnvelope, limit, keyPrefix, false).ConfigureAwait(false));
+        }
+
+        private async Task StoreAllItemsInCache(TModel[] itemsArray, int limit, string key)
+        {
+            InternalContract.RequireNotNull(itemsArray, nameof(itemsArray));
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             try
             {
-                if (Options.SaveResultFromReadAll)
+                if (Options.SaveCollections)
                 {
                     // Maybe cache the entire array
-                    var cacheArrayTask = CacheSetAsync(itemsArray);
+                    var cacheArrayTask = CacheSetAsync(itemsArray, limit, key);
                     var cachePageTasks = new List<Task>();
 
                     // Cache individual pages
@@ -145,7 +168,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                     {
                         var data = itemsArray.Skip(offset).Take(PageInfo.DefaultLimit);
                         var pageEnvelope = new PageEnvelope<TModel>(offset, PageInfo.DefaultLimit, itemsArray.Length, data);
-                        var task = StoreAllItemsInCache(pageEnvelope, true);
+                        var task = StoreAllItemsInCache(pageEnvelope, limit, key, true);
                         cachePageTasks.Add(task);
                         offset += PageInfo.DefaultLimit;
                     }
@@ -161,20 +184,17 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             finally
             {
-                lock (_lockReadAllCache)
-                {
-                    SaveReadAllToCacheThreadIsActive = false;
-                }
+                _saveReadAllToCacheThreadIsActive.TryRemove(key, out _);
             }
         }
 
-        protected async Task StoreAllItemsInCache(PageEnvelope<TModel> pageEnvelope, bool inSaveReadAllThread)
+        private async Task StoreAllItemsInCache(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool inSaveReadAllThread)
         {
             // Give up if this is an individual page being saved while we are saving a total read all, 
             // because that could lead to inconsistencies in the data
-            if (!inSaveReadAllThread && SaveReadAllToCacheThreadIsActive) return;
+            if (!inSaveReadAllThread && GetSaveReadAllToCacheThreadIsActive(keyPrefix)) return;
 
-            var key = GetCacheKeyForPage(pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
+            var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
 
             // Give up if a save of the same page is already active
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
@@ -182,9 +202,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             try
             {
                 var cacheIndividualItemTasks = pageEnvelope.Data.Select(CacheSetAsync);
-                var cachePageTask = CacheSetAsync(pageEnvelope);
+                if (!PageWasTruncated(pageEnvelope.PageInfo, limit))
+                {
+                    await CacheSetAsync(pageEnvelope, keyPrefix);
+                }
                 await Task.WhenAll(cacheIndividualItemTasks);
-                await cachePageTask;
             }
             finally
             {
@@ -192,11 +214,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit)
+        private bool PageWasTruncated(PageInfo pageInfo, int limit)
+        {
+            if (pageInfo.Total != null && limit > pageInfo.Total.Value) return false;
+            var count = pageInfo.Offset * pageInfo.Limit + pageInfo.Returned;
+            return count == limit;
+        }
+
+        protected async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix)
         {
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(PageEnvelope<TModel>))) return null;
-            var key = GetCacheKeyForPage(offset, limit);
+            var key = GetCacheKeyForPage(keyPrefix, offset, limit);
             var byteArray = await Cache.GetAsync(key);
             if (byteArray == null) return null;
             var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
@@ -216,18 +245,23 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task<TModel[]> CacheGetAsync()
+        protected async Task<TModel[]> CacheGetAsync(int limit, string key)
         {
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+            if (limit > _limitOfItemsInReadAllCache) return null;
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(TModel[]))) return null;
-            var byteArray = await Cache.GetAsync(ReadAllCacheKey);
+            var byteArray = await Cache.GetAsync(key);
             if (byteArray == null) return null;
             var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
             var cacheItemStrategy = GetCacheItemStrategy(cacheEnvelope);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
-                    return SupportMethods.Deserialize<TModel[]>(cacheEnvelope.Data);
+                    var array =  SupportMethods.Deserialize<TModel[]>(cacheEnvelope.Data);
+                    if (limit > array.Length) return array;
+                    var subset = array.Take(limit);
+                    return subset as TModel[] ?? subset.ToArray();
                 case UseCacheStrategyEnum.Ignore:
                     return null;
                 case UseCacheStrategyEnum.Remove:
@@ -308,25 +342,26 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
         }
 
-        protected async Task CacheSetAsync(TModel[] itemsArray)
+        protected async Task CacheSetAsync(TModel[] itemsArray, int limit, string key)
         {
             InternalContract.RequireNotDefaultValue(itemsArray, nameof(itemsArray));
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(itemsArray);
-            await Cache.SetAsync(ReadAllCacheKey, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
+            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
+            _limitOfItemsInReadAllCache = limit;
         }
 
-        protected async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope)
+        protected async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope, string keyPrefix)
         {
             InternalContract.RequireNotDefaultValue(pageEnvelope, nameof(pageEnvelope));
             InternalContract.RequireValidated(pageEnvelope, nameof(pageEnvelope));
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(pageEnvelope);
-            var key = GetCacheKeyForPage(pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
+            var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
             await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
         }
 
-        protected static string GetCacheKeyForPage(int offset, int limit)
+        protected static string GetCacheKeyForPage(string prefix, int offset, int limit)
         {
-            return $"{ReadAllCacheKey}-{offset}-{limit}";
+            return $"{prefix}-{offset}-{limit}";
         }
 
         protected async Task CacheRemoveAsync(TId id)

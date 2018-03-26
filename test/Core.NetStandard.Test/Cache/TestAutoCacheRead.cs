@@ -129,7 +129,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadAll()
         {
-            AutoCacheOptions.SaveResultFromReadAll = true;
+            AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
             _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
             var id1 = ToGuid("A1", 1);
@@ -138,26 +138,37 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
-            while (_autoCache.SaveReadAllToCacheThreadIsActive) await Task.Delay(TimeSpan.FromMilliseconds(10));
-            await VerifyAsync(id1, "A1");
-            await VerifyAsync(id2, "B1");
-            UT.Assert.IsNotNull(result);
             var enumerable = result as string[] ?? result.ToArray();
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains("A1"));
             UT.Assert.IsTrue(enumerable.Contains("B1"));
 
-            await PrepareStorageAsync(id1, "A2");
-            await PrepareStorageAsync(id2, "B2");
+            await _storage.UpdateAsync(id1, "A2");
+            await _storage.UpdateAsync(id2, "B2");
+            // Even though the items have been updated, the result will be fetched from the cache.
             result = await _autoCache.ReadAllAsync();
-            UT.Assert.IsNotNull(result);
-            await VerifyAsync(id1, "A2", "A1");
-            await VerifyAsync(id2, "B2", "B1");
             UT.Assert.IsNotNull(result);
             enumerable = result as string[] ?? result.ToArray();
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains("A1"));
             UT.Assert.IsTrue(enumerable.Contains("B1"));
+        }
+
+        [TestMethod]
+        public async Task ReadAllUpdatesIndividualItems()
+        {
+            AutoCacheOptions.SaveCollections = true;
+            AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
+            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            var id1 = ToGuid("A1", 1);
+            await PrepareStorageAndCacheAsync(id1, "A1", null);
+            var id2 = ToGuid("B1", 1);
+            await PrepareStorageAndCacheAsync(id2, "B1", null);
+            var result = await _autoCache.ReadAllAsync();
+            UT.Assert.IsNotNull(result);
+            while (_autoCache.GetSaveReadAllToCacheThreadIsActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await VerifyAsync(id1, "A1");
+            await VerifyAsync(id2, "B1");
         }
     }
 }
