@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.20.0</version>
+    <version>1.20.1</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.20.1 Adjusted storage interfaces.
       1.20.0 Added AutoCache.
       1.19.10 Fix for many-to-one reference being declared as nullable.
       1.19.6 Introduced recursive interfaces and memory implementations.
