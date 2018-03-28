@@ -37,6 +37,10 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         {
             var updatedItem = new TModel();
             updatedItem.InitializeWithDataForTesting(type);
+            if (updatedItem is IUniquelyIdentifiable<TId> itemWithId)
+            {
+                itemWithId.Id = id;
+            }
             if (updatedItem is IOptimisticConcurrencyControlByETag etaggedItem)
             {
                 var readItem = await ReadItemAsync(id);
