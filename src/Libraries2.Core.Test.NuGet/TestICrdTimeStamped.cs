@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// Create an item with an id.
         /// </summary>
         [TestMethod]
-        public async Task Create_Read_Etag_Async()
+        public async Task Create_Read_Async()
         {
             var initialItem = new TestItemTimestamped<TId>();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);
@@ -39,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// Create an item with an etag.
         /// </summary>
         [TestMethod]
-        public async Task CreateAndReturn_Read_Etag_Async()
+        public async Task CreateAndReturn_Read_Async()
         {
             var initialItem = new TestItemTimestamped<TId>();
             initialItem.InitializeWithDataForTesting(TypeOfTestDataEnum.Default);

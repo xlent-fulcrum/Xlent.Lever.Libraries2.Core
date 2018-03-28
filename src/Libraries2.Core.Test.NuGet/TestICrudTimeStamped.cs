@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// Create an item with an id.
         /// </summary>
         [TestMethod]
-        public async Task Update_Read_Etag_Async()
+        public async Task Update_Read_Async()
         {
             var id = await CreateItemAsync(TypeOfTestDataEnum.Variant1);
             var updateItem = await UpdateItemAsync(id, TypeOfTestDataEnum.Variant2);
