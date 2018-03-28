@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -43,9 +44,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate TId GetForeignKeyDelegate(TManyToManyModel item);
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1(TId id, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1WithPagingAsync(TId id, int offset = 0, int? limit = null)
         {
-            return await ReadReferencedItemsByForeignKey(
+            return await ReadReferencedItemsByForeignKeyAsync(
                 id,
                 _getForeignKey1Delegate,
                 _getForeignKey2Delegate,
@@ -54,14 +55,26 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2(TId id, int offset = 0, int? limit = null)
+        public async Task<IEnumerable<TReferenceModel2>> ReadReferencedItemsByReference1Async(TId id, int limit = Int32.MaxValue)
         {
-            return await ReadReferencedItemsByForeignKey(
+            return await StorageHelper.ReadPages(offset => ReadReferencedItemsByReference1WithPagingAsync(id, offset));
+        }
+
+        /// <inheritdoc />
+        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2WithPagingAsync(TId id, int offset = 0, int? limit = null)
+        {
+            return await ReadReferencedItemsByForeignKeyAsync(
                 id,
                 _getForeignKey2Delegate,
                 _getForeignKey1Delegate,
                 _foreignHandler1,
                 offset, limit);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TReferenceModel1>> ReadReferencedItemsByReference2Async(TId id, int limit = Int32.MaxValue)
+        {
+            return await StorageHelper.ReadPages(offset => ReadReferencedItemsByReference2WithPagingAsync(id, offset));
         }
 
         /// <inheritdoc />
@@ -76,7 +89,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             await DeleteReferencesByForeignKey(id, _getForeignKey2Delegate);
         }
         
-        private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKey<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset = 0, int? limit = null)
+        private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(id, nameof(id));

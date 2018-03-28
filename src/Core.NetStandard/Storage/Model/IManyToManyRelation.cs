@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
@@ -13,7 +14,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="id">The specific foreign key value to read the referenced items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1(TId id, int offset = 0, int? limit = null);
+        Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1WithPagingAsync(TId id, int offset = 0, int? limit = null);
+
+        /// <summary>
+        /// Find all referenced items with foreign key 1 set to <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The specific foreign key value to read the referenced items for.</param>
+        /// <param name="limit">The maximum number of items to return.</param>
+        Task<IEnumerable<TReferenceModel2>> ReadReferencedItemsByReference1Async(TId id, int limit = int.MaxValue);
 
         /// <summary>
         /// Find all referenced items with foreign key 2 set to <paramref name="id"/>.
@@ -21,7 +29,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="id">The specific foreign key value to read the referenced items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2(TId id, int offset = 0, int? limit = null);
+        Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2WithPagingAsync(TId id, int offset = 0, int? limit = null);
+
+        /// <summary>
+        /// Find all referenced items with foreign key 2 set to <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The specific foreign key value to read the referenced items for.</param>
+        /// <param name="limit">The maximum number of items to return.</param>
+        Task<IEnumerable<TReferenceModel1>> ReadReferencedItemsByReference2Async(TId id, int limit = int.MaxValue);
 
         /// <summary>
         /// Delete all references where foreign key 1 is set to <paramref name="id"/>.
