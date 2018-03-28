@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -110,6 +112,25 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 // We should not end up at this line, but the compiler think that we can, so we add a throw here.
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Read pages until the <paramref name="limit"/> number of items have been read (or the pages are exhausted) and return the result.
+        /// </summary>
+        /// <param name="readMethodDelegateAsync">A method that returns one page at the time</param>
+        /// <param name="limit">The maximum number of items to return.</param>
+        /// <typeparam name="TModel">The type of the items.</typeparam>
+        public static async Task<IEnumerable<TModel>> ReadPages<TModel>(PageEnvelopeEnumeratorAsync<TModel>.ReadMethodDelegate readMethodDelegateAsync, int limit = int.MaxValue)
+        {
+            var result = new List<TModel>();
+            var enumerator = new PageEnvelopeEnumeratorAsync<TModel>(readMethodDelegateAsync);
+            var count = 0;
+            while (count < limit && await enumerator.MoveNextAsync())
+            {
+                result.Add(enumerator.Current);
+                count++;
+            }
+            return result;
         }
     }
 }

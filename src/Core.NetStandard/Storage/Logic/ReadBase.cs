@@ -24,19 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <inheritdoc />
         public virtual async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue)
         {
-            var result = new List<TModel>();
-            var offset = 0;
-            while (true)
-            {
-                var page = await ReadAllWithPagingAsync(offset);
-                if (page.PageInfo.Returned == 0) break;
-                var returned = page.PageInfo.Returned;
-                if (offset + returned > limit) returned = limit - offset;
-                result.AddRange(page.Data.Take(returned));
-                offset += page.PageInfo.Returned;
-            }
-
-            return result;
+            return await StorageHelper.ReadPages(offset => ReadAllWithPagingAsync(offset), limit);
         }
 
         /// <summary>

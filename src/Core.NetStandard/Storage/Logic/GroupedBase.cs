@@ -13,7 +13,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     public abstract class GroupedBase<TModel, TId, TGroupId> : IGrouped<TModel, TId, TGroupId>
     {
         /// <inheritdoc />
-        public async Task<TId> CreateAsync(TGroupId groupValue, TModel item)
+        public virtual async Task<TId> CreateAsync(TGroupId groupValue, TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -35,7 +35,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId groupValue, TId id, TModel item)
+        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId groupValue, TId id, TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -44,7 +44,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TModel>> ReadAllAsync(TGroupId groupValue, int offset = 0, int? limit = null);
+        public abstract Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset = 0, int? limit = null);
+
+        /// <inheritdoc />
+        public virtual async Task<IEnumerable<TModel>> ReadAllAsync(TGroupId groupValue, int limit = int.MaxValue)
+        {
+            return await StorageHelper.ReadPages(offset => ReadAllWithPagingAsync(groupValue, offset), limit);
+        }
 
         /// <inheritdoc />
         public abstract Task<TModel> ReadAsync(TGroupId groupValue, TId id);
@@ -58,7 +64,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(GroupedBase<TModel, TId, TGroupId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadAllAsync(groupValue, offset));
+            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadAllWithPagingAsync(groupValue, offset));
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
