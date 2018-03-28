@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TItem,TId}"/>"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>"/>
     /// </summary>
     [TestClass]
     public abstract class TestICrudTimeStamped<TId> : TestICrdTimeStamped<TId>

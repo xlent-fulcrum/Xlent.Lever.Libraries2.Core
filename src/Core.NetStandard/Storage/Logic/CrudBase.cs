@@ -6,18 +6,18 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
-    /// Abstract base class that has a default implementation for the methods <see cref="CrdBase{TItem,TId}.CreateAndReturnAsync"/>,
-    /// <see cref="CrdBase{TItem,TId}.DeleteAllAsync"/> and <see cref="UpdateAndReturnAsync"/>.
+    /// Abstract base class that has a default implementation for the methods <see cref="CrdBase{TModel,TId}.CreateAndReturnAsync"/>,
+    /// <see cref="CrdBase{TModel,TId}.DeleteAllAsync"/> and <see cref="UpdateAndReturnAsync"/>.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class CrudBase<TItem, TId> :  CrdBase<TItem, TId>, ICrud<TItem, TId>
+    public abstract class CrudBase<TModel, TId> :  CrdBase<TModel, TId>, ICrud<TModel, TId>
     {
         /// <inheritdoc />
-        public abstract Task UpdateAsync(TId id, TItem item);
+        public abstract Task UpdateAsync(TId id, TModel item);
 
         /// <inheritdoc />
-        public virtual async Task<TItem> UpdateAndReturnAsync(TId id, TItem item)
+        public virtual async Task<TModel> UpdateAndReturnAsync(TId id, TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -27,13 +27,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
-        /// then the old value is read using <see cref="CrdBase{TItem,TId}.ReadAsync"/> and the values are verified to be equal.
+        /// then the old value is read using <see cref="CrdBase{TModel,TId}.ReadAsync"/> and the values are verified to be equal.
         /// The Etag of the item is then set to a new value.
         /// </summary>
         /// <param name="id"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TItem item)
+        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TModel item)
         {
             if (item is IOptimisticConcurrencyControlByETag etaggable)
             {

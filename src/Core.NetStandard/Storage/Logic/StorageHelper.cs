@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
-        public static void MaybeValidate<TItem>(TItem item)
+        public static void MaybeValidate<TModel>(TModel item)
         {
             if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
         }
@@ -58,7 +58,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
         /// then the Etag of the item is set to a new value.
         /// </summary>
-        public static void MaybeCreateNewEtag<TItem>(TItem item)
+        public static void MaybeCreateNewEtag<TModel>(TModel item)
         {
             if (item is IOptimisticConcurrencyControlByETag eTaggable) eTaggable.Etag = Guid.NewGuid().ToString();
         }
@@ -67,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// If <paramref name="item"/> implements <see cref="IUniquelyIdentifiable{TId}"/>
         /// then the Id of the item is set.
         /// </summary>
-        public static void MaybeSetId<TId, TItem>(TId id, TItem item)
+        public static void MaybeSetId<TId, TModel>(TId id, TModel item)
         {
             if (item is IUniquelyIdentifiable<TId> identifiable) identifiable.Id = id;
         }
@@ -81,7 +81,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <param name="updateCreatedToo">True means that we should update the create property too.</param>
         /// <param name="timeStamp">Optional time stamp to use when setting the time properties. If null, then 
         /// <see cref="DateTimeOffset.Now"/> will be used.</param>
-        public static void MaybeUpdateTimeStamps<TItem>(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
+        public static void MaybeUpdateTimeStamps<TModel>(TModel item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
         {
             if (!(item is ITimeStamped timeStamped)) return;
             timeStamp = timeStamp ?? DateTimeOffset.Now;

@@ -109,6 +109,7 @@
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
     <Compile Include="Core\Cache\AutoCacheCrud.cs" />
+    <Compile Include="Core\Storage\Logic\ReadBase.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToManyPersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOneRecursivePersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
