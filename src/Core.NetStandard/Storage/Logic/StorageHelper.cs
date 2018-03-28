@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -49,7 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
-        public static void MaybeValidate<TItem>(TItem item)
+        public static void MaybeValidate<TModel>(TModel item)
         {
             if (item is IValidatable validatable) InternalContract.RequireValidated(validatable, nameof(item));
         }
@@ -58,7 +60,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
         /// then the Etag of the item is set to a new value.
         /// </summary>
-        public static void MaybeCreateNewEtag<TItem>(TItem item)
+        public static void MaybeCreateNewEtag<TModel>(TModel item)
         {
             if (item is IOptimisticConcurrencyControlByETag eTaggable) eTaggable.Etag = Guid.NewGuid().ToString();
         }
@@ -67,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// If <paramref name="item"/> implements <see cref="IUniquelyIdentifiable{TId}"/>
         /// then the Id of the item is set.
         /// </summary>
-        public static void MaybeSetId<TId, TItem>(TId id, TItem item)
+        public static void MaybeSetId<TId, TModel>(TId id, TModel item)
         {
             if (item is IUniquelyIdentifiable<TId> identifiable) identifiable.Id = id;
         }
@@ -81,7 +83,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <param name="updateCreatedToo">True means that we should update the create property too.</param>
         /// <param name="timeStamp">Optional time stamp to use when setting the time properties. If null, then 
         /// <see cref="DateTimeOffset.Now"/> will be used.</param>
-        public static void MaybeUpdateTimeStamps<TItem>(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
+        public static void MaybeUpdateTimeStamps<TModel>(TModel item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
         {
             if (!(item is ITimeStamped timeStamped)) return;
             timeStamp = timeStamp ?? DateTimeOffset.Now;
@@ -110,6 +112,25 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 // We should not end up at this line, but the compiler think that we can, so we add a throw here.
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Read pages until the <paramref name="limit"/> number of items have been read (or the pages are exhausted) and return the result.
+        /// </summary>
+        /// <param name="readMethodDelegateAsync">A method that returns one page at the time</param>
+        /// <param name="limit">The maximum number of items to return.</param>
+        /// <typeparam name="TModel">The type of the items.</typeparam>
+        public static async Task<IEnumerable<TModel>> ReadPages<TModel>(PageEnvelopeEnumeratorAsync<TModel>.ReadMethodDelegate readMethodDelegateAsync, int limit = int.MaxValue)
+        {
+            var result = new List<TModel>();
+            var enumerator = new PageEnvelopeEnumeratorAsync<TModel>(readMethodDelegateAsync);
+            var count = 0;
+            while (count < limit && await enumerator.MoveNextAsync())
+            {
+                result.Add(enumerator.Current);
+                count++;
+            }
+            return result;
         }
     }
 }

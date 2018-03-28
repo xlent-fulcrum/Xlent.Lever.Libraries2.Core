@@ -10,19 +10,19 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// General class for storing any <see cref="IUniquelyIdentifiable{TId}"/> in memory.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class MemoryPersistance<TItem, TId> : CrudBase<TItem, TId>
+    public class MemoryPersistance<TModel, TId> : CrudBase<TModel, TId>
     {
-        private static readonly string Namespace = typeof(MemoryPersistance<TItem, TId>).Namespace;
+        private static readonly string Namespace = typeof(MemoryPersistance<TModel, TId>).Namespace;
 
         /// <summary>
         /// The actual storage of the items.
         /// </summary>
-        protected readonly ConcurrentDictionary<TId, TItem> MemoryItems = new ConcurrentDictionary<TId, TItem>();
+        protected readonly ConcurrentDictionary<TId, TModel> MemoryItems = new ConcurrentDictionary<TId, TModel>();
 
         /// <inheritdoc />
-        public override async Task<TId> CreateAsync(TItem item)
+        public override async Task<TId> CreateAsync(TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -32,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task CreateWithSpecifiedIdAsync(TId id, TItem item)
+        public override async Task CreateWithSpecifiedIdAsync(TId id, TModel item)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -53,7 +53,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task<TItem> ReadAsync(TId id)
+        public override Task<TModel> ReadAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
@@ -65,7 +65,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task UpdateAsync(TId id, TItem item)
+        public override async Task UpdateAsync(TId id, TModel item)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -100,7 +100,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task<PageEnvelope<TItem>> ReadAllWithPagingAsync(int offset = 0, int? limit = null)
+        public override Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
@@ -109,7 +109,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             {
                 var keys = MemoryItems.Keys.Skip(offset).Take(limit.Value);
                 var list = keys.Select(GetMemoryItem).ToList();
-                var page = new PageEnvelope<TItem>(offset, limit.Value, MemoryItems.Count, list);
+                var page = new PageEnvelope<TModel>(offset, limit.Value, MemoryItems.Count, list);
                 return Task.FromResult(page);
             }
         }
@@ -130,17 +130,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             if (!MemoryItems.ContainsKey(id)) return;
             throw new FulcrumConflictException(
-                $"An item of type {typeof(TItem).Name} with id \"{id}\" already exists.");
+                $"An item of type {typeof(TModel).Name} with id \"{id}\" already exists.");
         }
 
         private void ValidateExists(TId id)
         {
             if (MemoryItems.ContainsKey(id)) return;
             throw new FulcrumNotFoundException(
-                $"Could not find an item of type {typeof(TItem).Name} with id \"{id}\".");
+                $"Could not find an item of type {typeof(TModel).Name} with id \"{id}\".");
         }
 
-        private static TItem CopyItem(TItem source)
+        private static TModel CopyItem(TModel source)
         {
             InternalContract.RequireNotNull(source, nameof(source));
             var itemCopy = StorageHelper.DeepCopy(source);
@@ -149,12 +149,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             return itemCopy;
         }
 
-        private void SetMemoryItem(TId id, TItem item)
+        private void SetMemoryItem(TId id, TModel item)
         {
             MemoryItems[id] = CopyItem(item);
         }
 
-        private TItem GetMemoryItem(TId id)
+        private TModel GetMemoryItem(TId id)
         {
             ValidateExists(id);
             InternalContract.RequireNotDefaultValue(id, nameof(id));

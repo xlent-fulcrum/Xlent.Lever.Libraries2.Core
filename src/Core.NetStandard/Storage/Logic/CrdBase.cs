@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -7,15 +6,16 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
-    /// Abstract base class that has a default implementation for <see cref="CreateAndReturnAsync"/>,
+    /// Abstract base class that has a default implementation for 
+    /// <see cref="CreateAsync"/>, <see cref="CreateAndReturnAsync"/>,
     /// and <see cref="DeleteAllAsync"/>.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class CrdBase<TItem, TId> : ICrd<TItem, TId>
+    public abstract class CrdBase<TModel, TId> : ReadBase<TModel, TId>, ICrd<TModel, TId>
     {
         /// <inheritdoc />
-        public virtual async Task<TId> CreateAsync(TItem item)
+        public virtual async Task<TId> CreateAsync(TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -25,7 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public virtual async Task<TItem> CreateAndReturnAsync(TItem item)
+        public virtual async Task<TModel> CreateAndReturnAsync(TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -34,10 +34,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(TId id, TItem item);
+        public abstract Task CreateWithSpecifiedIdAsync(TId id, TModel item);
 
         /// <inheritdoc />
-        public async Task<TItem> CreateWithSpecifiedIdAndReturnAsync(TId id, TItem item)
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item)
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -46,37 +46,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public abstract Task<TItem> ReadAsync(TId id);
-
-        /// <inheritdoc />
         public abstract Task DeleteAsync(TId id);
-
-        /// <inheritdoc />
-        public abstract Task<PageEnvelope<TItem>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
-
-        /// <inheritdoc />
-        public virtual async Task<IEnumerable<TItem>> ReadAllAsync(int limit = int.MaxValue)
-        {
-            var result = new List<TItem>();
-            var offset = 0;
-            while (true)
-            {
-                var page = await ReadAllWithPagingAsync(offset);
-                if (page.PageInfo.Returned == 0) break;
-                    result.AddRange(page.Data);
-                offset += page.PageInfo.Returned;
-            }
-
-            return result;
-        }
 
         /// <inheritdoc />
         public virtual async Task DeleteAllAsync()
         {
-            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TItem, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
-            FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TItem)), null,
+            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TItem>(offset => ReadAllWithPagingAsync(offset));
+            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadAllWithPagingAsync(offset));
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
@@ -88,56 +66,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 taskList.Add(DeleteAsync(identifiable.Id));
             }
             await Task.WhenAll(taskList);
-        }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
-        /// </summary>
-        protected static void MaybeValidate(TItem item)
-        {
-            StorageHelper.MaybeValidate(item);
-        }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
-        /// then the Etag of the item is set to a new value.
-        /// </summary>
-        protected static void MaybeCreateNewEtag(TItem item)
-        {
-            StorageHelper.MaybeCreateNewEtag(item);
-        }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="IUniquelyIdentifiable{TId}"/>
-        /// then the Id of the item is set.
-        /// </summary>
-        protected static void MaybeSetId(TId id, TItem item)
-        {
-            StorageHelper.MaybeSetId(id, item);
-        }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="ITimeStamped"/>
-        /// then the <see cref="ITimeStamped.RecordUpdatedAt"/> is set. If <paramref name="updateCreatedToo"/> is true, 
-        /// then the <see cref="ITimeStamped.RecordCreatedAt"/> is also set.
-        /// </summary>
-        /// <param name="item">The item that will be affected.</param>
-        /// <param name="updateCreatedToo">True means that we should update the create property too.</param>
-        /// <param name="timeStamp">Optional time stamp to use when setting the time properties. If null, then 
-        /// <see cref="DateTimeOffset.Now"/> will be used.</param>
-        protected static void MaybeUpdateTimeStamps(TItem item, bool updateCreatedToo, DateTimeOffset? timeStamp = null)
-        {
-            StorageHelper.MaybeUpdateTimeStamps(item, updateCreatedToo, timeStamp);
-        }
-
-        /// <summary>
-        /// Helper method to convert from one parameter type to another.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        protected static T ConvertToParameterType<T>(Object source)
-        {
-            return StorageHelper.ConvertToParameterType<T>(source);
         }
     }
 }

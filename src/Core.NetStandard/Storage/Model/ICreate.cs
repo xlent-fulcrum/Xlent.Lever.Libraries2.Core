@@ -5,16 +5,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     /// <summary>
     /// Can create items of type <see cref="IUniquelyIdentifiable{TId}"/>.
     /// </summary>
-    /// <typeparam name="TItem">The type of objects to create in persistant storage.</typeparam>
+    /// <typeparam name="TModel">The type of objects to create in persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
-    public interface ICreate<TItem, TId>
+    public interface ICreate<TModel, TId>
     {
         /// <summary>
         /// Creates a new item in storage and returns the new Id.
         /// </summary>
         /// <param name="item">The item to store.</param>
         /// <returns>The new id for the created object.</returns>
-        Task<TId> CreateAsync(TItem item);
+        Task<TId> CreateAsync(TModel item);
 
         /// <summary>
         /// Creates a new item in storage and returns the final result.
@@ -27,18 +27,18 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// </remarks>
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IUniquelyIdentifiable{TId}"/>
-        Task<TItem> CreateAndReturnAsync(TItem item);
+        Task<TModel> CreateAndReturnAsync(TModel item);
 
         /// <summary>
-        /// Same as <see cref="CreateAsync(TItem)"/>, but you can specify the new id.
+        /// Same as <see cref="CreateAsync(TModel)"/>, but you can specify the new id.
         /// </summary>
         /// <param name="id">The id to use for the new item.</param>
         /// <param name="item">The item to create in storage.</param>
         /// <returns>The newly created item.</returns>
-        Task CreateWithSpecifiedIdAsync(TId id, TItem item);
+        Task CreateWithSpecifiedIdAsync(TId id, TModel item);
 
         /// <summary>
-        /// Same as <see cref="CreateAndReturnAsync(TItem)"/>, but you can specify the new id.
+        /// Same as <see cref="CreateAndReturnAsync(TModel)"/>, but you can specify the new id.
         /// </summary>
         /// <param name="id">The id to use for the new item.</param>
         /// <param name="item">The item to store.</param>
@@ -49,6 +49,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// </remarks>
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IUniquelyIdentifiable{TId}"/>
-        Task<TItem> CreateWithSpecifiedIdAndReturnAsync(TId id, TItem item);
+        Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item);
     }
 }

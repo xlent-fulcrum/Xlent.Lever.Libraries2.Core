@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -8,66 +9,95 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class MemoryGroupPersistance<TStorableItem, TId, TGroup> : IGrouped<TStorableItem, TId, TGroup>
-        where TStorableItem : class, IUniquelyIdentifiable<TId>, IOptimisticConcurrencyControlByETag, IValidatable
+    public class MemoryGroupPersistance<TModel, TId, TGroupId> : GroupedBase<TModel, TId, TGroupId>
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
         /// </summary>
-        protected static readonly ConcurrentDictionary<TGroup, MemoryPersistance<TStorableItem, TId>> Storages = new ConcurrentDictionary<TGroup, MemoryPersistance<TStorableItem, TId>>();
+        protected static readonly ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>> Storages = new ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>>();
 
         /// <inheritdoc />
-        public async Task<TId> CreateAsync(TGroup groupValue, TStorableItem item)
+        public override async Task<TId> CreateAsync(TGroupId groupValue, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAsync(item);
         }
 
         /// <inheritdoc />
-        public async Task CreateWithSpecifiedIdAsync(TGroup groupValue, TId id, TStorableItem item)
+        public override async Task CreateWithSpecifiedIdAsync(TGroupId groupValue, TId id, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var groupPersistance = GetStorage(groupValue);
             await groupPersistance.CreateWithSpecifiedIdAsync(id, item);
         }
 
         /// <inheritdoc />
-        public async Task<TStorableItem> CreateAndReturnAsync(TGroup groupValue, TStorableItem item)
+        public override async Task<TModel> CreateAndReturnAsync(TGroupId groupValue, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateAndReturnAsync(item);
         }
 
         /// <inheritdoc />
-        public async Task<TStorableItem> CreateWithSpecifiedIdAndReturnAsync(TGroup groupValue, TId id, TStorableItem item)
+        public override async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId groupValue, TId id, TModel item)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            InternalContract.RequireNotDefaultValue(item, nameof(item));
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.CreateWithSpecifiedIdAndReturnAsync(id, item);
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TStorableItem>> ReadAllAsync(TGroup groupValue, int offset = 0, int? limit = null)
+        public override async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset = 0, int? limit = null)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
+            if (limit != null)
+            {
+                InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
+            }
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAllWithPagingAsync(offset);
         }
 
         /// <inheritdoc />
-        public async Task<TStorableItem> ReadAsync(TGroup groupValue, TId id)
+        public override async Task<IEnumerable<TModel>> ReadAllAsync(TGroupId groupValue, int limit = int.MaxValue)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireGreaterThan(0, limit, nameof(limit));
+            var groupPersistance = GetStorage(groupValue);
+            return await groupPersistance.ReadAllAsync(limit);
+        }
+
+        /// <inheritdoc />
+        public override async Task<TModel> ReadAsync(TGroupId groupValue, TId id)
+        {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             var groupPersistance = GetStorage(groupValue);
             return await groupPersistance.ReadAsync(id);
         }
 
         /// <inheritdoc />
-        public async Task DeleteAsync(TGroup groupValue, TId id)
+        public override async Task DeleteAsync(TGroupId groupValue, TId id)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
             var groupPersistance = GetStorage(groupValue);
             await groupPersistance.DeleteAsync(id);
         }
 
         /// <inheritdoc />
-        public async Task DeleteAllAsync(TGroup groupValue)
+        public override async Task DeleteAllAsync(TGroupId groupValue)
         {
+            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             var groupPersistance = GetStorage(groupValue);
             await groupPersistance.DeleteAllAsync();
         }
@@ -77,9 +107,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="groupValue"></param>
         /// <returns></returns>
-        private MemoryPersistance<TStorableItem, TId> GetStorage(TGroup groupValue)
+        private MemoryPersistance<TModel, TId> GetStorage(TGroupId groupValue)
         {
-            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new MemoryPersistance<TStorableItem, TId>();
+            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new MemoryPersistance<TModel, TId>();
             return Storages[groupValue];
         }
     }
