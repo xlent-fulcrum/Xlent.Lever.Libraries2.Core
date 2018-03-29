@@ -61,7 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate object GetParentIdDelegate(TManyModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset = 0, int? limit = null)
+        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(parentId, nameof(parentId));

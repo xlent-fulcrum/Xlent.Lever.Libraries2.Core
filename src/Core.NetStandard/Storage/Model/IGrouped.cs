@@ -39,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="groupValue">The specific group to read the items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroup groupValue, int offset = 0, int? limit = null);
+        Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroup groupValue, int offset, int? limit = null);
 
         /// <summary>
         /// Read all items for a specific group, <paramref name="groupValue"/>.

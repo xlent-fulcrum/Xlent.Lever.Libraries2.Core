@@ -44,7 +44,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset = 0, int? limit = null);
+        public abstract Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset, int? limit = null);
 
         /// <inheritdoc />
         public virtual async Task<IEnumerable<TModel>> ReadAllAsync(TGroupId groupValue, int limit = int.MaxValue)

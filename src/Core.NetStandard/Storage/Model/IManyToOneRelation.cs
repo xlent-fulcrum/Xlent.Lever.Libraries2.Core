@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="parentId">The specific parent to read the child items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset = 0, int? limit = null);
+        Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null);
 
         /// <summary>
         /// Read all child items for a specific parent, <paramref name="parentId"/>.

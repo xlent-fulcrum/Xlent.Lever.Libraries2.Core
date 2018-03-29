@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset = 0, int? limit = null)
+        public override async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset, int? limit = null)
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));

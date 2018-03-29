@@ -115,7 +115,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null)
         {
             if (limit == null) limit = PageInfo.DefaultLimit;
             var result = await CacheGetAsync(offset, limit.Value, ReadAllCacheKey);

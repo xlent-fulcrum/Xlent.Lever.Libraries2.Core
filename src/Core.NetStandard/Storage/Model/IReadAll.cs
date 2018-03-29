@@ -21,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null);
+        Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null);
 
         /// <summary>
         /// Reads all the items from storage and return them as a collection of items.

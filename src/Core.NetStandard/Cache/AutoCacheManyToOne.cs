@@ -67,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset = 0, int? limit = null)
+        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null)
         {
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(limit));

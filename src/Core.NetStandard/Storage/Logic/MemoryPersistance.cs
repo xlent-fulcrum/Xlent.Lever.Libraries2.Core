@@ -100,7 +100,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset = 0, int? limit = null)
+        public override Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
