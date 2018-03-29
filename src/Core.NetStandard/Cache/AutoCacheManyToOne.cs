@@ -13,10 +13,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class AutoCacheManyToOne<TManyModel, TOneModel, TId> : AutoCacheCrud<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId> where TManyModel : class
+    public class AutoCacheManyToOne<TManyModel, TOneModel, TId> : AutoCacheCrud<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TOneModel, TId>
     {
         private readonly IManyToOneRelationComplete<TManyModel, TOneModel, TId> _storage;
-        private readonly AutoCacheCrud<TOneModel, TId> _oneCache;
         /// <summary>
         /// Constructor for TOneModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
         /// </summary>
