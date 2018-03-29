@@ -35,19 +35,14 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 
         protected async Task<TModel> UpdateItemAsync(TId id, TypeOfTestDataEnum type)
         {
-            var updatedItem = new TModel();
+            var updatedItem = await ReadItemAsync(id);
             updatedItem.InitializeWithDataForTesting(type);
             if (updatedItem is IUniquelyIdentifiable<TId> itemWithId)
             {
                 itemWithId.Id = id;
             }
-            if (updatedItem is IOptimisticConcurrencyControlByETag etaggedItem)
-            {
-                var readItem = await ReadItemAsync(id);
-                etaggedItem.Etag = ((IOptimisticConcurrencyControlByETag)readItem).Etag;
-            }
             await CrudStorage.UpdateAsync(id, updatedItem);
-            return updatedItem;
+            return await ReadItemAsync(id);
         }
     }
 }
