@@ -67,16 +67,16 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null)
+        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId reference1Id, int offset, int? limit = null)
         {
-            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
+            InternalContract.RequireNotDefaultValue(reference1Id, nameof(reference1Id));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(limit));
             if (limit == null) limit = PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
-            var key = CacheKeyForChildrenCollection(parentId);
+            var key = CacheKeyForChildrenCollection(reference1Id);
             var result = await CacheGetAsync(offset, limit.Value, key);
             if (result != null) return result;
-            result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit);
+            result = await _storage.ReadChildrenWithPagingAsync(reference1Id, offset, limit);
             if (result?.Data == null) return null;
             CacheItemsInBackground(result, limit.Value, key);
             return result;
@@ -94,29 +94,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             itemsArray = itemsCollection as TManyModel[] ?? itemsCollection.ToArray();
             CacheItemsInBackground(itemsArray, limit, key);
             return itemsArray;
-        }
-
-        /// <inheritdoc />
-        public async Task<TOneModel> ReadParentAsync(TId childId)
-        {
-            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
-            if (typeof(TManyModel) != typeof(TOneModel))
-            {
-                return await _storage.ReadParentAsync(childId);
-            }
-
-            var child = await ReadAsync(childId);
-            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
-            var key = $"parentTo-{GetCacheKeyFromId(childId)}";
-            var parent = ConvertSameType<TOneModel,TManyModel>(await CacheGetAsync(childId, key));
-            if (parent != null) return parent;
-
-            parent = await _storage.ReadParentAsync(childId);
-            var parentAsManyModel = ConvertSameType<TManyModel,TOneModel>(parent);
-            var task1 = CacheSetAsync(GetIdDelegate(parentAsManyModel), parentAsManyModel);
-            var task2 = CacheSetAsync(childId, parentAsManyModel, key);
-            await Task.WhenAll(task1, task2);
-            return parent;
         }
 
         private TTarget ConvertSameType<TTarget, TSource>(TSource sourceType)

@@ -23,9 +23,6 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(child.ParentId);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TReferenceId), child.ParentId);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(parent.Value, child.Value);
-            var foundParent = await ManyStorageNonRecursive.ReadParentAsync(child.Id);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(foundParent);
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(parent.Value, foundParent.Value);
         }
     }
 }

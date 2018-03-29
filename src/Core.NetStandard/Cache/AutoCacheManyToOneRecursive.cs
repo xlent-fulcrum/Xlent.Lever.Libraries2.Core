@@ -44,19 +44,5 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             _storage = storage;
         }
-
-        /// <inheritdoc />
-        public new async Task<TModel> ReadParentAsync(TId childId)
-        {
-            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
-            var key = $"parentTo-{GetCacheKeyFromId(childId)}";
-            var item = await CacheGetAsync(childId, key);
-            if (item != null) return item;
-            item = await _storage.ReadParentAsync(childId);
-            var task1 = CacheSetAsync(GetIdDelegate(item), item);
-            var task2 = CacheSetAsync(childId, item, key);
-            await Task.WhenAll(task1, task2);
-            return item;
-        }
     }
 }

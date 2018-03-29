@@ -33,19 +33,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             _parentReader = parentReader;
         }
 
-        /// <inheritdoc />
-        public async Task<TOneModel> ReadParentAsync(TId childId)
-        {
-            InternalContract.RequireNotNull(childId, nameof(childId));
-            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
-            var child = await ReadAsync(childId);
-            var parentIdAsObject = _getParentIdDelegate(child);
-            if (parentIdAsObject == null) return null;
-            if (parentIdAsObject.Equals(default(TId))) return null;
-            var parentIdAsId = ConvertToParameterType<TId>(parentIdAsObject);
-            return _parentReader == null ? ToOneModel(await ReadAsync(parentIdAsId)) : await _parentReader.ReadAsync(parentIdAsId);
-        }
-
         private TOneModel ToOneModel(TManyModel manyModel)
         {
             InternalContract.RequireNotNull(manyModel, nameof(manyModel));
@@ -61,16 +48,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate object GetParentIdDelegate(TManyModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null)
+        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId reference1Id, int offset, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
-            InternalContract.RequireNotNull(parentId, nameof(parentId));
+            InternalContract.RequireNotNull(reference1Id, nameof(reference1Id));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
             InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
             lock (MemoryItems)
             {
                 var list = MemoryItems.Values
-                    .Where(i => parentId.Equals(_getParentIdDelegate(i)))
+                    .Where(i => reference1Id.Equals(_getParentIdDelegate(i)))
                     .Skip(offset)
                     .Take(limit.Value);
                 var page = new PageEnvelope<TManyModel>(offset, limit.Value, MemoryItems.Count, list);

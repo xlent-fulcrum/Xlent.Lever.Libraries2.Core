@@ -41,24 +41,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         [TestMethod]
-        public async Task ReadParentAsync()
-        {
-            var parentId = Guid.NewGuid();
-            var parent = new ItemWithParentId(parentId, "ParentA");
-            await PrepareStorageAndCacheAsync(parentId, parent, null);
-            var childId = Guid.NewGuid();
-            var child = new ItemWithParentId(childId, "ChildA", parentId);
-            await PrepareStorageAndCacheAsync(childId, child, null);
-            var readParent = await _autoCache.ReadParentAsync(childId);
-            UT.Assert.IsNotNull(readParent);
-            UT.Assert.AreEqual(parent, readParent);
-            var updatedParent = new ItemWithParentId(parentId, "ParentB");
-            await _storage.UpdateAsync(parentId, updatedParent);
-            await VerifyAsync(parentId, updatedParent, readParent);
-            await VerifyAsync(childId, child, null, child);
-        }
-
-        [TestMethod]
         [Ignore] // The test fails when all tests are run for the solution, but not if only the tests for Cache is run!?!
         public async Task ReadChildren()
         {
