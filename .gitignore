@@ -264,3 +264,4 @@ lib/Libraries2.Core/*.xml
 /src/Core.NetFramework/lib/net462/*.xml
 /src/Core.NetFramework/lib/net46/*.xml
 /src/Core.NetFramework/lib
+/src/Core.NetStandard/lib/netstandard1.4
