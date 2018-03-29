@@ -18,6 +18,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Constructor for a page of data.
         /// </summary>
+        /// <param name="pageInfo">Information about offset, limit and total number of items.</param>
+        /// <param name="data">The data in this page.</param>
+        public PageEnvelope(PageInfo pageInfo, IEnumerable<T> data)
+        :this(pageInfo.Offset, pageInfo.Limit, pageInfo.Total, data)
+        { }
+
+        /// <summary>
+        /// Constructor for a page of data.
+        /// </summary>
         /// <param name="offset">The offset for this page.</param>
         /// <param name="limit">The limit used for this page.</param>
         /// <param name="total">The total number of items including this page. Null if not known.</param>
