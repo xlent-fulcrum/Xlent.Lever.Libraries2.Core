@@ -14,8 +14,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class AutoCacheManyToOneRecursive<TModel, TId> : AutoCacheManyToOne<TModel, TModel, TId>
+    public class AutoCacheManyToOneRecursive<TModel, TId> : AutoCacheManyToOne<TModel, TModel, TId>, IManyToOneRelationComplete<TModel, TModel, TId>
     {
+        private readonly IManyToOneRelationComplete<TModel, TModel, TId> _storage;
+
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
         /// </summary>
@@ -40,6 +42,21 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public AutoCacheManyToOneRecursive(IManyToOneRelationComplete<TModel, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
+            _storage = storage;
+        }
+
+        /// <inheritdoc />
+        public new async Task<TModel> ReadParentAsync(TId childId)
+        {
+            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
+            var key = $"parentTo-{GetCacheKeyFromId(childId)}";
+            var item = await CacheGetAsync(childId, key);
+            if (item != null) return item;
+            item = await _storage.ReadParentAsync(childId);
+            var task1 = CacheSetAsync(GetIdDelegate(item), item);
+            var task2 = CacheSetAsync(childId, item, key);
+            await Task.WhenAll(task1, task2);
+            return item;
         }
     }
 }

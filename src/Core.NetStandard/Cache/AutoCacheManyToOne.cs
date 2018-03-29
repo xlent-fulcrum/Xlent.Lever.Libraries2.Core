@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -99,7 +100,33 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task<TOneModel> ReadParentAsync(TId childId)
         {
             InternalContract.RequireNotDefaultValue(childId, nameof(childId));
-            return await _storage.ReadParentAsync(childId);
+            if (typeof(TManyModel) != typeof(TOneModel))
+            {
+                return await _storage.ReadParentAsync(childId);
+            }
+
+            var child = await ReadAsync(childId);
+            InternalContract.RequireNotDefaultValue(childId, nameof(childId));
+            var key = $"parentTo-{GetCacheKeyFromId(childId)}";
+            var parent = ConvertSameType<TOneModel,TManyModel>(await CacheGetAsync(childId, key));
+            if (parent != null) return parent;
+
+            parent = await _storage.ReadParentAsync(childId);
+            var parentAsManyModel = ConvertSameType<TManyModel,TOneModel>(parent);
+            var task1 = CacheSetAsync(GetIdDelegate(parentAsManyModel), parentAsManyModel);
+            var task2 = CacheSetAsync(childId, parentAsManyModel, key);
+            await Task.WhenAll(task1, task2);
+            return parent;
+        }
+
+        private TTarget ConvertSameType<TTarget, TSource>(TSource sourceType)
+        {
+            InternalContract.RequireNotNull(sourceType, nameof(sourceType));
+            InternalContract.Require(sourceType is TTarget, $"Expected parameter {nameof(sourceType)} to be an instance of {typeof(TTarget).FullName}");
+            var o = (object)sourceType;
+            var targetType = (TTarget) o;
+            FulcrumAssert.IsNotNull(targetType);
+            return targetType;
         }
 
         private static string CacheKeyForChildrenCollection(TId parentId)
