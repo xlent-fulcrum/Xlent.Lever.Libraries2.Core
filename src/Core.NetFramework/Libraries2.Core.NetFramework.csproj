@@ -124,8 +124,6 @@
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
     <Compile Include="Core\Storage\Logic\StorageHelper.cs" />
     <Compile Include="Core\Storage\Model\IManyToManyRelationComplete.cs" />
-    <Compile Include="Core\Storage\Model\IManyToOneRecursiveRelation.cs" />
-    <Compile Include="Core\Storage\Model\IManyToOneRecursiveRelationComplete.cs" />
     <Compile Include="Core\Storage\Model\IManyToOneRelationComplete.cs" />
     <Compile Include="Core\Storage\Model\IManyToManyRelation.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />

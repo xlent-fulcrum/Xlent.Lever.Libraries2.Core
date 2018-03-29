@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> 
+    public class MemoryManyToOneRecursivePersistance<TModel, TId> : MemoryPersistance<TModel, TId>, IManyToOneRelationComplete<TModel, TModel, TId> 
         where TModel : class
         
     {

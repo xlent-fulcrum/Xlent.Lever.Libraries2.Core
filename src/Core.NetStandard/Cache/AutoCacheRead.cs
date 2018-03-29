@@ -137,14 +137,14 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return item;
         }
 
-        protected void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
+        protected internal void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () =>
                 await CacheItemCollectionOperationAsync(itemsArray, limit, key, true).ConfigureAwait(false));
         }
 
-        protected void CacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
+        protected internal void CacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
         {
             // Give up if this is an individual page being saved while we are operating on a larger scale, 
             // because that could lead to inconsistencies in the data
@@ -266,7 +266,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return count == limit;
         }
 
-        protected async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix)
+        protected internal async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix)
         {
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(PageEnvelope<TModel>))) return null;
@@ -290,7 +290,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        protected async Task<TModel[]> CacheGetAsync(int limit, string key)
+        protected internal async Task<TModel[]> CacheGetAsync(int limit, string key)
         {
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             if (limit > _limitOfItemsInReadAllCache) return null;

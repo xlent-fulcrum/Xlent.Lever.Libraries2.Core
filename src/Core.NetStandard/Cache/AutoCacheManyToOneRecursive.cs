@@ -14,9 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// </summary>
     /// <typeparam name="TModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class AutoCacheManyToOneRecursive<TModel, TId> : AutoCacheCrud<TModel, TId>, IManyToOneRecursiveRelationComplete<TModel, TId> where TModel : class
+    public class AutoCacheManyToOneRecursive<TModel, TId> : AutoCacheCrud<TModel, TId>, IManyToOneRelationComplete<TModel, TModel, TId> where TModel : class
     {
-        private readonly IManyToOneRecursiveRelationComplete<TModel, TId> _storage;
+        private readonly IManyToOneRelationComplete<TModel, TModel, TId> _storage;
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -25,7 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheManyToOneRecursive(IManyToOneRecursiveRelationComplete<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public AutoCacheManyToOneRecursive(IManyToOneRelationComplete<TModel, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -39,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheManyToOneRecursive(IManyToOneRecursiveRelationComplete<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public AutoCacheManyToOneRecursive(IManyToOneRelationComplete<TModel, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
             _storage = storage;
