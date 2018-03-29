@@ -3,7 +3,7 @@
     /// <summary>
     /// Functionality for persisting many-to-many relations.
     /// </summary>
-    public interface IManyToOneRelationComplete<TManyModel, TOneModel, TId> : ICrud<TManyModel, TId>, IManyToOneRelation<TManyModel, TOneModel, TId>, IManyToOneRecursiveRelationComplete<TManyModel, TId>
+    public interface IManyToOneRelationComplete<TManyModel, TOneModel, TId> : ICrud<TManyModel, TId>, IManyToOneRelation<TManyModel, TOneModel, TId>
     {
     }
 }

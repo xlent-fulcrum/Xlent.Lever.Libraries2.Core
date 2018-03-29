@@ -21,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage
         }
 
         /// <inheritdoc />
-        protected override IManyToOneRecursiveRelationComplete<TestItemManyToOne<Guid, Guid?>, Guid>
+        protected override IManyToOneRelationComplete<TestItemManyToOne<Guid, Guid?>, TestItemManyToOne<Guid, Guid?>, Guid>
             ManyStorageRecursive => null;
 
         /// <inheritdoc />
