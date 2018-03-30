@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset, int? limit = null)
+        public override async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null)
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
@@ -68,7 +68,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task<IEnumerable<TModel>> ReadAllAsync(TGroupId groupValue, int limit = int.MaxValue)
+        public override async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue)
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
@@ -95,7 +95,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task DeleteAllAsync(TGroupId groupValue)
+        public override async Task DeleteChildrenAsync(TGroupId groupValue)
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             var groupPersistance = GetStorage(groupValue);

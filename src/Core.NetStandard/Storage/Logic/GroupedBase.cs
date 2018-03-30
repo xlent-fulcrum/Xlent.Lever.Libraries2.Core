@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
     /// Abstract base class that has a default implementation for <see cref="CreateAndReturnAsync"/>,
-    /// and <see cref="DeleteAllAsync"/>.
+    /// and <see cref="DeleteChildrenAsync"/>.
     /// </summary>
     public abstract class GroupedBase<TModel, TId, TGroupId> : IGrouped<TModel, TId, TGroupId>
     {
@@ -44,12 +44,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(TGroupId groupValue, int offset, int? limit = null);
+        public abstract Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null);
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TModel>> ReadAllAsync(TGroupId groupValue, int limit = int.MaxValue)
+        public virtual async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue)
         {
-            return await StorageHelper.ReadPages(offset => ReadAllWithPagingAsync(groupValue, offset), limit);
+            return await StorageHelper.ReadPages(offset => ReadChildrenWithPagingAsync(groupValue, offset), limit);
         }
 
         /// <inheritdoc />
@@ -59,12 +59,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public abstract Task DeleteAsync(TGroupId groupValue, TId id);
 
         /// <inheritdoc />
-        public virtual async Task DeleteAllAsync(TGroupId groupValue)
+        public virtual async Task DeleteChildrenAsync(TGroupId groupValue)
         {
-            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(GroupedBase<TModel, TId, TGroupId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(GroupedBase<TModel, TId, TGroupId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadAllWithPagingAsync(groupValue, offset));
+            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadChildrenWithPagingAsync(groupValue, offset));
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
