@@ -6,7 +6,7 @@
     public interface IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> 
         : ICrud<TManyToManyModel, TId>, 
             IManyToManyRelation<TReferenceModel1, TReferenceModel2, TId>,
-            IManyToOneRelation<TManyToManyModel, TReferenceModel2, TId>
+            IManyToOneRelation<TManyToManyModel, TId>
         where TManyToManyModel : class
     {
     }
