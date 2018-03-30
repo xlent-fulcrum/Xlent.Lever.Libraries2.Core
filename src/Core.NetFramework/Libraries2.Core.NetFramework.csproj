@@ -60,7 +60,6 @@
     <Compile Include="Core\Assert\ServiceContract.cs" />
     <Compile Include="Core\Cache\AutoCacheCrd.cs" />
     <Compile Include="Core\Cache\AutoCacheManyToOne.cs" />
-    <Compile Include="Core\Cache\AutoCacheManyToOneRecursive.cs" />
     <Compile Include="Core\Cache\AutoCacheRead.cs" />
     <Compile Include="Core\Cache\AutoCacheOptions.cs" />
     <Compile Include="Core\Cache\CachedItemInformation.cs" />
@@ -111,7 +110,6 @@
     <Compile Include="Core\Cache\AutoCacheCrud.cs" />
     <Compile Include="Core\Storage\Logic\ReadBase.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToManyPersistance.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryManyToOneRecursivePersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
     <Compile Include="Core\Storage\Logic\CrudBase.cs" />
     <Compile Include="Core\Storage\Logic\CrdBase.cs" />
