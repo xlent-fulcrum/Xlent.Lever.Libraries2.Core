@@ -137,7 +137,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyToManyModel>> ReadChildrenWithPagingAsync(TId reference1Id, int offset, int? limit = null)
+        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference1WithPagingAsync(TId reference1Id, int offset, int? limit = null)
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(reference1Id, nameof(reference1Id));
@@ -157,15 +157,59 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TManyToManyModel>> ReadChildrenAsync(TId reference1Id, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<TManyToManyModel>> ReadByReference1Async(TId reference1Id, int limit = Int32.MaxValue)
         {
-            return await StorageHelper.ReadPages(offset => ReadChildrenWithPagingAsync(reference1Id, offset));
+            return await StorageHelper.ReadPages(offset => ReadByReference1WithPagingAsync(reference1Id, offset));
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TId reference1Id)
+        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference2WithPagingAsync(TId reference2Id, int offset, int? limit = null)
         {
-            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>(offset => ReadChildrenWithPagingAsync(reference1Id, offset));
+            limit = limit ?? PageInfo.DefaultLimit;
+            InternalContract.RequireNotNull(reference2Id, nameof(reference2Id));
+            InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
+            InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
+            List<TManyToManyModel> list;
+            lock (MemoryItems)
+            {
+                list = MemoryItems.Values
+                    .Where(i => reference2Id.Equals(_getForeignKey2Delegate(i)))
+                    .Skip(offset)
+                    .Take(limit.Value)
+                    .ToList();
+            }
+            var page = new PageEnvelope<TManyToManyModel>(offset, limit.Value, null, list);
+            return await Task.FromResult(page);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TManyToManyModel>> ReadByReference2Async(TId reference2Id, int limit = Int32.MaxValue)
+        {
+            return await StorageHelper.ReadPages(offset => ReadByReference2WithPagingAsync(reference2Id, offset));
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteByReference1Async(TId reference1Id)
+        {
+            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>(offset => ReadByReference1WithPagingAsync(reference1Id, offset));
+            var tasks = new List<Task>();
+            while (await enumerator.MoveNextAsync())
+            {
+                var item = enumerator.Current;
+                var itemWithId = item as IUniquelyIdentifiable<TId>;
+                InternalContract.Require(itemWithId != null, $"The type {typeof(TManyToManyModel).FullName} must implement {typeof(IUniquelyIdentifiable<TId>).Name} for this method to work.");
+                if (itemWithId == null) break;
+                var task = DeleteAsync(itemWithId.Id);
+                tasks.Add(task);
+            }
+
+            await Task.WhenAll(tasks);
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteByReference2Async(TId reference2Id)
+        {
+            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>(offset => ReadByReference2WithPagingAsync(reference2Id, offset));
             var tasks = new List<Task>();
             while (await enumerator.MoveNextAsync())
             {
