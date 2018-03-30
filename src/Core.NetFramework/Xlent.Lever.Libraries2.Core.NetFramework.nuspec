@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.20.9</version>
+    <version>1.20.10</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.20.10 Simplified some ManyToOne interfaces
       1.20.9 Removed the ReadParentAsync() method from ManyToOne interfaces.
       1.20.8 Adjusted storage interfaces.
       1.20.7 Added overloaded constructor for PageEnvelope.
