@@ -76,8 +76,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// </summary>
         public static T ToItem<T>(byte[] serializedEnvelope)
         {
-            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(serializedEnvelope);
-            return SupportMethods.Deserialize<T>(cacheEnvelope.Data);
+            var cacheEnvelope = Deserialize<CacheEnvelope>(serializedEnvelope);
+            return Deserialize<T>(cacheEnvelope.Data);
         }
     }
 }

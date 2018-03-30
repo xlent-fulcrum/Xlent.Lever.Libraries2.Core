@@ -19,7 +19,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     public class AutoCacheRead<TModel, TId> : IReadAll<TModel, TId>
     {
         private readonly IReadAll<TModel, TId> _storage;
-        private readonly object _lockReadAllCache = new object();
         private int _limitOfItemsInReadAllCache;
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
         private readonly ConcurrentDictionary<string, bool> _collectionOperations = new ConcurrentDictionary<string, bool>();
@@ -155,13 +154,14 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, false, true).ConfigureAwait(false));
+                await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, true).ConfigureAwait(false));
         }
 
         protected async Task RemoveCacheItemsInBackgroundAsync(string key, Func<Task<TModel[]>> getItemsToDelete)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () => await ReadAndDelete(key, getItemsToDelete));
+            await Task.Yield();
         }
 
         private async Task ReadAndDelete(string key, Func<Task<TModel[]>> getItemsToDelete)
@@ -189,7 +189,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false, false).ConfigureAwait(false));
+                await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false).ConfigureAwait(false));
         }
 
         private async Task CacheItemCollectionOperationAsync(TModel[] itemsArray, int limit, string key, bool isSetOperation)
@@ -216,7 +216,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                     {
                         var data = itemsArray.Skip(offset).Take(PageInfo.DefaultLimit);
                         var pageEnvelope = new PageEnvelope<TModel>(offset, PageInfo.DefaultLimit, itemsArray.Length, data);
-                        var task = CacheItemPageOperationAsync(pageEnvelope, limit, key, true, isSetOperation);
+                        var task = CacheItemPageOperationAsync(pageEnvelope, limit, key, isSetOperation);
                         cachePageTasks.Add(task);
                         offset += PageInfo.DefaultLimit;
                     }
@@ -238,7 +238,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        private async Task CacheItemPageOperationAsync(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool inCollectionOperation, bool isSetOperation)
+        private async Task CacheItemPageOperationAsync(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool isSetOperation)
         {
             var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
             try

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -93,16 +92,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             itemsArray = itemsCollection as TManyModel[] ?? itemsCollection.ToArray();
             CacheItemsInBackground(itemsArray, limit, key);
             return itemsArray;
-        }
-
-        private TTarget ConvertSameType<TTarget, TSource>(TSource sourceType)
-        {
-            InternalContract.RequireNotNull(sourceType, nameof(sourceType));
-            InternalContract.Require(sourceType is TTarget, $"Expected parameter {nameof(sourceType)} to be an instance of {typeof(TTarget).FullName}");
-            var o = (object)sourceType;
-            var targetType = (TTarget) o;
-            FulcrumAssert.IsNotNull(targetType);
-            return targetType;
         }
 
         private static string CacheKeyForChildrenCollection(TId parentId)

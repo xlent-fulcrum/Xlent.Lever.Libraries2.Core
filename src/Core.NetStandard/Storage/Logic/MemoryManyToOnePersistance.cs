@@ -10,35 +10,20 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// General class for storing a many to one item in memory.
     /// </summary>
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
-    /// <typeparam name="TOneModel">The model for the parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TOneModel, TId> : MemoryPersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
+    public class MemoryManyToOnePersistance<TManyModel, TId> : MemoryPersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
         where TManyModel : class
-        where TOneModel : class
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
-        private readonly IRead<TOneModel, TId> _parentReader;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="getParentIdDelegate">See <see cref="MemoryManyToOneRecursivePersistance{TModel,TId}.GetParentIdDelegate"/>.</param>
-        /// <param name="parentReader">Functionality to read a specified parent.</param>
-        public MemoryManyToOnePersistance(GetParentIdDelegate getParentIdDelegate, IRead<TOneModel, TId> parentReader)
+        /// <param name="getParentIdDelegate">See <see cref="GetParentIdDelegate"/>.</param>
+        public MemoryManyToOnePersistance(GetParentIdDelegate getParentIdDelegate)
         {
             InternalContract.RequireNotNull(getParentIdDelegate, nameof(getParentIdDelegate));
-            if (typeof(TManyModel) == typeof(TOneModel)) InternalContract.Require(parentReader == null, $"Expected parameter {nameof(parentReader)} to be null when TManyModel and TOneModel are equal.");
-            else InternalContract.RequireNotNull(parentReader, nameof(parentReader));
             _getParentIdDelegate = getParentIdDelegate;
-            _parentReader = parentReader;
-        }
-
-        private TOneModel ToOneModel(TManyModel manyModel)
-        {
-            InternalContract.RequireNotNull(manyModel, nameof(manyModel));
-            var oneModel = manyModel as TOneModel;
-            FulcrumAssert.IsNotNull(oneModel);
-            return oneModel;
         }
 
         /// <summary>

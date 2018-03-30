@@ -1,11 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
-using Xlent.Lever.Libraries2.Core.Threads;
-using System;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
@@ -16,7 +10,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
     public class AutoCacheManyToOneRecursive<TModel, TId> : AutoCacheManyToOne<TModel, TId>
     {
-        private readonly IManyToOneRelationComplete<TModel, TId> _storage;
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -42,7 +35,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public AutoCacheManyToOneRecursive(IManyToOneRelationComplete<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
-            _storage = storage;
         }
     }
 }
