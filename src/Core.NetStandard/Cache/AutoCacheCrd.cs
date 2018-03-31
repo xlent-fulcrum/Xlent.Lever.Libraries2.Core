@@ -15,7 +15,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     public class AutoCacheCrd<TModel, TId> : AutoCacheRead<TModel, TId>, ICrd<TModel, TId>
     {
         private readonly ICrd<TModel, TId> _storage;
+
+        /// <summary>
+        /// A method that flushes the content of a cache.
+        /// </summary>
         protected readonly FlushCacheDelegateAsync FlushCacheDelegateAsync;
+
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
         /// </summary>
@@ -106,6 +111,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await Task.WhenAll(task1, task2);
         }
 
+        /// <summary>
+        /// Read and cache the item, but only if we have an aggressive caching strategy.
+        /// </summary>
+        /// <param name="id">The id of the item.</param>
         protected async Task CacheMaybeSetAsync(TId id)
         {
             async Task<bool> IsAlreadyCachedAndGetIsOkToUpdate()
@@ -119,6 +128,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await CacheSetAsync(id, item);
         }
 
+        /// <summary>
+        /// Check if an item exists in the cache.
+        /// </summary>
+        /// <param name="id">The id for the item</param>
         protected async Task<bool> CacheItemExistsAsync(TId id)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));

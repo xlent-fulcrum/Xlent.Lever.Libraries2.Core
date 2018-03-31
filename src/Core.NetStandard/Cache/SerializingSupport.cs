@@ -49,7 +49,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <param name="item">The item to get the key for</param>
     public delegate TId GetIdDelegate<in TModel, out TId>(TModel item);
 
-    public static class SupportMethods
+    /// <summary>
+    /// Methods that are used for serializing.
+    /// </summary>
+    public static class SerializingSupport
     {
 
         /// <summary>

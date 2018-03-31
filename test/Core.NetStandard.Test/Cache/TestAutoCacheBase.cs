@@ -115,7 +115,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             else
             {
-                var actualCacheValue = SupportMethods.ToItem<TModel>(actualCacheSerializedValue);
+                var actualCacheValue = SerializingSupport.ToItem<TModel>(actualCacheSerializedValue);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedCacheValue, actualCacheValue, $"Cache verification {beforeOrAfter} read failed.");
             }
         }

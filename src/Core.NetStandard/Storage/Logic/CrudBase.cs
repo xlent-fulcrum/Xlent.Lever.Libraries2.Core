@@ -27,7 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
-        /// then the old value is read using <see cref="CrdBase{TModel,TId}.ReadAsync"/> and the values are verified to be equal.
+        /// then the old value is read using <see cref="ReadBase{TModel,TId}.ReadAsync"/> and the values are verified to be equal.
         /// The Etag of the item is then set to a new value.
         /// </summary>
         /// <param name="id"></param>

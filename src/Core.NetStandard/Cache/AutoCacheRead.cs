@@ -22,12 +22,32 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         private int _limitOfItemsInReadAllCache;
         private readonly ConcurrentDictionary<string, PageEnvelope<TModel>> _activeCachingOfPages = new ConcurrentDictionary<string, PageEnvelope<TModel>>();
         private readonly ConcurrentDictionary<string, bool> _collectionOperations = new ConcurrentDictionary<string, bool>();
-        protected readonly IDistributedCache Cache;
-        protected readonly GetIdDelegate<TModel, TId> GetIdDelegate;
-        protected readonly AutoCacheOptions Options;
-        protected readonly DistributedCacheEntryOptions CacheOptions;
-        protected string CacheIdentity { get; set; }
         private const string ReadAllCacheKey = "ReadAllCacheKey";
+
+        /// <summary>
+        /// The cache of items
+        /// </summary>
+        protected readonly IDistributedCache Cache;
+
+        /// <summary>
+        /// A method for getting the id of an item.
+        /// </summary>
+        protected GetIdDelegate<TModel, TId> GetIdDelegate { get; }
+
+        /// <summary>
+        /// The options for the AutoCache
+        /// </summary>
+        protected AutoCacheOptions Options { get; }
+
+        /// <summary>
+        /// The options we should use when creating new items in the Distributed cache.
+        /// </summary>
+        protected  DistributedCacheEntryOptions CacheOptions { get; }
+
+        /// <summary>
+        /// The identity of the current cache. For caches that doesn't support flushing, this is how we forget about all old values.
+        /// </summary>
+        protected string CacheIdentity { get; set; }
 
 
         /// <summary>
@@ -136,6 +156,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return item;
         }
 
+        /// <summary>
+        /// Add the items to the cache as a background process.
+        /// </summary>
         protected internal void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
@@ -143,6 +166,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 await CacheItemCollectionOperationAsync(itemsArray, limit, key, true).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Add the items to the cache as a background process.
+        /// </summary>
         protected internal void CacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
         {
             // Give up if this is an individual page being saved while we are operating on a larger scale, 
@@ -157,6 +183,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, true).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Remove items from the cache as a background process.
+        /// </summary>
+        /// <param name="key">The key into the cache.</param>
+        /// <param name="getItemsToDelete">A method that gets the items that should be deleted.</param>
         protected async Task RemoveCacheItemsInBackgroundAsync(string key, Func<Task<TModel[]>> getItemsToDelete)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
@@ -171,6 +202,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Remove items from the cache as a background process.
+        /// </summary>
+        /// <param name="key">The key into the cache.</param>
+        /// <param name="itemsArray">An array of items that should be removed from the cache.</param>
         protected void RemoveCacheItemsInBackground(TModel[] itemsArray, string key)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
@@ -178,7 +214,13 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false));
         }
 
-        protected void RemoveCacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix)
+        /// <summary>
+        /// Remove items from the cache as a background process.
+        /// </summary>
+        /// <param name="pageEnvelope">A page with the items to delete.</param>
+        /// <param name="keyPrefix">The key into the cache.</param>
+        /// 
+        protected void RemoveCacheItemsInBackground(PageEnvelope<TModel> pageEnvelope, string keyPrefix)
         {
             // Give up if this is an individual page being saved while we are operating on a larger scale, 
             // because that could lead to inconsistencies in the data
@@ -266,83 +308,72 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return count == limit;
         }
 
+        /// <summary>
+        /// Get a value from the cache if all constraints are fulfilled.
+        /// </summary>
         protected internal async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix)
         {
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(PageEnvelope<TModel>))) return null;
             var key = GetCacheKeyForPage(keyPrefix, offset, limit);
-            var byteArray = await Cache.GetAsync(key);
-            if (byteArray == null) return null;
-            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
-            var cacheItemStrategy = GetCacheItemStrategy(cacheEnvelope);
-            switch (cacheItemStrategy)
-            {
-                case UseCacheStrategyEnum.Use:
-                    return SupportMethods.Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data);
-                case UseCacheStrategyEnum.Ignore:
-                    return null;
-                case UseCacheStrategyEnum.Remove:
-                    await Cache.RemoveAsync(key);
-                    return null;
-                default:
-                    FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
-                    return null;
-            }
+            return await GetAndMaybeReturnAsync<PageEnvelope<TModel>>(key, cacheEnvelope => SerializingSupport.Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data));
         }
 
+        /// <summary>
+        /// Get a value from the cache if all constraints are fulfilled.
+        /// </summary>
         protected internal async Task<TModel[]> CacheGetAsync(int limit, string key)
         {
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             if (limit > _limitOfItemsInReadAllCache) return null;
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(TModel[]))) return null;
-            var byteArray = await Cache.GetAsync(key);
-            if (byteArray == null) return null;
-            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
-            var cacheItemStrategy = GetCacheItemStrategy(cacheEnvelope);
-            switch (cacheItemStrategy)
-            {
-                case UseCacheStrategyEnum.Use:
-                    var array =  SupportMethods.Deserialize<TModel[]>(cacheEnvelope.Data);
+
+            return await GetAndMaybeReturnAsync<TModel[]>(key, cacheEnvelope =>
+                {
+                    var array = SerializingSupport.Deserialize<TModel[]>(cacheEnvelope.Data);
                     if (limit > array.Length) return array;
                     var subset = array.Take(limit);
                     return subset as TModel[] ?? subset.ToArray();
-                case UseCacheStrategyEnum.Ignore:
-                    return null;
-                case UseCacheStrategyEnum.Remove:
-                    await Cache.RemoveAsync(ReadAllCacheKey);
-                    return null;
-                default:
-                    FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
-                    return null;
-            }
+                });
         }
 
-        protected async Task<TModel> CacheGetAsync(TId id, string key = null)
+        /// <summary>
+        /// Get a value from the cache if all constraints are fulfilled.
+        /// </summary>
+        private async Task<TModel> CacheGetAsync(TId id, string key = null)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
             key = key ?? GetCacheKeyFromId(id);
+
+            return await GetAndMaybeReturnAsync<TModel>(key, cacheEnvelope => SerializingSupport.Deserialize<TModel>(cacheEnvelope.Data), id);
+        }
+
+        private delegate TReturn DeserializeDelegate<out TReturn>(CacheEnvelope cacheEnvelope);
+
+        private async Task<TReturn> GetAndMaybeReturnAsync<TReturn>(string key, DeserializeDelegate<TReturn> deserializeDelegate, TId id = default(TId))
+        {
             var byteArray = await Cache.GetAsync(key);
-            if (byteArray == null) return default(TModel);
-            var cacheEnvelope = SupportMethods.Deserialize<CacheEnvelope>(byteArray);
-            var cacheItemStrategy = await GetCacheItemStrategyAsync(id, cacheEnvelope);
+            if (byteArray == null) return default(TReturn);
+            var cacheEnvelope = SerializingSupport.Deserialize<CacheEnvelope>(byteArray);
+            var cacheItemStrategy = Equals(id, default(TId)) ? GetCacheItemStrategy(cacheEnvelope) : await GetCacheItemStrategyAsync(id, cacheEnvelope);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
-                    return SupportMethods.Deserialize<TModel>(cacheEnvelope.Data);
+                    return deserializeDelegate(cacheEnvelope);
                 case UseCacheStrategyEnum.Ignore:
-                    return default(TModel);
+                    return default(TReturn);
                 case UseCacheStrategyEnum.Remove:
-                    await CacheRemoveByIdAsync(id);
-                    return default(TModel);
+                    await Cache.RemoveAsync(key);
+                    return default(TReturn);
                 default:
                     FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
-                    return default(TModel);
+                    return default(TReturn);
             }
         }
 
-        protected async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope)
+        private async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
@@ -358,7 +389,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return await UseCacheStrategyMethodAsync(cachedItemInformation);
         }
 
-        protected UseCacheStrategyEnum GetCacheItemStrategy(CacheEnvelope cacheEnvelope)
+        private UseCacheStrategyEnum GetCacheItemStrategy(CacheEnvelope cacheEnvelope)
         {
             InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
 
@@ -366,18 +397,24 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             return TooOld(cacheEnvelope) ? UseCacheStrategyEnum.Remove : UseCacheStrategyEnum.Use;
         }
 
-        protected bool TooOld(CacheEnvelope cacheEnvelope)
+        private bool TooOld(CacheEnvelope cacheEnvelope)
         {
             if (Options.AbsoluteExpirationRelativeToNow == null) return false;
             return cacheEnvelope.UpdatedAt.Add(Options.AbsoluteExpirationRelativeToNow.Value) <= DateTimeOffset.Now;
         }
 
+        /// <summary>
+        /// Put the item in the cache.
+        /// </summary>
         protected Task CacheSetAsync(TModel item)
         {
             InternalContract.RequireNotDefaultValue(item, nameof(item));
             return CacheSetAsync(GetIdDelegate(item), item);
         }
 
+        /// <summary>
+        /// Put the item in the cache.
+        /// </summary>
         protected async Task CacheSetAsync(TId id, TModel item, string key = null)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
@@ -387,7 +424,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
         }
 
-        protected async Task CacheSetAsync(TModel[] itemsArray, int limit, string key)
+        /// <summary>
+        /// Put the item in the cache.
+        /// </summary>
+        private async Task CacheSetAsync(TModel[] itemsArray, int limit, string key)
         {
             InternalContract.RequireNotDefaultValue(itemsArray, nameof(itemsArray));
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(itemsArray);
@@ -395,7 +435,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             _limitOfItemsInReadAllCache = limit;
         }
 
-        protected async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope, string keyPrefix)
+        /// <summary>
+        /// Put the item in the cache.
+        /// </summary>
+        private async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope, string keyPrefix)
         {
             InternalContract.RequireNotDefaultValue(pageEnvelope, nameof(pageEnvelope));
             InternalContract.RequireValidated(pageEnvelope, nameof(pageEnvelope));
@@ -404,18 +447,17 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Get the cache key for a specific page
+        /// </summary>
         protected static string GetCacheKeyForPage(string prefix, int offset, int limit)
         {
             return $"{prefix}-{offset}-{limit}";
         }
 
-        protected async Task CacheRemoveByIdAsync(TId id)
-        {
-            InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var key = GetCacheKeyFromId(id);
-            await Cache.RemoveAsync(key);
-        }
-
+        /// <summary>
+        /// Get the cacke key
+        /// </summary>
         protected static string GetCacheKeyFromId(TId id)
         {
             var key = id?.ToString();
@@ -425,18 +467,28 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <summary>
+        /// Remove from cache
+        /// </summary>
+        protected async Task CacheRemoveByIdAsync(TId id)
+        {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+            var key = GetCacheKeyFromId(id);
+            await Cache.RemoveAsync(key);
+        }
+
+        /// <summary>
         /// Serialize the <paramref name="item"/>, put it into an envelope and serialize the envelope
         /// </summary>
         public byte[] ToSerializedCacheEnvelope<T>(T item)
         {
-            var serializedItem = SupportMethods.Serialize(item);
+            var serializedItem = SerializingSupport.Serialize(item);
             var cacheEnvelope = new CacheEnvelope
             {
                 CacheIdentity = CacheIdentity,
                 UpdatedAt = DateTimeOffset.Now,
                 Data = serializedItem
             };
-            var serializedCacheEnvelope = SupportMethods.Serialize(cacheEnvelope);
+            var serializedCacheEnvelope = SerializingSupport.Serialize(cacheEnvelope);
             return serializedCacheEnvelope;
         }
     }
