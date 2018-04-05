@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
@@ -12,10 +13,11 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Delete all the items from storage.
         /// </summary>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
         /// <remarks>
         /// The implementor of this method can decide that it is not a valid method to expose.
         /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
         /// </remarks>
-        Task DeleteAllAsync();
+        Task DeleteAllAsync(CancellationToken token = default(CancellationToken));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -11,6 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     public class PageEnvelopeEnumerator<T> : IEnumerator<T>
     {
         private readonly ReadMethodDelegate _readMethodDelegate;
+        private readonly CancellationToken _token;
         private PageEnvelope<T> _currentPageEnvelope;
         private int? _currentOffset;
         private IEnumerator<T> _dataEnumerator;
@@ -20,15 +22,18 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// How to get new page envelopes when required.
         /// </summary>
         /// <param name="offset"></param>
-        public delegate PageEnvelope<T> ReadMethodDelegate(int offset);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public delegate PageEnvelope<T> ReadMethodDelegate(int offset, CancellationToken token);
 
         /// <summary>
         /// Create a new PageEnvelopeEnumerator which will get its values by calling the <paramref name="readMethodDelegate"/> method.
         /// </summary>
         /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerator(ReadMethodDelegate readMethodDelegate)
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public PageEnvelopeEnumerator(ReadMethodDelegate readMethodDelegate, CancellationToken token = default(CancellationToken))
         {
             _readMethodDelegate = readMethodDelegate;
+            _token = token;
         }
 
         /// <inheritdoc />
@@ -52,12 +57,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 _endOfData = true;
                 return false;
             }
+
+            if (_token.IsCancellationRequested) return false;
             return ReadAndMoveNext(_currentOffset.Value);
         }
 
         private bool ReadAndMoveNext(int offset)
         {
-            _currentPageEnvelope = _readMethodDelegate(offset);
+            _currentPageEnvelope = _readMethodDelegate(offset, _token);
             if (_currentPageEnvelope?.PageInfo == null || _currentPageEnvelope.Data == null || _currentPageEnvelope.PageInfo.Returned == 0)
             {
                 _endOfData = true;

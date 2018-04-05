@@ -33,7 +33,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage
                 await _storage.CreateAsync(item);
             }
 
-            var values = new PageEnvelopeEnumerable<TestItemId<string>>(offset => _storage.ReadAllWithPagingAsync(offset, 1).Result);
+            var values = new PageEnvelopeEnumerable<TestItemId<string>>((offset,t) => _storage.ReadAllWithPagingAsync(offset, 1, t).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(numberOfValues1, values.Count());
 
             for (var i = 0; i < numberOfValues2; i++)
@@ -46,14 +46,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage
                 await _storage.CreateAsync(item);
             }
 
-            values = new PageEnvelopeEnumerable<TestItemId<string>>(offset => _storage.ReadAllWithPagingAsync(offset, 1).Result);
+            values = new PageEnvelopeEnumerable<TestItemId<string>>((offset, t) => _storage.ReadAllWithPagingAsync(offset, 1, t).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(numberOfValues1+numberOfValues2, values.Count());
         }
 
         [TestMethod]
         public void TestEmptyData()
         {
-            var values = new PageEnvelopeEnumerable<TestItemId<string>>(offset => _storage.ReadAllWithPagingAsync(offset, 1).Result);
+            var values = new PageEnvelopeEnumerable<TestItemId<string>>((offset, t) => _storage.ReadAllWithPagingAsync(offset, 1, t).Result);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsFalse(values.Any());
         }
 

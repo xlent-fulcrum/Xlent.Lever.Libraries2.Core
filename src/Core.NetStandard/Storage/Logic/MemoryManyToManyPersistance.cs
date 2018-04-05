@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -44,52 +45,52 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         public delegate TId GetForeignKeyDelegate(TManyToManyModel item);
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1WithPagingAsync(TId id, int offset, int? limit = null)
+        public async Task<PageEnvelope<TReferenceModel2>> ReadReferencedItemsByReference1WithPagingAsync(TId id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             return await ReadReferencedItemsByForeignKeyAsync(
                 id,
                 _getForeignKey1Delegate,
                 _getForeignKey2Delegate,
                 _foreignHandler2, 
-                offset, limit);
+                offset, limit, token);
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TReferenceModel2>> ReadReferencedItemsByReference1Async(TId id, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<TReferenceModel2>> ReadReferencedItemsByReference1Async(TId id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPages(offset => ReadReferencedItemsByReference1WithPagingAsync(id, offset));
+            return await StorageHelper.ReadPagesAsync((offset, t) => ReadReferencedItemsByReference1WithPagingAsync(id, offset, null, t), limit, token);
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2WithPagingAsync(TId id, int offset, int? limit = null)
+        public async Task<PageEnvelope<TReferenceModel1>> ReadReferencedItemsByReference2WithPagingAsync(TId id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             return await ReadReferencedItemsByForeignKeyAsync(
                 id,
                 _getForeignKey2Delegate,
                 _getForeignKey1Delegate,
                 _foreignHandler1,
-                offset, limit);
+                offset, limit, token);
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TReferenceModel1>> ReadReferencedItemsByReference2Async(TId id, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<TReferenceModel1>> ReadReferencedItemsByReference2Async(TId id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPages(offset => ReadReferencedItemsByReference2WithPagingAsync(id, offset));
+            return await StorageHelper.ReadPagesAsync((offset, t) => ReadReferencedItemsByReference2WithPagingAsync(id, offset, null, t), limit, token);
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByReference1(TId id)
+        public async Task DeleteReferencesByReference1(TId id, CancellationToken token = default(CancellationToken))
         {
-            await DeleteReferencesByForeignKey(id, _getForeignKey1Delegate);
+            await DeleteReferencesByForeignKey(id, _getForeignKey1Delegate, token);
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByReference2(TId id)
+        public async Task DeleteReferencesByReference2(TId id, CancellationToken token = default(CancellationToken))
         {
-            await DeleteReferencesByForeignKey(id, _getForeignKey2Delegate);
+            await DeleteReferencesByForeignKey(id, _getForeignKey2Delegate, token);
         }
         
-        private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null)
+        private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(id, nameof(id));
@@ -102,7 +103,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                     .Where(i => id.Equals(idDelegate(i)))
                     .Skip(offset)
                     .Take(limit.Value)
-                    .Select(i => referenceHandler.ReadAsync(referenceIdDelegate(i)))
+                    .Select(i => referenceHandler.ReadAsync(referenceIdDelegate(i), token))
                     .ToList();
             }
 
@@ -116,7 +117,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             return await Task.FromResult(page);
         }
         
-        private async Task DeleteReferencesByForeignKey(TId id, GetForeignKeyDelegate idDelegate)
+        private async Task DeleteReferencesByForeignKey(TId id, GetForeignKeyDelegate idDelegate, CancellationToken token)
         {
             InternalContract.RequireNotNull(id, nameof(id));
             var errorMessage = $"{nameof(TManyToManyModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
@@ -137,7 +138,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference1WithPagingAsync(TId reference1Id, int offset, int? limit = null)
+        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference1WithPagingAsync(TId reference1Id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(reference1Id, nameof(reference1Id));
@@ -157,13 +158,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TManyToManyModel>> ReadByReference1Async(TId reference1Id, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<TManyToManyModel>> ReadByReference1Async(TId reference1Id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPages(offset => ReadByReference1WithPagingAsync(reference1Id, offset));
+            return await StorageHelper.ReadPagesAsync((offset, t) => ReadByReference1WithPagingAsync(reference1Id, offset, null, t), limit, token);
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference2WithPagingAsync(TId reference2Id, int offset, int? limit = null)
+        public async Task<PageEnvelope<TManyToManyModel>> ReadByReference2WithPagingAsync(TId reference2Id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireNotNull(reference2Id, nameof(reference2Id));
@@ -183,41 +184,36 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TManyToManyModel>> ReadByReference2Async(TId reference2Id, int limit = Int32.MaxValue)
+        public async Task<IEnumerable<TManyToManyModel>> ReadByReference2Async(TId reference2Id, int limit = Int32.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPages(offset => ReadByReference2WithPagingAsync(reference2Id, offset));
+            return await StorageHelper.ReadPagesAsync((offset, t) => ReadByReference2WithPagingAsync(reference2Id, offset, null, t), limit, token);
         }
 
         /// <inheritdoc />
-        public async Task DeleteByReference1Async(TId reference1Id)
+        public async Task DeleteByReference1Async(TId reference1Id, CancellationToken token = default(CancellationToken))
         {
-            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>(offset => ReadByReference1WithPagingAsync(reference1Id, offset));
+            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>((offset,t) => ReadByReference1WithPagingAsync(reference1Id, offset, null, t), token);
+            await DeleteItemsAsync(enumerator, token);
+        }
+
+        /// <inheritdoc />
+        public async Task DeleteByReference2Async(TId reference2Id, CancellationToken token = default(CancellationToken))
+        {
+            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>((offset, t) => ReadByReference2WithPagingAsync(reference2Id, offset, null, t), token);
+            await DeleteItemsAsync(enumerator, token);
+        }
+
+        private async Task DeleteItemsAsync(PageEnvelopeEnumeratorAsync<TManyToManyModel> enumerator, CancellationToken token)
+        {
             var tasks = new List<Task>();
             while (await enumerator.MoveNextAsync())
             {
                 var item = enumerator.Current;
                 var itemWithId = item as IUniquelyIdentifiable<TId>;
-                InternalContract.Require(itemWithId != null, $"The type {typeof(TManyToManyModel).FullName} must implement {typeof(IUniquelyIdentifiable<TId>).Name} for this method to work.");
+                InternalContract.Require(itemWithId != null,
+                    $"The type {typeof(TManyToManyModel).FullName} must implement {typeof(IUniquelyIdentifiable<TId>).Name} for this method to work.");
                 if (itemWithId == null) break;
-                var task = DeleteAsync(itemWithId.Id);
-                tasks.Add(task);
-            }
-
-            await Task.WhenAll(tasks);
-        }
-
-        /// <inheritdoc />
-        public async Task DeleteByReference2Async(TId reference2Id)
-        {
-            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>(offset => ReadByReference2WithPagingAsync(reference2Id, offset));
-            var tasks = new List<Task>();
-            while (await enumerator.MoveNextAsync())
-            {
-                var item = enumerator.Current;
-                var itemWithId = item as IUniquelyIdentifiable<TId>;
-                InternalContract.Require(itemWithId != null, $"The type {typeof(TManyToManyModel).FullName} must implement {typeof(IUniquelyIdentifiable<TId>).Name} for this method to work.");
-                if (itemWithId == null) break;
-                var task = DeleteAsync(itemWithId.Id);
+                var task = DeleteAsync(itemWithId.Id, token);
                 tasks.Add(task);
             }
 

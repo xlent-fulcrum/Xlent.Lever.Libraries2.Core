@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -14,15 +15,15 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     public abstract class CrudBase<TModel, TId> :  CrdBase<TModel, TId>, ICrud<TModel, TId>
     {
         /// <inheritdoc />
-        public abstract Task UpdateAsync(TId id, TModel item);
+        public abstract Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<TModel> UpdateAndReturnAsync(TId id, TModel item)
+        public virtual async Task<TModel> UpdateAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
-            await UpdateAsync(id, item);
-            return await ReadAsync(id);
+            await UpdateAsync(id, item, token);
+            return await ReadAsync(id, token);
         }
 
         /// <summary>
@@ -32,12 +33,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="id"></param>
         /// <param name="item"></param>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
         /// <returns></returns>
-        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TModel item)
+        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             if (item is IOptimisticConcurrencyControlByETag etaggable)
             {
-                var oldItem = await ReadAsync(id);
+                var oldItem = await ReadAsync(id, token);
                 if (oldItem != null)
                 {
                     var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;

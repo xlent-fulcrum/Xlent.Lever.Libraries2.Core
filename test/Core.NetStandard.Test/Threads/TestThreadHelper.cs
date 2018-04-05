@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             _provider.CorrelationId = correlationId;
             var done = false;
             var canAccess = false;
-            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken =>
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(token =>
             {
                 var provider = new CorrelationIdValueProvider();
                 canAccess = correlationId == provider.CorrelationId;

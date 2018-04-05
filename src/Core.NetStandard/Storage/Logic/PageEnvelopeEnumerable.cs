@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -16,9 +17,10 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// Create a new PageEnvelopeEnumerable which will get its values by calling the <paramref name="readMethodDelegate"/> method.
         /// </summary>
         /// <param name="readMethodDelegate">A method that returns a new page of answers for a specific offset.</param>
-        public PageEnvelopeEnumerable(PageEnvelopeEnumerator<T>.ReadMethodDelegate readMethodDelegate)
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public PageEnvelopeEnumerable(PageEnvelopeEnumerator<T>.ReadMethodDelegate readMethodDelegate, CancellationToken token = default(CancellationToken))
         {
-            _enumerator = new PageEnvelopeEnumerator<T>(readMethodDelegate);
+            _enumerator = new PageEnvelopeEnumerator<T>(readMethodDelegate, token);
         }
 
         /// <inheritdoc />

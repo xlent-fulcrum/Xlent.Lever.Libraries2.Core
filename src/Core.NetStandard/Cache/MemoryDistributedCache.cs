@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             try
             {
                 InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
-                return await ItemStorage.ReadAsync(key);
+                return await ItemStorage.ReadAsync(key, token);
             }
             catch (FulcrumNotFoundException)
             {
@@ -57,16 +57,16 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 try
                 {
-                    await ItemStorage.CreateWithSpecifiedIdAsync(key, value);
+                    await ItemStorage.CreateWithSpecifiedIdAsync(key, value, token);
                 }
                 catch (FulcrumConflictException)
                 {
-                    await ItemStorage.UpdateAsync(key, value);
+                    await ItemStorage.UpdateAsync(key, value, token);
                 }
             }
             else
             {
-                await ItemStorage.UpdateAsync(key, value);
+                await ItemStorage.UpdateAsync(key, value, token);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task RemoveAsync(string key, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
-            await ItemStorage.DeleteAsync(key);
+            await ItemStorage.DeleteAsync(key, token);
         }
     }
 }

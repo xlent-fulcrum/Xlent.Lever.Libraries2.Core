@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
@@ -16,14 +17,16 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="id">The specific foreign key value to read the items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TManyToManyModel>> ReadByReference1WithPagingAsync(TId id, int offset, int? limit = null);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task<PageEnvelope<TManyToManyModel>> ReadByReference1WithPagingAsync(TId id, int offset, int? limit = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Find all items reference 1 set to <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The specific foreign key value to read the items for.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<IEnumerable<TManyToManyModel>> ReadByReference1Async(TId id, int limit = int.MaxValue);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task<IEnumerable<TManyToManyModel>> ReadByReference1Async(TId id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Find all items with reference 2 set to <paramref name="id"/>.
@@ -31,25 +34,29 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <param name="id">The specific foreign key value to read the items for.</param>
         /// <param name="offset">The number of items that will be skipped in result.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<PageEnvelope<TManyToManyModel>> ReadByReference2WithPagingAsync(TId id, int offset, int? limit = null);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task<PageEnvelope<TManyToManyModel>> ReadByReference2WithPagingAsync(TId id, int offset, int? limit = null, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Find all items with reference 2 set to <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The specific foreign key value to read the items for.</param>
         /// <param name="limit">The maximum number of items to return.</param>
-        Task<IEnumerable<TManyToManyModel>> ReadByReference2Async(TId id, int limit = int.MaxValue);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task<IEnumerable<TManyToManyModel>> ReadByReference2Async(TId id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Delete all items reference 1 set to <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The specific foreign key value to delete the items for.</param>
-        Task DeleteByReference1Async(TId id);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task DeleteByReference1Async(TId id, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Delete all items reference 2 set to <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The specific foreign key value to delete the items for.</param>
-        Task DeleteByReference2Async(TId id);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        Task DeleteByReference2Async(TId id, CancellationToken token = default(CancellationToken));
     }
 }

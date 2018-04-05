@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -10,61 +11,61 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// Abstract base class that has a default implementation for <see cref="CreateAndReturnAsync"/>,
     /// and <see cref="DeleteChildrenAsync"/>.
     /// </summary>
-    public abstract class GroupedBase<TModel, TId, TGroupId> : IGrouped<TModel, TId, TGroupId>
+    public abstract class SlaveToMasterRelationBase<TModel, TId, TGroupId> : ISlaveToMasterRelation<TModel, TId, TGroupId>
     {
         /// <inheritdoc />
-        public virtual async Task<TId> CreateAsync(TGroupId groupValue, TModel item)
+        public virtual async Task<TId> CreateAsync(TGroupId masterId, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
             var id = StorageHelper.CreateNewId<TId>();
-            await CreateWithSpecifiedIdAsync(groupValue, id, item);
+            await CreateWithSpecifiedIdAsync(masterId, id, item, token);
             return id;
         }
 
         /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(TGroupId groupValue, TId id, TModel item);
+        public abstract Task CreateWithSpecifiedIdAsync(TGroupId masterId, TId id, TModel item, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<TModel> CreateAndReturnAsync(TGroupId groupValue, TModel item)
+        public virtual async Task<TModel> CreateAndReturnAsync(TGroupId masterId, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
-            var id = await CreateAsync(groupValue, item);
-            return await ReadAsync(groupValue, id);
+            var id = await CreateAsync(masterId, item, token);
+            return await ReadAsync(masterId, id, token);
         }
 
         /// <inheritdoc />
-        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId groupValue, TId id, TModel item)
+        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId masterId, TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
-            await CreateWithSpecifiedIdAsync(groupValue, id, item);
-            return await ReadAsync(groupValue, id);
+            await CreateWithSpecifiedIdAsync(masterId, id, item, token);
+            return await ReadAsync(masterId, id, token);
         }
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null);
+        public abstract Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue)
+        public virtual async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPages(offset => ReadChildrenWithPagingAsync(groupValue, offset), limit);
+            return await StorageHelper.ReadPagesAsync((offset,ct) => ReadChildrenWithPagingAsync(groupValue, offset, limit, ct), limit, token);
         }
 
         /// <inheritdoc />
-        public abstract Task<TModel> ReadAsync(TGroupId groupValue, TId id);
+        public abstract Task<TModel> ReadAsync(TGroupId masterId, TId id, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public abstract Task DeleteAsync(TGroupId groupValue, TId id);
+        public abstract Task DeleteAsync(TGroupId masterId, TId id, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task DeleteChildrenAsync(TGroupId groupValue)
+        public virtual async Task DeleteChildrenAsync(TGroupId groupValue, CancellationToken token = default(CancellationToken))
         {
-            var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(GroupedBase<TModel, TId, TGroupId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(SlaveToMasterRelationBase<TModel, TId, TGroupId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>(offset => ReadChildrenWithPagingAsync(groupValue, offset));
+            var items = new PageEnvelopeEnumerableAsync<TModel>((offset,ct) => ReadChildrenWithPagingAsync(groupValue, offset, null, ct));
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
@@ -73,7 +74,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 var identifiable = item as IUniquelyIdentifiable<TId>;
                 FulcrumAssert.IsNotNull(identifiable, null, errorMessage);
                 if (identifiable == null) continue;
-                taskList.Add(DeleteAsync(groupValue, identifiable.Id));
+                taskList.Add(DeleteAsync(groupValue, identifiable.Id, token));
             }
             await Task.WhenAll(taskList);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -28,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <summary>
     /// A delegate for flushing the cache, ie remove all items in the cache.
     /// </summary>
-    public delegate Task FlushCacheDelegateAsync();
+    public delegate Task FlushCacheDelegateAsync(CancellationToken token = default(CancellationToken));
 
     /// <summary>
     /// The delegate should decide if we should even should try to get the data from the cache, or if we should go directly to the storage.
@@ -41,7 +42,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// This means for example that you will not have to check if the data is too old in the general sense.
     /// </summary>
     /// <param name="cachedItemInformation">Information about the cached item.</param>
-    public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync<TId>(CachedItemInformation<TId> cachedItemInformation);
+    /// <param name="token">Propagates notification that operations should be canceled</param>
+    public delegate Task<UseCacheStrategyEnum> UseCacheStrategyDelegateAsync<TId>(CachedItemInformation<TId> cachedItemInformation, CancellationToken token = default(CancellationToken));
 
     /// <summary>
     /// A delegate for getting a unique cache key from an item.

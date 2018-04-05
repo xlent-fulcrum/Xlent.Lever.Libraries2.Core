@@ -51,12 +51,12 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         }
 
         /// <summary></summary>
-        public void ExecuteActionFailSafe(Action<CancellationToken> action, CancellationToken cancellationToken = default(CancellationToken))
+        public void ExecuteActionFailSafe(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
             try
             {
                 RestoreContext();
-                action(cancellationToken);
+                action(token);
                 lock (ClassLock)
                 {
                     if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);

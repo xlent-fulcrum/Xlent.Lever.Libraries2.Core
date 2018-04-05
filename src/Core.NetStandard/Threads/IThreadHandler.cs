@@ -12,6 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// Execute an <paramref name="action"/> in the background.
         /// </summary>
         /// <param name="action">The action to run in the background.</param>
-        void FireAndForget(Action<CancellationToken> action);
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        void FireAndForget(Action<CancellationToken> action, CancellationToken token = default(CancellationToken));
     }
 }

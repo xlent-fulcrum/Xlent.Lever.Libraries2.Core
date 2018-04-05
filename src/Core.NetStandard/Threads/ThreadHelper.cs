@@ -36,18 +36,19 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         {
             FulcrumApplication.ValidateButNotInProduction();
             var context = new ContextPreservation();
-            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.ExecuteActionFailSafe(token => action(), CancellationToken.None));
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(t1 => context.ExecuteActionFailSafe(t2 => action(), CancellationToken.None));
         }
 
         /// <summary>
         /// Execute an <paramref name="action"/> in the background.
         /// </summary>
         /// <param name="action">The action to run in the background.</param>
-        public static void FireAndForget(Action<CancellationToken> action)
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public static void FireAndForget(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
             FulcrumApplication.ValidateButNotInProduction();
             var context = new ContextPreservation();
-            FulcrumApplication.Setup.ThreadHandler.FireAndForget(cancellationToken => context.ExecuteActionFailSafe(action, cancellationToken));
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(t => context.ExecuteActionFailSafe(action, t), token);
         }
         
 

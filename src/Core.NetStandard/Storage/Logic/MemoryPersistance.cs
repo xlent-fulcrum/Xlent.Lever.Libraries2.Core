@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
@@ -22,17 +23,17 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         protected readonly ConcurrentDictionary<TId, TModel> MemoryItems = new ConcurrentDictionary<TId, TModel>();
 
         /// <inheritdoc />
-        public override async Task<TId> CreateAsync(TModel item)
+        public override async Task<TId> CreateAsync(TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
             var id = StorageHelper.CreateNewId<TId>();
-            await CreateWithSpecifiedIdAsync(id, item);
+            await CreateWithSpecifiedIdAsync(id, item, token);
             return id;
         }
 
         /// <inheritdoc />
-        public override async Task CreateWithSpecifiedIdAsync(TId id, TModel item)
+        public override async Task CreateWithSpecifiedIdAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -53,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task<TModel> ReadAsync(TId id)
+        public override Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
@@ -65,13 +66,13 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override async Task UpdateAsync(TId id, TModel item)
+        public override async Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
 
-            await MaybeVerifyEtagForUpdateAsync(id, item);
+            await MaybeVerifyEtagForUpdateAsync(id, item, token);
             var itemCopy = CopyItem(item);
             MaybeUpdateTimeStamps(itemCopy, false);
             MaybeCreateNewEtag(itemCopy);
@@ -87,7 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <remarks>
         /// Idempotent, i.e. will not throw an exception if the item does not exist.
         /// </remarks>
-        public override async Task DeleteAsync(TId id)
+        public override async Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             lock (MemoryItems)
@@ -100,7 +101,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null)
+        public override Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             limit = limit ?? PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
@@ -115,7 +116,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public override Task DeleteAllAsync()
+        public override Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
             lock (MemoryItems)
             {

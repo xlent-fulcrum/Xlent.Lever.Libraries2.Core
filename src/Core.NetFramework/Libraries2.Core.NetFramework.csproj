@@ -113,8 +113,8 @@
     <Compile Include="Core\Storage\Logic\MemoryManyToOnePersistance.cs" />
     <Compile Include="Core\Storage\Logic\CrudBase.cs" />
     <Compile Include="Core\Storage\Logic\CrdBase.cs" />
-    <Compile Include="Core\Storage\Logic\GroupedBase.cs" />
-    <Compile Include="Core\Storage\Logic\MemoryGroupPersistance.cs" />
+    <Compile Include="Core\Storage\Logic\SlaveToMasterRelationBase.cs" />
+    <Compile Include="Core\Storage\Logic\MemorySlaveToMasterPersistance.cs" />
     <Compile Include="Core\Storage\Logic\MemoryPersistance.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerableAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
@@ -126,7 +126,7 @@
     <Compile Include="Core\Storage\Model\IManyToManyRelation.cs" />
     <Compile Include="Core\Storage\Model\ICrd.cs" />
     <Compile Include="Core\Storage\Model\IManyToOneRelation.cs" />
-    <Compile Include="Core\Storage\Model\IGrouped.cs" />
+    <Compile Include="Core\Storage\Model\ISlaveToMasterRelation.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
     <Compile Include="Core\Threads\ContextPreservation.cs" />
@@ -168,7 +168,6 @@
     <Compile Include="Core\Storage\Model\IDeleteAll.cs" />
     <Compile Include="Core\Storage\Model\INameable.cs" />
     <Compile Include="Core\Storage\Model\IOptimisticConcurrencyControlByETag.cs" />
-    <Compile Include="Core\Storage\Model\IPageEnvelope.cs" />
     <Compile Include="Core\Storage\Model\IRead.cs" />
     <Compile Include="Core\Storage\Model\IReadAll.cs" />
     <Compile Include="Core\Storage\Model\IRecommendedStorableItem.cs" />

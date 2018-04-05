@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
@@ -15,6 +16,6 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// </summary>
         /// <returns>The found item.</returns>
         /// <exception cref="FulcrumNotFoundException">Thrown if the <paramref name="id"/> could not be found.</exception>
-        Task<TModel> ReadAsync(TId id);
+        Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken));
     }
 }

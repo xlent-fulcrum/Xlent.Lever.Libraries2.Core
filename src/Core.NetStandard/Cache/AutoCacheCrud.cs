@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -42,21 +43,21 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<TModel> UpdateAndReturnAsync(TId id, TModel item)
+        public async Task<TModel> UpdateAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var updatedItem = await _storage.UpdateAndReturnAsync(id, item);
-            await CacheSetAsync(id, updatedItem);
+            var updatedItem = await _storage.UpdateAndReturnAsync(id, item, token);
+            await CacheSetAsync(id, updatedItem, null, token);
             return updatedItem;
 
         }
 
         /// <inheritdoc />
-        public async Task UpdateAsync(TId id, TModel item)
+        public async Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
-            await _storage.UpdateAsync(id, item);
-            await CacheMaybeSetAsync(id);
+            await _storage.UpdateAsync(id, item, token);
+            await CacheMaybeSetAsync(id, token);
         }
     }
 }

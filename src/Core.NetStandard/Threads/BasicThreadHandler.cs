@@ -9,9 +9,9 @@ namespace Xlent.Lever.Libraries2.Core.Threads
     public class BasicThreadHandler : IThreadHandler
     {
         /// <inheritdoc />
-        public void FireAndForget(Action<CancellationToken> action)
+        public void FireAndForget(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
-            var thread = new Thread(() => action(CancellationToken.None));
+            var thread = new Thread(() => action(token));
             thread.Start();
         }
     }

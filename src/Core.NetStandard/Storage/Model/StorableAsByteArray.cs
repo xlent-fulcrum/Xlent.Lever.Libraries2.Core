@@ -9,7 +9,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
     public class StorableAsByteArray<TData, TId> : StorableByteArray<TId>, IStorableAsByteArray<TData, TId>
     {
         /// <summary>
-        /// A dictionary of HTTP headers
+        /// This property is stored serialized as a byte array
         /// </summary>
         public TData Data
         {

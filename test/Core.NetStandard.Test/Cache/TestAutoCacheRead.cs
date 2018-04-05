@@ -70,7 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadStorage_MethodIgnore_ReadStorage()
         {
-            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(UseCacheStrategyEnum.Ignore);
+            _autoCache.UseCacheStrategyMethodAsync = (type,t) => Task.FromResult(UseCacheStrategyEnum.Ignore);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", null);
             await VerifyAsync(id, "A", null, "A");
@@ -81,7 +81,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         [TestMethod]
         public async Task ReadStorage_MethodRemove_ReadStorage()
         {
-            _autoCache.UseCacheStrategyMethodAsync = type => Task.FromResult(UseCacheStrategyEnum.Remove);
+            _autoCache.UseCacheStrategyMethodAsync = (type, t) => Task.FromResult(UseCacheStrategyEnum.Remove);
             var id = Guid.NewGuid();
             await PrepareStorageAndCacheAsync(id, "A", null);
             await VerifyAsync(id, "A", null, "A");

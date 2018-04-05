@@ -121,38 +121,38 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue)
+        public async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             if (limit == 0) limit = int.MaxValue;
-            var itemsArray = await CacheGetAsync(limit, ReadAllCacheKey);
+            var itemsArray = await CacheGetAsync(limit, ReadAllCacheKey, token);
             if (itemsArray != null) return itemsArray;
-            var itemsCollection = await _storage.ReadAllAsync(limit);
+            var itemsCollection = await _storage.ReadAllAsync(limit, token);
             itemsArray = itemsCollection as TModel[] ?? itemsCollection.ToArray();
             CacheItemsInBackground(itemsArray, limit, ReadAllCacheKey);
             return itemsArray;
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null)
+        public async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             if (limit == null) limit = PageInfo.DefaultLimit;
-            var result = await CacheGetAsync(offset, limit.Value, ReadAllCacheKey);
+            var result = await CacheGetAsync(offset, limit.Value, ReadAllCacheKey, token);
             if (result != null) return result;
-            result = await _storage.ReadAllWithPagingAsync(offset, limit.Value);
+            result = await _storage.ReadAllWithPagingAsync(offset, limit.Value, token);
             if (result?.Data == null) return null;
             CacheItemsInBackground(result, limit.Value, ReadAllCacheKey);
             return result;
         }
 
         /// <inheritdoc />
-        public async Task<TModel> ReadAsync(TId id)
+        public async Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var item = await CacheGetAsync(id);
+            var item = await CacheGetAsync(id, null, token);
             if (item != null) return item;
-            item = await _storage.ReadAsync(id);
-            await CacheSetAsync(id, item);
+            item = await _storage.ReadAsync(id, token);
+            await CacheSetAsync(id, item, null, token);
             return item;
         }
 
@@ -163,7 +163,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemCollectionOperationAsync(itemsArray, limit, key, true).ConfigureAwait(false));
+                await CacheItemCollectionOperationAsync(itemsArray, limit, key, true, CancellationToken.None).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, true).ConfigureAwait(false));
+                await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, true, CancellationToken.None).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             var itemsArray = await getItemsToDelete();
             if (itemsArray == null || itemsArray.Length == 0) return;
-            await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false);
+            await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false).ConfigureAwait(false));
+                await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false, CancellationToken.None).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -231,10 +231,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
             ThreadHelper.FireAndForget(async () =>
-                await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false).ConfigureAwait(false));
+                await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false, CancellationToken.None).ConfigureAwait(false));
         }
 
-        private async Task CacheItemCollectionOperationAsync(TModel[] itemsArray, int limit, string key, bool isSetOperation)
+        private async Task CacheItemCollectionOperationAsync(TModel[] itemsArray, int limit, string key, bool isSetOperation, CancellationToken token)
         {
             InternalContract.RequireNotNull(itemsArray, nameof(itemsArray));
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
@@ -248,8 +248,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 {
 
                     var cacheArrayTask = isSetOperation 
-                        ? CacheSetAsync(itemsArray, limit, key)
-                        : Cache.RemoveAsync(key);
+                        ? CacheSetAsync(itemsArray, limit, key, token)
+                        : Cache.RemoveAsync(key, token);
                     var cachePageTasks = new List<Task>();
 
                     // Cache individual pages
@@ -258,7 +258,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                     {
                         var data = itemsArray.Skip(offset).Take(PageInfo.DefaultLimit);
                         var pageEnvelope = new PageEnvelope<TModel>(offset, PageInfo.DefaultLimit, itemsArray.Length, data);
-                        var task = CacheItemPageOperationAsync(pageEnvelope, limit, key, isSetOperation);
+                        var task = CacheItemPageOperationAsync(pageEnvelope, limit, key, isSetOperation, token);
                         cachePageTasks.Add(task);
                         offset += PageInfo.DefaultLimit;
                     }
@@ -269,8 +269,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 {
                     // Cache individual items
                     var cacheIndividualItemTasks = isSetOperation 
-                    ? itemsArray.Select(CacheSetAsync)
-                        : itemsArray.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item)));
+                    ? itemsArray.Select(item => CacheSetAsync(item, token))
+                        : itemsArray.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item), token));
                     await Task.WhenAll(cacheIndividualItemTasks);
                 }
             }
@@ -280,18 +280,18 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        private async Task CacheItemPageOperationAsync(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool isSetOperation)
+        private async Task CacheItemPageOperationAsync(PageEnvelope<TModel> pageEnvelope, int limit, string keyPrefix, bool isSetOperation, CancellationToken token)
         {
             var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
             try
             {
                 var cacheIndividualItemTasks = isSetOperation
-                    ? pageEnvelope.Data.Select(CacheSetAsync)
-                    : pageEnvelope.Data.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item)));
+                    ? pageEnvelope.Data.Select(item => CacheSetAsync(item, token))
+                    : pageEnvelope.Data.Select(item => CacheRemoveByIdAsync(GetIdDelegate(item), token));
                 if (!PageWasTruncated(pageEnvelope.PageInfo, limit))
                 {
-                    if (isSetOperation) await CacheSetAsync(pageEnvelope, keyPrefix);
-                    else await Cache.RemoveAsync(key);
+                    if (isSetOperation) await CacheSetAsync(pageEnvelope, keyPrefix, token);
+                    else await Cache.RemoveAsync(key, token);
                 }
                 await Task.WhenAll(cacheIndividualItemTasks);
             }
@@ -311,53 +311,53 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// Get a value from the cache if all constraints are fulfilled.
         /// </summary>
-        protected internal async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix)
+        protected internal async Task<PageEnvelope<TModel>> CacheGetAsync(int offset, int limit, string keyPrefix, CancellationToken token)
         {
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(PageEnvelope<TModel>))) return null;
             var key = GetCacheKeyForPage(keyPrefix, offset, limit);
-            return await GetAndMaybeReturnAsync<PageEnvelope<TModel>>(key, cacheEnvelope => SerializingSupport.Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data));
+            return await GetAndMaybeReturnAsync(key, cacheEnvelope => SerializingSupport.Deserialize<PageEnvelope<TModel>>(cacheEnvelope.Data), token: token);
         }
 
         /// <summary>
         /// Get a value from the cache if all constraints are fulfilled.
         /// </summary>
-        protected internal async Task<TModel[]> CacheGetAsync(int limit, string key)
+        protected internal async Task<TModel[]> CacheGetAsync(int limit, string key, CancellationToken token)
         {
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             if (limit > _limitOfItemsInReadAllCache) return null;
             if (UseCacheAtAllMethodAsync != null &&
                 !await UseCacheAtAllMethodAsync(typeof(TModel[]))) return null;
 
-            return await GetAndMaybeReturnAsync<TModel[]>(key, cacheEnvelope =>
+            return await GetAndMaybeReturnAsync(key, cacheEnvelope =>
                 {
                     var array = SerializingSupport.Deserialize<TModel[]>(cacheEnvelope.Data);
                     if (limit > array.Length) return array;
                     var subset = array.Take(limit);
                     return subset as TModel[] ?? subset.ToArray();
-                });
+                }, token: token);
         }
 
         /// <summary>
         /// Get a value from the cache if all constraints are fulfilled.
         /// </summary>
-        private async Task<TModel> CacheGetAsync(TId id, string key = null)
+        private async Task<TModel> CacheGetAsync(TId id, string key = null, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             if (UseCacheAtAllMethodAsync != null && !await UseCacheAtAllMethodAsync(typeof(TModel))) return default(TModel);
             key = key ?? GetCacheKeyFromId(id);
 
-            return await GetAndMaybeReturnAsync<TModel>(key, cacheEnvelope => SerializingSupport.Deserialize<TModel>(cacheEnvelope.Data), id);
+            return await GetAndMaybeReturnAsync(key, cacheEnvelope => SerializingSupport.Deserialize<TModel>(cacheEnvelope.Data), id, token);
         }
 
         private delegate TReturn DeserializeDelegate<out TReturn>(CacheEnvelope cacheEnvelope);
 
-        private async Task<TReturn> GetAndMaybeReturnAsync<TReturn>(string key, DeserializeDelegate<TReturn> deserializeDelegate, TId id = default(TId))
+        private async Task<TReturn> GetAndMaybeReturnAsync<TReturn>(string key, DeserializeDelegate<TReturn> deserializeDelegate, TId id = default(TId), CancellationToken token = default(CancellationToken))
         {
-            var byteArray = await Cache.GetAsync(key);
+            var byteArray = await Cache.GetAsync(key, token);
             if (byteArray == null) return default(TReturn);
             var cacheEnvelope = SerializingSupport.Deserialize<CacheEnvelope>(byteArray);
-            var cacheItemStrategy = Equals(id, default(TId)) ? GetCacheItemStrategy(cacheEnvelope) : await GetCacheItemStrategyAsync(id, cacheEnvelope);
+            var cacheItemStrategy = Equals(id, default(TId)) ? GetCacheItemStrategy(cacheEnvelope) : await GetCacheItemStrategyAsync(id, cacheEnvelope, token);
             switch (cacheItemStrategy)
             {
                 case UseCacheStrategyEnum.Use:
@@ -365,7 +365,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 case UseCacheStrategyEnum.Ignore:
                     return default(TReturn);
                 case UseCacheStrategyEnum.Remove:
-                    await Cache.RemoveAsync(key);
+                    await Cache.RemoveAsync(key, token);
                     return default(TReturn);
                 default:
                     FulcrumAssert.Fail($"Unexpected value of {nameof(UseCacheStrategyEnum)} ({cacheItemStrategy}).");
@@ -373,7 +373,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
         }
 
-        private async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope)
+        private async Task<UseCacheStrategyEnum> GetCacheItemStrategyAsync(TId id, CacheEnvelope cacheEnvelope, CancellationToken token)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(cacheEnvelope, nameof(cacheEnvelope));
@@ -386,7 +386,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
                 Id = id,
                 UpdatedAt = cacheEnvelope.UpdatedAt
             };
-            return await UseCacheStrategyMethodAsync(cachedItemInformation);
+            return await UseCacheStrategyMethodAsync(cachedItemInformation, token);
         }
 
         private UseCacheStrategyEnum GetCacheItemStrategy(CacheEnvelope cacheEnvelope)
@@ -406,45 +406,45 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// Put the item in the cache.
         /// </summary>
-        protected Task CacheSetAsync(TModel item)
+        protected Task CacheSetAsync(TModel item, CancellationToken token)
         {
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            return CacheSetAsync(GetIdDelegate(item), item);
+            return CacheSetAsync(GetIdDelegate(item), item, null, token);
         }
 
         /// <summary>
         /// Put the item in the cache.
         /// </summary>
-        protected async Task CacheSetAsync(TId id, TModel item, string key = null)
+        protected async Task CacheSetAsync(TId id, TModel item, string key = null, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
             key = key ?? GetCacheKeyFromId(id);
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(item);
-            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
+            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, token);
         }
 
         /// <summary>
         /// Put the item in the cache.
         /// </summary>
-        private async Task CacheSetAsync(TModel[] itemsArray, int limit, string key)
+        private async Task CacheSetAsync(TModel[] itemsArray, int limit, string key, CancellationToken token)
         {
             InternalContract.RequireNotDefaultValue(itemsArray, nameof(itemsArray));
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(itemsArray);
-            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
+            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, token);
             _limitOfItemsInReadAllCache = limit;
         }
 
         /// <summary>
         /// Put the item in the cache.
         /// </summary>
-        private async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope, string keyPrefix)
+        private async Task CacheSetAsync(PageEnvelope<TModel> pageEnvelope, string keyPrefix, CancellationToken token)
         {
             InternalContract.RequireNotDefaultValue(pageEnvelope, nameof(pageEnvelope));
             InternalContract.RequireValidated(pageEnvelope, nameof(pageEnvelope));
             var serializedCacheEnvelope = ToSerializedCacheEnvelope(pageEnvelope);
             var key = GetCacheKeyForPage(keyPrefix, pageEnvelope.PageInfo.Offset, pageEnvelope.PageInfo.Limit);
-            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, CancellationToken.None);
+            await Cache.SetAsync(key, serializedCacheEnvelope, CacheOptions, token);
         }
 
         /// <summary>
@@ -469,11 +469,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// Remove from cache
         /// </summary>
-        protected async Task CacheRemoveByIdAsync(TId id)
+        protected async Task CacheRemoveByIdAsync(TId id, CancellationToken token)
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             var key = GetCacheKeyFromId(id);
-            await Cache.RemoveAsync(key);
+            await Cache.RemoveAsync(key, token);
         }
 
         /// <summary>

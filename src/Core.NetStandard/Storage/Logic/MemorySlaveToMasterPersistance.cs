@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -9,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class MemoryGroupPersistance<TModel, TId, TGroupId> : GroupedBase<TModel, TId, TGroupId>
+    public class MemorySlaveToMasterPersistance<TModel, TId, TGroupId> : SlaveToMasterRelationBase<TModel, TId, TGroupId>
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
@@ -17,45 +18,45 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         protected static readonly ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>> Storages = new ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>>();
 
         /// <inheritdoc />
-        public override async Task<TId> CreateAsync(TGroupId groupValue, TModel item)
+        public override async Task<TId> CreateAsync(TGroupId masterId, TModel item, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var groupPersistance = GetStorage(groupValue);
-            return await groupPersistance.CreateAsync(item);
+            var groupPersistance = GetStorage(masterId);
+            return await groupPersistance.CreateAsync(item, token);
         }
 
         /// <inheritdoc />
-        public override async Task CreateWithSpecifiedIdAsync(TGroupId groupValue, TId id, TModel item)
+        public override async Task CreateWithSpecifiedIdAsync(TGroupId masterId, TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var groupPersistance = GetStorage(groupValue);
-            await groupPersistance.CreateWithSpecifiedIdAsync(id, item);
+            var groupPersistance = GetStorage(masterId);
+            await groupPersistance.CreateWithSpecifiedIdAsync(id, item, token);
         }
 
         /// <inheritdoc />
-        public override async Task<TModel> CreateAndReturnAsync(TGroupId groupValue, TModel item)
+        public override async Task<TModel> CreateAndReturnAsync(TGroupId masterId, TModel item, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var groupPersistance = GetStorage(groupValue);
-            return await groupPersistance.CreateAndReturnAsync(item);
+            var groupPersistance = GetStorage(masterId);
+            return await groupPersistance.CreateAndReturnAsync(item, token);
         }
 
         /// <inheritdoc />
-        public override async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId groupValue, TId id, TModel item)
+        public override async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TGroupId masterId, TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
-            var groupPersistance = GetStorage(groupValue);
-            return await groupPersistance.CreateWithSpecifiedIdAndReturnAsync(id, item);
+            var groupPersistance = GetStorage(masterId);
+            return await groupPersistance.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
         }
 
         /// <inheritdoc />
-        public override async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null)
+        public override async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TGroupId groupValue, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
@@ -64,38 +65,38 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
                 InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
             }
             var groupPersistance = GetStorage(groupValue);
-            return await groupPersistance.ReadAllWithPagingAsync(offset);
+            return await groupPersistance.ReadAllWithPagingAsync(offset, limit, token);
         }
 
         /// <inheritdoc />
-        public override async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue)
+        public override async Task<IEnumerable<TModel>> ReadChildrenAsync(TGroupId groupValue, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             InternalContract.RequireGreaterThan(0, limit, nameof(limit));
             var groupPersistance = GetStorage(groupValue);
-            return await groupPersistance.ReadAllAsync(limit);
+            return await groupPersistance.ReadAllAsync(limit, token);
         }
 
         /// <inheritdoc />
-        public override async Task<TModel> ReadAsync(TGroupId groupValue, TId id)
+        public override async Task<TModel> ReadAsync(TGroupId masterId, TId id, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var groupPersistance = GetStorage(groupValue);
+            var groupPersistance = GetStorage(masterId);
             return await groupPersistance.ReadAsync(id);
         }
 
         /// <inheritdoc />
-        public override async Task DeleteAsync(TGroupId groupValue, TId id)
+        public override async Task DeleteAsync(TGroupId masterId, TId id, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            var groupPersistance = GetStorage(groupValue);
+            var groupPersistance = GetStorage(masterId);
             await groupPersistance.DeleteAsync(id);
         }
 
         /// <inheritdoc />
-        public override async Task DeleteChildrenAsync(TGroupId groupValue)
+        public override async Task DeleteChildrenAsync(TGroupId groupValue, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(groupValue, nameof(groupValue));
             var groupPersistance = GetStorage(groupValue);
