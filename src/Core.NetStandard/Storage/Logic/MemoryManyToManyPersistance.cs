@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
@@ -20,8 +21,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     {
         private readonly GetForeignKeyDelegate _getForeignKey1Delegate;
         private readonly GetForeignKeyDelegate _getForeignKey2Delegate;
-        private readonly IRead<TReferenceModel1, TId> _foreignHandler1;
-        private readonly IRead<TReferenceModel2, TId> _foreignHandler2;
+        private readonly ICrd<TReferenceModel1, TId> _foreignHandler1;
+        private readonly ICrd<TReferenceModel2, TId> _foreignHandler2;
 
         /// <summary>
         /// Constructor
@@ -30,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// <param name="getForeignKey2Delegate">See <see cref="GetForeignKeyDelegate"/>.</param>
         /// <param name="foreignHandler1">Functionality to read a specified parent.</param>
         /// <param name="foreignHandler2">Functionality to read a specified parent.</param>
-        public MemoryManyToManyPersistance(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, IRead<TReferenceModel1, TId> foreignHandler1, IRead<TReferenceModel2, TId> foreignHandler2)
+        public MemoryManyToManyPersistance(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, ICrd<TReferenceModel1, TId> foreignHandler1, ICrd<TReferenceModel2, TId> foreignHandler2)
         {
             _getForeignKey1Delegate = getForeignKey1Delegate;
             _getForeignKey2Delegate = getForeignKey2Delegate;
@@ -79,62 +80,64 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByReference1(TId id, CancellationToken token = default(CancellationToken))
+        public async Task DeleteReferencedItemsByReference1(TId id, CancellationToken token = default(CancellationToken))
         {
-            await DeleteReferencesByForeignKey(id, _getForeignKey1Delegate, token);
+            await DeleteReferencedItemsByForeignKey<TReferenceModel2>(id, _getForeignKey1Delegate, _foreignHandler2, token);
         }
 
         /// <inheritdoc />
-        public async Task DeleteReferencesByReference2(TId id, CancellationToken token = default(CancellationToken))
+        public async Task DeleteReferencedItemsByReference2(TId id, CancellationToken token = default(CancellationToken))
         {
-            await DeleteReferencesByForeignKey(id, _getForeignKey2Delegate, token);
+            await DeleteReferencedItemsByForeignKey<TReferenceModel1>(id, _getForeignKey2Delegate, _foreignHandler1, token);
         }
         
         private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
-            limit = limit ?? PageInfo.DefaultLimit;
-            InternalContract.RequireNotNull(id, nameof(id));
-            InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
-            InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
-            List<Task<T>> taskList;
-            lock (MemoryItems)
-            {
-                taskList = MemoryItems.Values
-                    .Where(i => id.Equals(idDelegate(i)))
-                    .Skip(offset)
-                    .Take(limit.Value)
-                    .Select(i => referenceHandler.ReadAsync(referenceIdDelegate(i), token))
-                    .ToList();
-            }
+            throw new FulcrumNotImplementedException("This method needs to be changed and tests");
+            //limit = limit ?? PageInfo.DefaultLimit;
+            //InternalContract.RequireNotNull(id, nameof(id));
+            //InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
+            //InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
+            //List<Task<T>> taskList;
+            //lock (MemoryItems)
+            //{
+            //    taskList = MemoryItems.Values
+            //        .Where(i => id.Equals(idDelegate(i)))
+            //        .Skip(offset)
+            //        .Take(limit.Value)
+            //        .Select(i => referenceHandler.ReadAsync(referenceIdDelegate(i), token))
+            //        .ToList();
+            //}
 
-            await Task.WhenAll(taskList);
-            var list = new List<T>();
-            foreach (var task in taskList)
-            {
-                list.Add(await task);
-            }
-            var page = new PageEnvelope<T>(offset, limit.Value, null, list);
-            return await Task.FromResult(page);
+            //await Task.WhenAll(taskList);
+            //var list = new List<T>();
+            //foreach (var task in taskList)
+            //{
+            //    list.Add(await task);
+            //}
+            //var page = new PageEnvelope<T>(offset, limit.Value, null, list);
+            //return await Task.FromResult(page);
         }
         
-        private async Task DeleteReferencesByForeignKey(TId id, GetForeignKeyDelegate idDelegate, CancellationToken token)
+        private async Task DeleteReferencedItemsByForeignKey<T>(TId id, GetForeignKeyDelegate idDelegate, IDelete<TId> referenceHandler, CancellationToken token)
         {
-            InternalContract.RequireNotNull(id, nameof(id));
-            var errorMessage = $"{nameof(TManyToManyModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
-            InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TManyToManyModel)), errorMessage);
-            List<TManyToManyModel> list;
-            lock (MemoryItems)
-            {
-                list = MemoryItems.Values
-                    .Where(i => id.Equals(idDelegate(i)))
-                    .ToList();
-            }
+            throw new FulcrumNotImplementedException("This method needs to be changed and tests");
+            //InternalContract.RequireNotNull(id, nameof(id));
+            //var errorMessage = $"{nameof(TManyToManyModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
+            //InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TManyToManyModel)), errorMessage);
+            //List<TManyToManyModel> list;
+            //lock (MemoryItems)
+            //{
+            //    list = MemoryItems.Values
+            //        .Where(i => id.Equals(idDelegate(i)))
+            //        .ToList();
+            //}
 
-            foreach (var item in list)
-            {
-                if (!(item is IUniquelyIdentifiable<TId> idItem)) continue;
-                await DeleteAsync(idItem.Id);
-            }
+            //foreach (var item in list)
+            //{
+            //    if (!(item is IUniquelyIdentifiable<TId> idItem)) continue;
+            //    await referenceHandler.DeleteAsync(idItem.Id, token);
+            //}
         }
 
         /// <inheritdoc />

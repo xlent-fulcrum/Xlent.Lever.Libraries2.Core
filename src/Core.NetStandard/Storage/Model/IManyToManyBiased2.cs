@@ -27,8 +27,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         Task<IEnumerable<TReferenceModel1>> ReadReferencedItemsByReference2Async(TId id, int limit = int.MaxValue, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Delete all references where foreign key 2 is set to <paramref name="id"/>.
+        /// Delete all referenced items where foreign key 2 is set to <paramref name="id"/>.
         /// </summary>
-        Task DeleteReferencesByReference2(TId id, CancellationToken token = default(CancellationToken));
+        Task DeleteReferencedItemsByReference2(TId id, CancellationToken token = default(CancellationToken));
     }
 }
