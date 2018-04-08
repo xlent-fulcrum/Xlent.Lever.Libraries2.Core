@@ -13,10 +13,10 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     [TestClass]
     public class TestAutoCacheRead : TestAutoCacheBase<string>
     {
-        private AutoCacheRead<string, Guid> _autoCache;
+        private ReadAutoCache<string, Guid> _autoCache;
 
         /// <inheritdoc />
-        public override AutoCacheRead<string, Guid> AutoCacheRead => _autoCache;
+        public override ReadAutoCache<string, Guid> ReadAutoCache => _autoCache;
 
         private ICrud<string, Guid> _storage;
         /// <inheritdoc />
@@ -27,7 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCacheRead).FullName);
-            _storage = new MemoryPersistance<string, Guid>();
+            _storage = new CrudMemory<string, Guid>();
             Cache = new MemoryDistributedCache();
             DistributedCacheOptions = new DistributedCacheEntryOptions
             {
@@ -37,7 +37,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 AbsoluteExpirationRelativeToNow = DistributedCacheOptions.AbsoluteExpirationRelativeToNow
             };
-            _autoCache = new AutoCacheRead<string, Guid>(_storage, ToGuid, Cache, AutoCacheOptions);
+            _autoCache = new ReadAutoCache<string, Guid>(_storage, ToGuid, Cache, AutoCacheOptions);
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
             var id1 = ToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
             var id2 = ToGuid("B1", 1);
@@ -160,7 +160,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new AutoCacheCrud<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
             var id1 = ToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
             var id2 = ToGuid("B1", 1);

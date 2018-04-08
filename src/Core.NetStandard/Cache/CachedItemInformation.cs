@@ -3,7 +3,7 @@
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     /// <summary>
-    /// Information that a <see cref="AutoCacheRead{TModel,TId}.UseCacheStrategyMethodAsync"/> can base its decision on.
+    /// Information that a <see cref="ReadAutoCache{TModel,TId}.UseCacheStrategyMethodAsync"/> can base its decision on.
     /// </summary>
     /// <typeparam name="TId">THe type for the unique identifier for the item.</typeparam>
     public class CachedItemInformation<TId>

@@ -15,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         protected readonly string BaseGuidString;
         protected AutoCacheOptions AutoCacheOptions;
 
-        public virtual AutoCacheRead<TModel, Guid> AutoCacheRead { get; }
+        public virtual ReadAutoCache<TModel, Guid> ReadAutoCache { get; }
 
         protected TestAutoCacheBase()
         {
@@ -36,7 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             }
             else
             {
-                await Cache.SetAsync(id.ToString(), AutoCacheRead.ToSerializedCacheEnvelope(cacheValue), DistributedCacheOptions);
+                await Cache.SetAsync(id.ToString(), ReadAutoCache.ToSerializedCacheEnvelope(cacheValue), DistributedCacheOptions);
             }
         }
 
@@ -124,8 +124,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             try
             {
-                var actualReadValue = await AutoCacheRead.ReadAsync(id);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedReadValue, actualReadValue, "AutoCacheRead Read verification failed.");
+                var actualReadValue = await ReadAutoCache.ReadAsync(id);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedReadValue, actualReadValue, "ReadAutoCache Read verification failed.");
             }
             catch (FulcrumNotFoundException)
             {

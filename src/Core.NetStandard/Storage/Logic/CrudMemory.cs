@@ -13,9 +13,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class MemoryPersistance<TModel, TId> : CrudBase<TModel, TId>
+    public class CrudMemory<TModel, TId> : CrudBase<TModel, TId>
     {
-        private static readonly string Namespace = typeof(MemoryPersistance<TModel, TId>).Namespace;
+        private static readonly string Namespace = typeof(CrudMemory<TModel, TId>).Namespace;
 
         /// <summary>
         /// The actual storage of the items.

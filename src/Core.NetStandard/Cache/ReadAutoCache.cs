@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class AutoCacheRead<TModel, TId> : IReadAll<TModel, TId>
+    public class ReadAutoCache<TModel, TId> : IReadAll<TModel, TId>
     {
         private readonly IReadAll<TModel, TId> _storage;
         private int _limitOfItemsInReadAllCache;
@@ -82,7 +82,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="storage"></param>
         /// <param name="cache"></param>
         /// <param name="options"></param>
-        public AutoCacheRead(IReadAll<TModel, TId> storage, IDistributedCache cache, AutoCacheOptions options = null)
+        public ReadAutoCache(IReadAll<TModel, TId> storage, IDistributedCache cache, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, options)
         {
         }
@@ -95,7 +95,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="cache"></param>
         /// <param name="getIdDelegate"></param>
         /// <param name="options"></param>
-        public AutoCacheRead(IReadAll<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, AutoCacheOptions options = null)
+        public ReadAutoCache(IReadAll<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, AutoCacheOptions options = null)
         {
             InternalContract.RequireNotNull(storage, nameof(storage));
             InternalContract.RequireNotNull(getIdDelegate, nameof(getIdDelegate));

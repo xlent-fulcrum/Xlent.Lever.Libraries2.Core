@@ -16,8 +16,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage
         [TestInitialize]
         public void Inititalize()
         {
-            _oneStorage = new MemoryPersistance<TestItemId<Guid>, Guid>();
-            _manyStorage = new MemoryManyToOnePersistance<TestItemManyToOne<Guid, Guid?>, Guid>(item => item.ParentId);
+            _oneStorage = new CrudMemory<TestItemId<Guid>, Guid>();
+            _manyStorage = new ManyToOneMemory<TestItemManyToOne<Guid, Guid?>, Guid>(item => item.ParentId);
         }
 
         /// <inheritdoc />

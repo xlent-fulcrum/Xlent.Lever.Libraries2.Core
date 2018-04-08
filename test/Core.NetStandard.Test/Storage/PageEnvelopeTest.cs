@@ -9,12 +9,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class PageEnvelopeTest
     {
-        private MemoryPersistance<TestItemId<string>, string> _storage;
+        private CrudMemory<TestItemId<string>, string> _storage;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryPersistance<TestItemId<string>, string>();
+            _storage = new CrudMemory<TestItemId<string>, string>();
         }
 
         [TestMethod]

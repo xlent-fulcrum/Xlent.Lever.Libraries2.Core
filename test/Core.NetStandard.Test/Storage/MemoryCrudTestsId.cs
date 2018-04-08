@@ -10,12 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class MemoryCrudTestsId : TestICrudId<Guid>
     {
-        private MemoryPersistance<TestItemId<Guid>, Guid> _storage;
+        private CrudMemory<TestItemId<Guid>, Guid> _storage;
 
         [TestInitialize]
         public void Inititalize()
         {
-            _storage = new MemoryPersistance<TestItemId<Guid>, Guid>();
+            _storage = new CrudMemory<TestItemId<Guid>, Guid>();
         }
 
         protected override ICrud<TestItemId<Guid>, Guid> CrudStorage => _storage;

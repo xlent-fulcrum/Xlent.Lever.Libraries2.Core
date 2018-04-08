@@ -10,12 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class MemorySlaveToMasterPersistance<TModel, TId, TGroupId> : SlaveToMasterRelationBase<TModel, TId, TGroupId>
+    public class SlaveToMasterMemory<TModel, TId, TGroupId> : SlaveToMasterRelationBase<TModel, TId, TGroupId>
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each group id.
         /// </summary>
-        protected static readonly ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>> Storages = new ConcurrentDictionary<TGroupId, MemoryPersistance<TModel, TId>>();
+        protected static readonly ConcurrentDictionary<TGroupId, CrudMemory<TModel, TId>> Storages = new ConcurrentDictionary<TGroupId, CrudMemory<TModel, TId>>();
 
         /// <inheritdoc />
         public override async Task<TId> CreateAsync(TGroupId masterId, TModel item, CancellationToken token = default(CancellationToken))
@@ -108,9 +108,9 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// </summary>
         /// <param name="groupValue"></param>
         /// <returns></returns>
-        private MemoryPersistance<TModel, TId> GetStorage(TGroupId groupValue)
+        private CrudMemory<TModel, TId> GetStorage(TGroupId groupValue)
         {
-            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new MemoryPersistance<TModel, TId>();
+            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new CrudMemory<TModel, TId>();
             return Storages[groupValue];
         }
     }

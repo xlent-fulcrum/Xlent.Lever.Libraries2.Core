@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
     /// </summary>
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class MemoryManyToOnePersistance<TManyModel, TId> : MemoryPersistance<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
+    public class ManyToOneMemory<TManyModel, TId> : CrudMemory<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
         where TManyModel : class
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
@@ -21,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         /// Constructor
         /// </summary>
         /// <param name="getParentIdDelegate">See <see cref="GetParentIdDelegate"/>.</param>
-        public MemoryManyToOnePersistance(GetParentIdDelegate getParentIdDelegate)
+        public ManyToOneMemory(GetParentIdDelegate getParentIdDelegate)
         {
             InternalContract.RequireNotNull(getParentIdDelegate, nameof(getParentIdDelegate));
             _getParentIdDelegate = getParentIdDelegate;

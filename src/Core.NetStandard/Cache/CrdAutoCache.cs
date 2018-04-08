@@ -13,7 +13,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class AutoCacheCrd<TModel, TId> : AutoCacheRead<TModel, TId>, ICrd<TModel, TId>
+    public class CrdAutoCache<TModel, TId> : ReadAutoCache<TModel, TId>, ICrd<TModel, TId>
     {
         private readonly ICrd<TModel, TId> _storage;
 
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheCrd(ICrd<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public CrdAutoCache(ICrd<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -43,7 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public AutoCacheCrd(ICrd<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
+        public CrdAutoCache(ICrd<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
         :base(storage, getIdDelegate, cache, options)
