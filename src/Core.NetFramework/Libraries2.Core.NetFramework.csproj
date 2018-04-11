@@ -89,8 +89,6 @@
     <Compile Include="Core\Crud\Cache\IFlushableCache.cs" />
     <Compile Include="Core\Crud\Cache\ManyToOneAutoCache.cs" />
     <Compile Include="Core\Crud\Cache\ManyToOneAutoCacheComplete.cs" />
-    <Compile Include="Core\Crud\Cache\Microsoft.Extensions.Caching.Distributed\DistributedCacheEntryOptions.cs" />
-    <Compile Include="Core\Crud\Cache\Microsoft.Extensions.Caching.Distributed\IDistributedCache.cs" />
     <Compile Include="Core\Crud\Cache\ReadAutoCache.cs" />
     <Compile Include="Core\Crud\Cache\SerializingSupport.cs" />
     <Compile Include="Core\Crud\ClientTranslators\ClientTranslatorBase.cs" />
