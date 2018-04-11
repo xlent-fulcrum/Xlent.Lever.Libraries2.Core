@@ -91,7 +91,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             await DeleteReferencedItemsByForeignKey<TReferenceModel1>(id, _getForeignKey2Delegate, _foreignHandler1, token);
         }
         
-        private async Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
+        private Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             throw new FulcrumNotImplementedException("This method needs to be changed and tests");
             //limit = limit ?? PageInfo.DefaultLimit;
@@ -119,7 +119,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
             //return await Task.FromResult(page);
         }
         
-        private async Task DeleteReferencedItemsByForeignKey<T>(TId id, GetForeignKeyDelegate idDelegate, IDelete<TId> referenceHandler, CancellationToken token)
+        private Task DeleteReferencedItemsByForeignKey<T>(TId id, GetForeignKeyDelegate idDelegate, IDelete<TId> referenceHandler, CancellationToken token)
         {
             throw new FulcrumNotImplementedException("This method needs to be changed and tests");
             //InternalContract.RequireNotNull(id, nameof(id));

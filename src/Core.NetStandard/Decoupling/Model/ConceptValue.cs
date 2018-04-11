@@ -7,6 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Decoupling.Model
     /// <summary>
     /// An important tool for loose coupling. Annotates system specific values with information that makes the value system independent.
     /// </summary>
+    [Obsolete("Use the Translation.ConceptValue")]
     public class ConceptValue : IConceptValue
     {
         static readonly Regex PathRegex = new Regex(@"^\(([^!]+)!([^!]+)!(.+)\)$");

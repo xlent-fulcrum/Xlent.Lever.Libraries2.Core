@@ -1,0 +1,49 @@
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
+using Xlent.Lever.Libraries2.Core.Translation;
+
+namespace Xlent.Lever.Libraries2.MoveTo.Core.ServerTranslators
+{
+    /// <inheritdoc />
+    public class ReadServerTranslator<TModel> : ServerTranslatorBase, IReadAll<TModel, string>
+    where TModel : IValidatable
+    {
+        private readonly IReadAll<TModel, string> _storage;
+
+        /// <inheritdoc />
+        public ReadServerTranslator(IReadAll<TModel, string> storage, string idConceptName, System.Func<string> getServerNameFunction, ITranslatorService translatorService)
+        :base(idConceptName, getServerNameFunction, translatorService)
+        {
+            _storage = storage;
+        }
+
+        /// <inheritdoc />
+        public virtual async Task<TModel> ReadAsync(string id, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            await translator.Add(id).ExecuteAsync();
+            id = translator.Translate(id);
+            var result = await _storage.ReadAsync(id, token);
+            return translator.DecorateItem(result);   
+        }
+
+        /// <inheritdoc />
+        public virtual async Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            var result =  await _storage.ReadAllWithPagingAsync(offset, limit, token);
+            return translator.DecoratePage(result);
+        }
+
+        /// <inheritdoc />
+        public virtual async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            var result = await _storage.ReadAllAsync(limit, token);
+            return translator.DecorateItems(result);
+        }
+    }
+}
