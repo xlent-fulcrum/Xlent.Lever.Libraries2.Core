@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.MoveTo.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ClientTranslators
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ServerTranslators.To
 {
-    /// <inheritdoc />
-    public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOneRelation<TModel, string>
+    /// <summary>
+    /// Translate concept values to the server
+    /// </summary>
+    public class ManyToOneServerTranslatorTo<TModel> : ServerTranslatorBase, IManyToOneRelation<TModel, string>
     where TModel : IValidatable
     {
         private readonly IManyToOneRelation<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneClientTranslator(IManyToOneRelation<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
-        :base(idConceptName, getClientNameMethod, translatorService)
+        public ManyToOneServerTranslatorTo(IManyToOneRelation<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        :base(idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;
         }
@@ -26,28 +27,26 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ClientTranslators
             CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
-            var result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
-            await translator.Add(result).ExecuteAsync();
-            return translator.Translate(result);
+            await translator.Add(parentId).ExecuteAsync();
+            parentId = translator.Translate(parentId);
+            return await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<TModel>> ReadChildrenAsync(string parentId, int limit = int.MaxValue, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
-            var result = await _storage.ReadChildrenAsync(parentId, limit, token);
-            var array = result as TModel[] ?? result.ToArray();
-            await translator.Add(array).ExecuteAsync();
-            return translator.Translate(array);
+            await translator.Add(parentId).ExecuteAsync();
+            parentId = translator.Translate(parentId);
+            return await _storage.ReadChildrenAsync(parentId, limit, token);
         }
 
         /// <inheritdoc />
         public async Task DeleteChildrenAsync(string parentId, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
+            await translator.Add(parentId).ExecuteAsync();
+            parentId = translator.Translate(parentId);
             await _storage.DeleteChildrenAsync(parentId, token);
         }
     }

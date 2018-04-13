@@ -1,6 +1,6 @@
-﻿using Xlent.Lever.Libraries2.Core.Translation;
+﻿using Xlent.Lever.Libraries2.MoveTo.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.ClientTranslators
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ClientTranslators
 {
     /// <summary>
     /// Decorate values from client and translate concept values to client.
@@ -27,11 +27,12 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.ClientTranslators
         /// Set up a new client translator.
         /// </summary>
         /// <param name="idConceptName">The <see cref="IdConceptName"/>.</param>
-        /// <param name="getClientNameFunction">The <see cref="GetClientNameMethod"/>.</param>
+        /// <param name="getClientNameMethod">The <see cref="GetClientNameMethod"/>.</param>
         /// <param name="translatorService">The <see cref="TranslatorService"/>.</param>
-        protected ClientTranslatorBase(string idConceptName, System.Func<string> getClientNameFunction, ITranslatorService translatorService)
+        protected ClientTranslatorBase(string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
         {
             IdConceptName = idConceptName;
+            GetClientNameMethod = getClientNameMethod;
             TranslatorService = translatorService;
         }
 

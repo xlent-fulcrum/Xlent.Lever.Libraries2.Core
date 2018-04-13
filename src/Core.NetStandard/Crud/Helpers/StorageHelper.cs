@@ -4,9 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Storage.Logic
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Helpers
 {
     /// <summary>
     /// Helper methods for Storage

@@ -2,19 +2,19 @@
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
-using Xlent.Lever.Libraries2.Core.Translation;
+using Xlent.Lever.Libraries2.MoveTo.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.ServerTranslators
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ServerTranslators.To
 {
-    /// <inheritdoc />
-    public class CrudServerTranslator<TModel> : CrdServerTranslator<TModel>, ICrud<TModel, string>
+    /// <inheritdoc cref="CrdServerTranslatorTo{TModel}" />
+    public class CrudServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel>, ICrud<TModel, string>
     where TModel : IValidatable
     {
         private readonly ICrud<TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrudServerTranslator(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getServerNameFunction, ITranslatorService translatorService)
-        :base(storage, idConceptName, getServerNameFunction, translatorService)
+        public CrudServerTranslatorTo(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        :base(storage, idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;
         }
@@ -36,8 +36,7 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.ServerTranslators
             await translator.Add(id).Add(item).ExecuteAsync();
             id = translator.Translate(id);
             item = translator.Translate(item);
-            var result = await _storage.UpdateAndReturnAsync(id, item, token);
-            return translator.DecorateItem(result);
+            return await _storage.UpdateAndReturnAsync(id, item, token);
         }
     }
 }

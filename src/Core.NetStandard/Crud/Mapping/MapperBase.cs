@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
 {
     /// <summary>
     /// Map between two models.
@@ -39,10 +39,10 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         /// <summary>
         /// A convenience method to map a list of <paramref name="serverItems"/> into a list of client items.
         /// </summary>
-        protected async Task<TClientModel[]> CreateAndMapFromServerAsync(IEnumerable<TServerModel> serverItems, CancellationToken token = default(CancellationToken))
+        protected async Task<TClientModel[]> MapFromServerAsync(IEnumerable<TServerModel> serverItems, CancellationToken token = default(CancellationToken))
         {
             if (serverItems == null) return null;
-            var clientItemTasks = serverItems.Select(async si => await CreateAndMapFromServerAsync(si, token));
+            var clientItemTasks = serverItems.Select(async si => await MapFromServerAsync(si, token));
             return await Task.WhenAll(clientItemTasks);
         }
 
@@ -50,17 +50,25 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         /// A convenience method to map a <paramref name="serverItem"/> to a a client item.
         /// </summary>
 
-        protected async Task<TClientModel> CreateAndMapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
+        protected async Task<TClientModel> MapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.CreateAndMapFromServerAsync(serverItem, ServerLogic, token);
+            return await ModelMapper.MapFromServerAsync(serverItem, ServerLogic, token);
         }
 
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected async Task<TServerModel> CreateAndMapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
+        protected async Task<TServerModel> MapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.CreateAndMapToServerAsync(clientItem, ServerLogic, token);
+            return await ModelMapper.MapToServerAsync(clientItem, ServerLogic, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected TServerModel MapToServer(TClientModel clientItem)
+        {
+            return ModelMapper.MapToServer(clientItem);
         }
 
         /// <summary>
@@ -68,7 +76,7 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         /// </summary>
         protected static TClientId MapToClientId(TServerId id)
         {
-            return MapperHelper.MapId<TClientId, TServerId>(id);
+            return MapperHelper.MapToType<TClientId, TServerId>(id);
         }
 
         /// <summary>
@@ -76,7 +84,7 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         /// </summary>
         protected static TServerId MapToServerId(TClientId id)
         {
-            return MapperHelper.MapId<TServerId, TClientId>(id);
+            return MapperHelper.MapToType<TServerId, TClientId>(id);
         }
     }
 }

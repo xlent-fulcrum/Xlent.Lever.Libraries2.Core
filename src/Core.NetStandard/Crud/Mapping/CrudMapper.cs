@@ -2,10 +2,15 @@
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
 {
-    /// <inheritdoc />
-    public class CrudMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : CrdMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, ICrud<TClientModel, TClientId>
+    /// <inheritdoc cref="CrdMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
+    public class
+        CrudMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> :
+            CrdMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>,
+            ICrud<TClientModel, TClientId> 
+        where TClientModel : IUniquelyIdentifiable<TClientId>
+        where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         private readonly ICrud<TServerModel, TServerId> _service;
 
@@ -20,7 +25,7 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         public virtual async Task UpdateAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
-            var serverItem = await CreateAndMapToServerAsync(item, token);
+            var serverItem = await MapToServerAsync(item, token);
             await _service.UpdateAsync(serverId, serverItem, token);
         }
 
@@ -28,9 +33,9 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         public virtual async Task<TClientModel> UpdateAndReturnAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
-            var serverItem = await CreateAndMapToServerAsync(item, token);
+            var serverItem = await MapToServerAsync(item, token);
             serverItem = await _service.UpdateAndReturnAsync(serverId, serverItem, token);
-            return await CreateAndMapFromServerAsync(serverItem, token);
+            return await MapFromServerAsync(serverItem, token);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
 {
     /// <summary>
     /// Interface for mapping between client and server models.
@@ -14,11 +14,16 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         /// <summary>
         /// Create a client model from a server model (<paramref name="source"/>). Use <paramref name="logic"/> if you need to access more server objects.
         /// </summary>
-        Task<TClientModel> CreateAndMapFromServerAsync(TServerModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));
+        Task<TClientModel> MapFromServerAsync(TServerModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));
+
+        /// <summary>
+        /// Create a server model from a client model (<paramref name="source"/>). This is used when no side effects are allowed.
+        /// </summary>
+        TServerModel MapToServer(TClientModel source);
 
         /// <summary>
         /// Create a server model from a client model (<paramref name="source"/>). Use <paramref name="logic"/> if you need to access more server objects.
         /// </summary>
-        Task<TServerModel> CreateAndMapToServerAsync(TClientModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));
+        Task<TServerModel> MapToServerAsync(TClientModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));
     }
 }

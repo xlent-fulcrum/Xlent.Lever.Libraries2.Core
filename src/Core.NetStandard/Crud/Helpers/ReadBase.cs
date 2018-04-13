@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Storage.Logic
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Helpers
 {
     /// <summary>
     /// Abstract base class that has a default implementation for <see cref="ReadAllAsync"/>.

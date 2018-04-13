@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
     public class ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, IReadAll<TClientModel, TClientId>
     {
         private readonly IReadAll<TServerModel, TServerId> _service;
@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         {
             var serverId = MapToServerId(id);
             var serverItem = await _service.ReadAsync(serverId, token);
-            return await CreateAndMapFromServerAsync(serverItem, token);
+            return await MapFromServerAsync(serverItem, token);
         }
 
         /// <inheritdoc />
@@ -31,14 +31,14 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.Mapping
         {
             var serverPage = await _service.ReadAllWithPagingAsync(offset, limit, token);
             FulcrumAssert.IsNotNull(serverPage);
-            return new PageEnvelope<TClientModel>(serverPage.PageInfo, await CreateAndMapFromServerAsync(serverPage.Data, token));
+            return new PageEnvelope<TClientModel>(serverPage.PageInfo, await MapFromServerAsync(serverPage.Data, token));
         }
 
         /// <inheritdoc />
         public virtual async Task<IEnumerable<TClientModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
             var serverItems = await _service.ReadAllAsync(limit, token);
-            return await CreateAndMapFromServerAsync(serverItems, token);
+            return await MapFromServerAsync(serverItems, token);
         }
     }
 }

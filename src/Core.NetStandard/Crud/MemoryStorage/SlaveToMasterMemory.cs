@@ -4,8 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
+using Xlent.Lever.Libraries2.MoveTo.Core.Crud.Helpers;
 
-namespace Xlent.Lever.Libraries2.Core.Storage.Logic
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage
 {
     /// <summary>
     /// Functionality for persisting objects in groups.

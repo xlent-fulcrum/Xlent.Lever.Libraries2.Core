@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
-using Xlent.Lever.Libraries2.Core.Translation;
+using Xlent.Lever.Libraries2.MoveTo.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.ClientTranslators
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
     public class CrudClientTranslator<TModel> : CrdClientTranslator<TModel>, ICrud<TModel, string>
@@ -13,8 +13,8 @@ namespace Xlent.Lever.Libraries2.MoveTo.Core.ClientTranslators
         private readonly ICrud<TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrudClientTranslator(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getClientNameFunction, ITranslatorService translatorService)
-        :base(storage, idConceptName, getClientNameFunction, translatorService)
+        public CrudClientTranslator(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        :base(storage, idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;
         }

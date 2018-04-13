@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Cache
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Cache
 {
     /// <summary>
     /// Interface for a flush method for the cache. The flush method should reset the cache to empty.
