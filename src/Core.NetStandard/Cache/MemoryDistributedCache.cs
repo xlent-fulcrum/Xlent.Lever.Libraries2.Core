@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
+using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 
@@ -11,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     /// <summary>
     /// 
     /// </summary>
-    public class MemoryDistributedCache : IDistributedCache
+    public class MemoryDistributedCache : IDistributedCache, IFlushableCache
     {
         /// <summary>
         /// The actual storage of the items.
@@ -93,6 +94,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
             await ItemStorage.DeleteAsync(key, token);
+        }
+
+        /// <inheritdoc />
+        public async Task FlushAsync(CancellationToken token = default(CancellationToken))
+        {
+            await ItemStorage.DeleteAllAsync(token);
         }
     }
 }

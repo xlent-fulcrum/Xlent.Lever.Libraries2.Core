@@ -58,10 +58,6 @@
     <Compile Include="Core\Assert\InternalContract.cs" />
     <Compile Include="Core\Assert\IValidatable.cs" />
     <Compile Include="Core\Assert\ServiceContract.cs" />
-    <Compile Include="Core\Cache\CrdAutoCache.cs" />
-    <Compile Include="Core\Cache\ManyToOneAutoCache.cs" />
-    <Compile Include="Core\Cache\ReadAutoCache.cs" />
-    <Compile Include="Core\Cache\AutoCacheOptions.cs" />
     <Compile Include="Core\Cache\CachedItemInformation.cs" />
     <Compile Include="Core\Cache\CacheEnvelope.cs" />
     <Compile Include="Core\Cache\MemoryDistributedCacheFactory.cs" />
@@ -69,7 +65,6 @@
     <Compile Include="Core\Cache\MemoryDistributedCache.cs" />
     <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\DistributedCacheEntryOptions.cs" />
     <Compile Include="Core\Cache\Microsoft.Extensions.Caching.Distributed\IDistributedCache.cs" />
-    <Compile Include="Core\Cache\SerializingSupport.cs" />
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
     <Compile Include="Core\Context\ContextValueProvider.cs" />
     <Compile Include="Core\Context\CorrelationIdValueProvider.cs" />
@@ -169,7 +164,6 @@
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
-    <Compile Include="Core\Cache\CrudAutoCache.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerableAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerable.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumeratorAsync.cs" />
