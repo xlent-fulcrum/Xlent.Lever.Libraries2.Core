@@ -2,10 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Helpers
+namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
 {
     /// <summary>
     /// Abstract base class that has a default implementation for 

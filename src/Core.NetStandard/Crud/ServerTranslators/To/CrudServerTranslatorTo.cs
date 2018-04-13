@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ServerTranslators.To
+namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
     /// <inheritdoc cref="CrdServerTranslatorTo{TModel}" />
     public class CrudServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel>, ICrud<TModel, string>

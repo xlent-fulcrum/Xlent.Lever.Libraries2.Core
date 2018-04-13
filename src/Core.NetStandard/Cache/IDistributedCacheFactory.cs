@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+using Xlent.Lever.Libraries2.Core.Cache.Microsoft.Extensions.Caching.Distributed;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {

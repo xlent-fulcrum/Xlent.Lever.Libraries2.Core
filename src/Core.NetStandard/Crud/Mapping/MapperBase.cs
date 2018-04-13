@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
     /// <summary>
     /// Map between two models.

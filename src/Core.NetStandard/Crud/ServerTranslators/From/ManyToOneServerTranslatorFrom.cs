@@ -2,9 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ServerTranslators.From
+namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
 {
     /// <summary>
     /// Decorate values from the server into concept values.

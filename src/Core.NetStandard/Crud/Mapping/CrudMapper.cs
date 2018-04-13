@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
     /// <inheritdoc cref="CrdMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
     public class

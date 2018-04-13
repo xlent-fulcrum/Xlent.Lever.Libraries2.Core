@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Cache.Microsoft.Extensions.Caching.Distributed;
+using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {

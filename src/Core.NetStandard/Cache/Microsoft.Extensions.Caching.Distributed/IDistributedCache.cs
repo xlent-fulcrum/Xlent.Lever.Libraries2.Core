@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 #pragma warning disable 1591
 // ReSharper disable All
 
-namespace Microsoft.Extensions.Caching.Distributed
+namespace Xlent.Lever.Libraries2.Core.Cache.Microsoft.Extensions.Caching.Distributed
 {
     /// <summary>
     /// https://raw.githubusercontent.com/aspnet/Caching/dev/src/Microsoft.Extensions.Caching.Abstractions/IDistributedCache.cs
