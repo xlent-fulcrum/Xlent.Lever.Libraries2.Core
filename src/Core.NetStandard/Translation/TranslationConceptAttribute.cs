@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Translation
+namespace Xlent.Lever.Libraries2.Core.Translation
 {
     /// <summary>
     /// Information about a translation concept

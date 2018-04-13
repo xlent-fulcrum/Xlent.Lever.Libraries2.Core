@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +8,7 @@ using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Translation
+namespace Xlent.Lever.Libraries2.Core.Translation
 {
     /// <summary>
     /// A convenience class for translations.

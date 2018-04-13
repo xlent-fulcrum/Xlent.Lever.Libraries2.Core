@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Cache
+namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {
     /// <summary>
     /// Meta data for a thing stored to cache

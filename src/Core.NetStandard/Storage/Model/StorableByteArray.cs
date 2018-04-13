@@ -1,6 +1,6 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Assert;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
+using Xlent.Lever.Libraries2.MoveTo.Core.Crud.Helpers;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Cache
+namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {
     /// <summary>
     /// Use this to put an "intelligent" cache between you and your ICrud storage.

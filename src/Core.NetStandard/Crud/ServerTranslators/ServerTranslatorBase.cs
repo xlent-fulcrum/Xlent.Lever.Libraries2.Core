@@ -1,4 +1,4 @@
-﻿using Xlent.Lever.Libraries2.MoveTo.Core.Translation;
+﻿using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.ServerTranslators
 {

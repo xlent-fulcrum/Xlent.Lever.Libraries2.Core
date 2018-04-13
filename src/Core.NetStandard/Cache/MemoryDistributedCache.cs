@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
+using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {

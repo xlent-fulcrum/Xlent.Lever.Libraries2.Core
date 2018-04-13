@@ -130,11 +130,15 @@
     <Compile Include="Core\Crud\MemoryStorage\ManyToManyMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\ManyToOneMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\SlaveToMasterMemory.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\CrdServerTranslator.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\CrudServerTranslator.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\ManyToOneServerTranslator.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\ReadServerTranslator.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFrom.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\From\CrudServerTranslatorFrom.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\From\ManyToOneServerTranslatorFrom.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\From\ReadServerTranslatorFrom.cs" />
     <Compile Include="Core\Crud\ServerTranslators\ServerTranslatorBase.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\To\CrdServerTranslatorTo.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\To\CrudServerTranslatorTo.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\To\ManyToOneServerTranslatorTo.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\To\ReadServerTranslatorTo.cs" />
     <Compile Include="Core\Decoupling\IFactory.cs" />
     <Compile Include="Core\Decoupling\Model\ConceptValue.cs" />
     <Compile Include="Core\Decoupling\Model\IConceptValue.cs" />
@@ -219,7 +223,6 @@
     <Compile Include="Core\Storage\Model\StorableItem.cs" />
     <Compile Include="Core\Translation\ConceptValue.cs" />
     <Compile Include="Core\Translation\IConceptValue.cs" />
-    <Compile Include="Core\Translation\ITranslatable.cs" />
     <Compile Include="Core\Translation\ITranslatorService.cs" />
     <Compile Include="Core\Translation\TranslationConceptAttribute.cs" />
     <Compile Include="Core\Translation\Translator.cs" />

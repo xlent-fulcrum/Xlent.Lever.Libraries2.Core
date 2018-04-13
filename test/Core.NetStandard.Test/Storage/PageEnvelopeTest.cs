@@ -2,14 +2,16 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
+using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 
 namespace Xlent.Lever.Libraries2.Core.Storage
 {
     [TestClass]
     public class PageEnvelopeTest
     {
-        private CrudMemory<TestItemId<string>, string> _storage;
+        private ICrud<TestItemId<string>, string> _storage;
 
         [TestInitialize]
         public void Inititalize()

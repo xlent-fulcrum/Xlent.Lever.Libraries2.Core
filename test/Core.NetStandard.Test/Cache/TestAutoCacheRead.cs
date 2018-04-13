@@ -6,6 +6,7 @@ using Xlent.Lever.Libraries2.Core.Application;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
+using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache

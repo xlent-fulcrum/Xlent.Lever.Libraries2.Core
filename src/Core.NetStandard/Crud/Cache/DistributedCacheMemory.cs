@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.MoveTo.Core.Crud.MemoryStorage;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Crud.Cache
+namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {
     /// <summary>
     /// 

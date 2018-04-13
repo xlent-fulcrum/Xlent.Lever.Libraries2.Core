@@ -1,8 +1,7 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.MoveTo.Core.Translation
+namespace Xlent.Lever.Libraries2.Core.Translation
 {
     /// <summary>
     /// What a translator service need to fulfil.
