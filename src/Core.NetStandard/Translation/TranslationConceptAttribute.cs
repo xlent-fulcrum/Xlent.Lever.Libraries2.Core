@@ -1,10 +1,11 @@
 ﻿using System;
 
-namespace Xlent.Lever.Libraries2.Core.Translation
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Translation
 {
     /// <summary>
     /// Information about a translation concept
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
     public class TranslationConceptAttribute : Attribute
     {
         /// <summary>

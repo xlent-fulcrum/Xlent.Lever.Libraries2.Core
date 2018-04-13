@@ -1,6 +1,6 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
 
-namespace Xlent.Lever.Libraries2.Core.Translation
+namespace Xlent.Lever.Libraries2.MoveTo.Core.Translation
 {
     /// <summary>
     /// An important tool for loose coupling. Annotates system specific values with information that makes the value system independent.
