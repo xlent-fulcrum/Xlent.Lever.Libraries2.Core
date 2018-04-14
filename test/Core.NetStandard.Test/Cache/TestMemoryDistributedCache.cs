@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
-using Xlent.Lever.Libraries2.Core.Cache.Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
