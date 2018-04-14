@@ -1,10 +1,12 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Decoupling.Model
 {
     /// <summary>
     /// An important tool for loose coupling. Annotates system specific values with information that makes the value system independent.
     /// </summary>
+    [Obsolete("Use the Translation.IConceptValue")]
     public interface IConceptValue : IValidatable
     {
         /// <summary>

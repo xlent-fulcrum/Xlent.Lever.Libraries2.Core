@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Crud.Helpers;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
@@ -8,7 +10,7 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TStorable,TId}"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>
     /// </summary>
     [TestClass]
     public abstract class TestICrdBare<TId> : TestICrdBase<TestItemBare, TId>

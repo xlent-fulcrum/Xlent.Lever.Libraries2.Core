@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xlent.Lever.Libraries2.Core.Decoupling.Model;
+using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.TestDecoupling
 {

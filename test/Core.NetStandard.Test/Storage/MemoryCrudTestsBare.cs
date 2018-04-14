@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
+using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet;
@@ -10,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage
     [TestClass]
     public class MemoryCrudTestsBare : TestICrudBare<Guid>
     {
-        private CrudMemory<TestItemBare, Guid> _storage;
+        private ICrud<TestItemBare, Guid> _storage;
 
         [TestInitialize]
         public void Inititalize()

@@ -2,10 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+
 #pragma warning disable 1591
 // ReSharper disable All
 
-namespace Microsoft.Extensions.Caching.Distributed
+namespace Xlent.Lever.Libraries2.Core.Cache.Microsoft.Extensions.Caching.Distributed
 {
     /// <summary>
     /// https://raw.githubusercontent.com/aspnet/Caching/dev/src/Microsoft.Extensions.Caching.Abstractions/DistributedCacheEntryOptions.cs
