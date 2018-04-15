@@ -4,10 +4,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Helpers;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
 {
+    /// <summary>
+    /// Functionality for persisting objects in groups.
+    /// </summary>
+    public class SlaveToMasterMemory<TModel, TId> : SlaveToMasterMemory<TModel, TModel, TId>, ISlaveToMasterRelation<TModel, TId>
+    {
+    }
+
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>

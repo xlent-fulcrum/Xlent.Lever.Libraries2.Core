@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Helpers;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
@@ -12,11 +13,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <summary>
     /// General class for storing any <see cref="IUniquelyIdentifiable{TId}"/> in memory.
     /// </summary>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
+    /// <typeparam name="TId"></typeparam>
+    public class CrudMemory<TModel, TId> : CrudMemory<TModel, TModel, TId>, ICrud<TModel, TId>
+    {
+    }
+
+    /// <summary>
+    /// General class for storing any <see cref="IUniquelyIdentifiable{TId}"/> in memory.
+    /// </summary>
     /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
     public class CrudMemory<TModelCreate, TModel, TId> : CrudBase<TModelCreate, TModel, TId>
-    where TModel : TModelCreate
+        where TModel : TModelCreate
     {
         /// <summary>
         /// The actual storage of the items.

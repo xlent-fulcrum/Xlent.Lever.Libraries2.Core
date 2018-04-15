@@ -8,14 +8,22 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// Functionality for persisting objects that has no life of their own, but are only relevant with their master.
     /// Examples: A list of rows on an invoice, a list of attributes of an object, the contact details of a person.
     /// </summary>
-    public interface ISlaveToMasterRelation<TModelCreate, TModel, TId> : IManyToOneRelation<TModel, TId>
+    public interface ISlaveToMasterRelation<TModel, TId> : ISlaveToMasterRelation<TModel, TModel, TId>
     {
-        /// <summary>
-        /// 
-        /// Create a new slave <paramref name="item"/> for the master <paramref name="masterId"/>.
+    }
+
+    /// <summary>
+        /// Functionality for persisting objects that has no life of their own, but are only relevant with their master.
+        /// Examples: A list of rows on an invoice, a list of attributes of an object, the contact details of a person.
         /// </summary>
-        /// <returns>The new id for the created object.</returns>
-        Task<TId> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken));
+        public interface ISlaveToMasterRelation<TModelCreate, TModel, TId> : IManyToOneRelation<TModel, TId>
+        {
+            /// <summary>
+            /// 
+            /// Create a new slave <paramref name="item"/> for the master <paramref name="masterId"/>.
+            /// </summary>
+            /// <returns>The new id for the created object.</returns>
+            Task<TId> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// 

@@ -19,12 +19,41 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <typeparam name="TReferenceModel1">The first model of references.</typeparam>
     /// <typeparam name="TReferenceModel2">The second model of references.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
+    public class ManyToManyMemory<TManyToManyModel, TReferenceModel1,
+        TReferenceModel2, TId> :
+        ManyToManyMemory<TManyToManyModel, TManyToManyModel, TReferenceModel1, TReferenceModel1,
+            TReferenceModel2, TReferenceModel2, TId>,
+        ICrud<TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+    {
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="getForeignKey1Delegate">See <see cref="ManyToManyMemory{TManyToManyModelCreate,TManyToManyModel,TReferenceModel1Create,TReferenceModel1,TReferenceModel2Create,TReferenceModel2,TId}.GetForeignKeyDelegate"/>.</param>
+        /// <param name="getForeignKey2Delegate">See <see cref="ManyToManyMemory{TManyToManyModelCreate,TManyToManyModel,TReferenceModel1Create,TReferenceModel1,TReferenceModel2Create,TReferenceModel2,TId}.GetForeignKeyDelegate"/>.</param>
+        /// <param name="foreignHandler1">Functionality to read a specified parent.</param>
+        /// <param name="foreignHandler2">Functionality to read a specified parent.</param>
+        public ManyToManyMemory(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, ICrd<TReferenceModel1, TId> foreignHandler1, ICrd<TReferenceModel2, TId> foreignHandler2)
+        : base(getForeignKey1Delegate, getForeignKey2Delegate, foreignHandler1, foreignHandler2)
+        {
+        }
+    }
+
+    /// <summary>
+    /// General class for storing a many to one item in memory.
+    /// </summary>
+    /// <typeparam name="TManyToManyModel">The model for many-to-many-relation.</typeparam>
+    /// <typeparam name="TReferenceModel1">The first model of references.</typeparam>
+    /// <typeparam name="TReferenceModel2">The second model of references.</typeparam>
+    /// <typeparam name="TId">The type for the id field of the models.</typeparam>
     /// <typeparam name="TReferenceModel2Create"></typeparam>
     /// <typeparam name="TReferenceModel1Create"></typeparam>
     /// <typeparam name="TManyToManyModelCreate"></typeparam>
-    public class ManyToManyMemory<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1Create, TReferenceModel1, TReferenceModel2Create, TReferenceModel2, TId> : 
+    public class ManyToManyMemory<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1Create, TReferenceModel1, TReferenceModel2Create, TReferenceModel2, TId> :
         CrudMemory<TManyToManyModelCreate, TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
-        where TManyToManyModel : class, TManyToManyModelCreate
+        where TManyToManyModel : TManyToManyModelCreate 
+        where TReferenceModel1 : TReferenceModel1Create 
+        where TReferenceModel2 : TReferenceModel2Create
     {
         private readonly GetForeignKeyDelegate _getForeignKey1Delegate;
         private readonly GetForeignKeyDelegate _getForeignKey2Delegate;
@@ -59,7 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
                 id,
                 _getForeignKey1Delegate,
                 _getForeignKey2Delegate,
-                _foreignHandler2, 
+                _foreignHandler2,
                 offset, limit, token);
         }
 
@@ -97,7 +126,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         {
             await DeleteReferencedItemsByForeignKey<TReferenceModel1>(id, _getForeignKey2Delegate, _foreignHandler1, token);
         }
-        
+
         private Task<PageEnvelope<T>> ReadReferencedItemsByForeignKeyAsync<T>(TId id, GetForeignKeyDelegate idDelegate, GetForeignKeyDelegate referenceIdDelegate, IRead<T, TId> referenceHandler, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             throw new FulcrumNotImplementedException("This method needs to be changed and tests");
@@ -125,7 +154,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             //var page = new PageEnvelope<T>(offset, limit.Value, null, list);
             //return await Task.FromResult(page);
         }
-        
+
         private Task DeleteReferencedItemsByForeignKey<T>(TId id, GetForeignKeyDelegate idDelegate, IDelete<TId> referenceHandler, CancellationToken token)
         {
             throw new FulcrumNotImplementedException("This method needs to be changed and tests");
@@ -202,7 +231,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         /// <inheritdoc />
         public async Task DeleteByReference1Async(TId reference1Id, CancellationToken token = default(CancellationToken))
         {
-            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>((offset,t) => ReadByReference1WithPagingAsync(reference1Id, offset, null, t), token);
+            var enumerator = new PageEnvelopeEnumeratorAsync<TManyToManyModel>((offset, t) => ReadByReference1WithPagingAsync(reference1Id, offset, null, t), token);
             await DeleteItemsAsync(enumerator, token);
         }
 

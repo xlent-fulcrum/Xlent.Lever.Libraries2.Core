@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
 {
     /// <inheritdoc cref="CrdServerTranslatorFrom{TModelCreate, TModel}" />
     public class CrudServerTranslatorFrom<TModelCreate, TModel> : CrdServerTranslatorFrom<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
-    where TModel : IValidatable
+    where TModel : TModelCreate
     {
         private readonly ICrud<TModelCreate, TModel, string> _storage;
 

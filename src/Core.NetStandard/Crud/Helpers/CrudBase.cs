@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class CrudBase<TModelCreate, TModel, TId> :  CrdBase<TModelCreate, TModel, TId>, ICrud<TModelCreate, TModel, TId>
+    public abstract class CrudBase<TModelCreate, TModel, TId> :  CrdBase<TModelCreate, TModel, TId>, ICrud<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
         /// <inheritdoc />
         public abstract Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));

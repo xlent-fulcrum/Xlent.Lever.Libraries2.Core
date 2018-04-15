@@ -14,9 +14,26 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// </summary>
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
+    public class ManyToOneMemory<TManyModel, TId> : ManyToOneMemory<TManyModel, TManyModel, TId>, ICrud<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
+    {
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="getParentIdDelegate">See <see cref="ManyToOneMemory{TManyModelCreate,TManyModel,TId}.GetParentIdDelegate"/>.</param>
+        public ManyToOneMemory(GetParentIdDelegate getParentIdDelegate)
+        :base(getParentIdDelegate)
+        {
+        }
+    }
+
+    /// <summary>
+    /// General class for storing a many to one item in memory.
+    /// </summary>
+    /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
+    /// <typeparam name="TId">The type for the id field of the models.</typeparam>
     /// <typeparam name="TManyModelCreate"></typeparam>
-    public class ManyToOneMemory<TManyModelCreate, TManyModel, TId> : CrudMemory<TManyModelCreate, TManyModel, TId>, IManyToOneRelationComplete<TManyModelCreate, TManyModel, TId>
-        where TManyModel : class, TManyModelCreate
+    public class ManyToOneMemory<TManyModelCreate, TManyModel, TId> : CrudMemory<TManyModelCreate, TManyModel, TId>, IManyToOneRelationComplete<TManyModelCreate, TManyModel, TId> where TManyModel : TManyModelCreate
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
 
@@ -81,7 +98,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             var errorMessage = $"{nameof(TManyModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
             InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TManyModel)), errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TManyModel>((o,t) => ReadChildrenWithPagingAsync(parentId, o, null, t), token);
+            var items = new PageEnvelopeEnumerableAsync<TManyModel>((o, t) => ReadChildrenWithPagingAsync(parentId, o, null, t), token);
             var enumerator = items.GetEnumerator();
             while (await enumerator.MoveNextAsync())
             {

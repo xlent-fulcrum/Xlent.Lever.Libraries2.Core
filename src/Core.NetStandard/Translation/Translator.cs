@@ -121,7 +121,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         /// <summary>
         ///  Decorate the <paramref name="items"/> so that concept values are set to concept value paths.
         /// </summary>
-        public IEnumerable<TModel> DecorateItems<TModel>(IEnumerable<TModel> items) where TModel : IValidatable
+        public IEnumerable<TModel> DecorateItems<TModel>(IEnumerable<TModel> items)
         {
             if (items == null) return null;
             var array = items as TModel[] ?? items.ToArray();
@@ -136,7 +136,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         /// <summary>
         /// Decorate the <paramref name="page"/> so that concept values are set to concept value paths.
         /// </summary>
-        public PageEnvelope<TModel> DecoratePage<TModel>(PageEnvelope<TModel> page) where TModel : IValidatable
+        public PageEnvelope<TModel> DecoratePage<TModel>(PageEnvelope<TModel> page)
         {
             if (page == null) return null;
             page.Data = DecorateItems(page.Data);

@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
     /// <inheritdoc cref="ReadMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
     public class CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, ICrd<TClientModelCreate, TClientModel, TClientId>
-    where TClientModel : IUniquelyIdentifiable<TClientId>
+    where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
     where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         private readonly ICrd<TServerModel, TServerModel, TServerId> _service;

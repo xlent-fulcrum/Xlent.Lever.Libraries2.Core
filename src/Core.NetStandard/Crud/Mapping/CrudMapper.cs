@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId> :
             CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId>,
             ICrud<TClientModelCreate, TClientModel, TClientId> 
-        where TClientModel : IUniquelyIdentifiable<TClientId>
+        where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
         where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         private readonly ICrud<TServerModel, TServerModel, TServerId> _service;
