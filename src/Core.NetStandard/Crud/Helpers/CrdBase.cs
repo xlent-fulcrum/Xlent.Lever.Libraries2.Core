@@ -2,12 +2,24 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Crud.Helpers;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
 {
+    /// <summary>
+    /// Abstract base class that has a default implementation for 
+    /// <see cref="CrdBase{TModelCreate,TModel,TId}.CreateAsync"/>, <see cref="CrdBase{TModelCreate,TModel,TId}.CreateAndReturnAsync"/>,
+    /// and <see cref="CrdBase{TModelCreate,TModel,TId}.DeleteAllAsync"/>.
+    /// </summary>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
+    /// <typeparam name="TId"></typeparam>
+    public abstract class CrdBase<TModel, TId> : CrdBase<TModel, TModel, TId>, ICrd<TModel, TId>
+    {
+    }
+
     /// <summary>
     /// Abstract base class that has a default implementation for 
     /// <see cref="CreateAsync"/>, <see cref="CreateAndReturnAsync"/>,
@@ -58,7 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TModelCreate, TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>((offset,t) => ReadAllWithPagingAsync(offset, null, t), token);
+            var items = new PageEnvelopeEnumerableAsync<TModel>((offset, t) => ReadAllWithPagingAsync(offset, null, t), token);
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
