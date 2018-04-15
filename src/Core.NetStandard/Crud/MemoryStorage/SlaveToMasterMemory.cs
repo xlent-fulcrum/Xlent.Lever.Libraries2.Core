@@ -11,15 +11,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class SlaveToMasterMemory<TModel, TId> : SlaveToMasterRelationBase<TModel, TId>
+    public class SlaveToMasterMemory<TModelCreate, TModel, TId> : SlaveToMasterRelationBase<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
         /// <summary>
         /// The storages; One dictionary with a memory storage for each master id.
         /// </summary>
-        protected static readonly ConcurrentDictionary<TId, CrudMemory<TModel, TId>> Storages = new ConcurrentDictionary<TId, CrudMemory<TModel, TId>>();
+        protected static readonly ConcurrentDictionary<TId, CrudMemory<TModelCreate, TModel, TId>> Storages = new ConcurrentDictionary<TId, CrudMemory<TModelCreate, TModel, TId>>();
 
         /// <inheritdoc />
-        public override async Task<TId> CreateAsync(TId masterId, TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task<TId> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
@@ -28,7 +28,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public override async Task CreateWithSpecifiedIdAsync(TId masterId, TId slaveId, TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task CreateWithSpecifiedIdAsync(TId masterId, TId slaveId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(slaveId, nameof(slaveId));
@@ -38,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public override async Task<TModel> CreateAndReturnAsync(TId masterId, TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
@@ -47,7 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public override async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId masterId, TId slaveId, TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId masterId, TId slaveId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotDefaultValue(slaveId, nameof(slaveId));
@@ -109,9 +109,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         /// </summary>
         /// <param name="groupValue"></param>
         /// <returns></returns>
-        private CrudMemory<TModel, TId> GetStorage(TId groupValue)
+        private CrudMemory<TModelCreate, TModel, TId> GetStorage(TId groupValue)
         {
-            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new CrudMemory<TModel, TId>();
+            if (!Storages.ContainsKey(groupValue)) Storages[groupValue] = new CrudMemory<TModelCreate, TModel, TId>();
             return Storages[groupValue];
         }
     }

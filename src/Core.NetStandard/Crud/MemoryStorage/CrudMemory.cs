@@ -12,19 +12,19 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <summary>
     /// General class for storing any <see cref="IUniquelyIdentifiable{TId}"/> in memory.
     /// </summary>
-    /// <typeparam name="TModel"></typeparam>
+    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrudMemory<TModel, TId> : CrudBase<TModel, TId>
+    public class CrudMemory<TModelCreate, TModel, TId> : CrudBase<TModelCreate, TModel, TId>
+    where TModel : TModelCreate
     {
-        private static readonly string Namespace = typeof(CrudMemory<TModel, TId>).Namespace;
-
         /// <summary>
         /// The actual storage of the items.
         /// </summary>
         protected readonly ConcurrentDictionary<TId, TModel> MemoryItems = new ConcurrentDictionary<TId, TModel>();
 
         /// <inheritdoc />
-        public override async Task<TId> CreateAsync(TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -34,7 +34,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public override async Task CreateWithSpecifiedIdAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
+        public override async Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -148,6 +148,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             return itemCopy;
         }
 
+        private static TModel CopyItem(TModelCreate source)
+        {
+            InternalContract.RequireNotNull(source, nameof(source));
+            var itemCopy = StorageHelper.DeepCopy<TModel, TModelCreate>(source);
+            if (itemCopy == null)
+                throw new FulcrumAssertionFailedException("Could not copy an item.");
+            return itemCopy;
+        }
+
         private void SetMemoryItem(TId id, TModel item)
         {
             MemoryItems[id] = CopyItem(item);
@@ -164,7 +173,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
                 return default(TModel);
             }
             var item = MemoryItems[id];
-            FulcrumAssert.IsNotNull(item, $"{Namespace}: B431A6BB-4A76-4672-9607-65E1C6EBFBC9");
+            FulcrumAssert.IsNotNull(item);
             return CopyItem(item);
         }
         #endregion

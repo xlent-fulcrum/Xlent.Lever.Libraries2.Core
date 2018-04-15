@@ -13,10 +13,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// Abstract base class that has a default implementation for <see cref="CreateAndReturnAsync"/>,
     /// and <see cref="DeleteChildrenAsync"/>.
     /// </summary>
-    public abstract class SlaveToMasterRelationBase<TModel, TId> : ISlaveToMasterRelation<TModel, TId>
+    public abstract class SlaveToMasterRelationBase<TModelCreate, TModel, TId> : ISlaveToMasterRelation<TModelCreate, TModel, TId>
     {
         /// <inheritdoc />
-        public virtual async Task<TId> CreateAsync(TId masterId, TModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TId> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -26,10 +26,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(TId masterId, TId slaveId, TModel item, CancellationToken token = default(CancellationToken));
+        public abstract Task CreateWithSpecifiedIdAsync(TId masterId, TId slaveId, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<TModel> CreateAndReturnAsync(TId masterId, TModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -38,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId masterId, TId slaveId, TModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId masterId, TId slaveId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -64,7 +64,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <inheritdoc />
         public virtual async Task DeleteChildrenAsync(TId groupValue, CancellationToken token = default(CancellationToken))
         {
-            var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(SlaveToMasterRelationBase<TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(SlaveToMasterRelationBase<TModelCreate, TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TModel>((offset,ct) => ReadChildrenWithPagingAsync(groupValue, offset, null, ct), token);
@@ -84,7 +84,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
-        protected static void MaybeValidate(TModel item)
+        protected static void MaybeValidate<T>(T item)
         {
             StorageHelper.MaybeValidate(item);
         }

@@ -115,6 +115,7 @@
     <Compile Include="Core\Crud\Interfaces\IUpdate.cs" />
     <Compile Include="Core\Crud\Mapping\CrdMapper.cs" />
     <Compile Include="Core\Crud\Mapping\CrudMapper.cs" />
+    <Compile Include="Core\Crud\Mapping\IModelMapperWithCreate.cs" />
     <Compile Include="Core\Crud\Mapping\IModelMapper.cs" />
     <Compile Include="Core\Crud\Mapping\ManyToOneBiased1Mapper.cs" />
     <Compile Include="Core\Crud\Mapping\ManyToOneMapper.cs" />

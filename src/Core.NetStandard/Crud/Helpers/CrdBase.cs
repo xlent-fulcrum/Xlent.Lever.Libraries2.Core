@@ -13,12 +13,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// <see cref="CreateAsync"/>, <see cref="CreateAndReturnAsync"/>,
     /// and <see cref="DeleteAllAsync"/>.
     /// </summary>
-    /// <typeparam name="TModel"></typeparam>
+    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class CrdBase<TModel, TId> : ReadBase<TModel, TId>, ICrd<TModel, TId>
+    public abstract class CrdBase<TModelCreate, TModel, TId> : ReadBase<TModel, TId>, ICrd<TModelCreate, TModel, TId>
     {
         /// <inheritdoc />
-        public virtual async Task<TId> CreateAsync(TModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -28,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public virtual async Task<TModel> CreateAndReturnAsync(TModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -37,10 +38,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));
+        public abstract Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
@@ -54,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <inheritdoc />
         public virtual async Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
-            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TModelCreate, TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TModel>((offset,t) => ReadAllWithPagingAsync(offset, null, t), token);

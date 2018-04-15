@@ -7,9 +7,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// <summary>
     /// Can create items of type <see cref="IUniquelyIdentifiable{TId}"/>.
     /// </summary>
-    /// <typeparam name="TModel">The type of objects to create in persistant storage.</typeparam>
+    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
+    /// <typeparam name="TModelReturned">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
-    public interface ICreate<TModel, TId>
+    public interface ICreate<in TModelCreate, TModelReturned, TId>
     {
         /// <summary>
         /// Creates a new item in storage and returns the new Id.
@@ -17,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// <param name="item">The item to store.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
         /// <returns>The new id for the created object.</returns>
-        Task<TId> CreateAsync(TModel item, CancellationToken token = default(CancellationToken));
+        Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Creates a new item in storage and returns the final result.
@@ -31,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// </remarks>
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IUniquelyIdentifiable{TId}"/>
-        Task<TModel> CreateAndReturnAsync(TModel item, CancellationToken token = default(CancellationToken));
+        Task<TModelReturned> CreateAndReturnAsync(TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Same as <see cref="CreateAsync"/>, but you can specify the new id.
@@ -40,7 +41,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// <param name="item">The item to create in storage.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
         /// <returns>The newly created item.</returns>
-        Task CreateWithSpecifiedIdAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));
+        Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Same as <see cref="CreateAndReturnAsync"/>, but you can specify the new id.
@@ -55,6 +56,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// </remarks>
         /// <seealso cref="IOptimisticConcurrencyControlByETag"/>
         /// <seealso cref="IUniquelyIdentifiable{TId}"/>
-        Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));
+        Task<TModelReturned> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken));
     }
 }

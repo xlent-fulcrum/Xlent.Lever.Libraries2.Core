@@ -6,20 +6,20 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
 {
     /// <inheritdoc cref="ReadServerTranslatorFrom{TModel}" />
-    public class CrdServerTranslatorFrom<TModel> : ReadServerTranslatorFrom<TModel>, ICrd<TModel, string>
+    public class CrdServerTranslatorFrom<TModelCreate, TModel> : ReadServerTranslatorFrom<TModel>, ICrd<TModelCreate, TModel, string>
     where TModel : IValidatable
     {
-        private readonly ICrd<TModel, string> _storage;
+        private readonly ICrd<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrdServerTranslatorFrom(ICrd<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
+        public CrdServerTranslatorFrom(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
         : base(storage, idConceptName, getServerNameMethod)
         {
             _storage = storage;
         }
 
         /// <inheritdoc />
-        public async Task<string> CreateAsync(TModel item, CancellationToken token = new CancellationToken())
+        public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var id = await _storage.CreateAsync(item, token);
             var translator = CreateTranslator();
@@ -27,7 +27,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateAndReturnAsync(TModel item, CancellationToken token = new CancellationToken())
+        public async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var decoratedResult = await _storage.CreateAndReturnAsync(item, token);
             var translator = CreateTranslator();
@@ -35,13 +35,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         }
 
         /// <inheritdoc />
-        public async Task CreateWithSpecifiedIdAsync(string id, TModel item, CancellationToken token = new CancellationToken())
+        public async Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
         {
             await _storage.CreateWithSpecifiedIdAsync(id, item, token);
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModel item, CancellationToken token = new CancellationToken())
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var result = await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
             var translator = CreateTranslator();

@@ -6,24 +6,32 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
     /// <inheritdoc cref="ReadMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
-    public class CrdMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, ICrd<TClientModel, TClientId>
+    public class CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, ICrd<TClientModelCreate, TClientModel, TClientId>
     where TClientModel : IUniquelyIdentifiable<TClientId>
     where TServerModel : IUniquelyIdentifiable<TServerId>
     {
-        private readonly ICrd<TServerModel, TServerId> _service;
+        private readonly ICrd<TServerModel, TServerModel, TServerId> _service;
+
+        /// <summary>
+        /// A mapping class that can map between the client and server model.
+        /// </summary>
+        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> ModelMapper { get; }
+
+
 
         /// <inheritdoc />
-        public CrdMapper(TServerLogic serverLogic, ICrd<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerLogic, TServerModel> modelMapper)
+        public CrdMapper(TServerLogic serverLogic, ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> modelMapper)
         : base(serverLogic, service, modelMapper)
         {
+            ModelMapper = modelMapper;
             _service = service;
         }
 
         /// <inheritdoc />
-        public virtual async Task<TClientId> CreateAsync(TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TClientId> CreateAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverItem = MapToServer(item);
-            var serverId = await _service.CreateAsync(serverItem, token);
+            serverItem = await _service.CreateAndReturnAsync(serverItem, token);
             var clientId = MapToClientId(serverId);
             item.Id = clientId;
             await MapToServerAsync(item, token);
@@ -31,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         }
 
         /// <inheritdoc />
-        public virtual async Task<TClientModel> CreateAndReturnAsync(TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TClientModel> CreateAndReturnAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverItem = MapToServer(item);
             serverItem = await _service.CreateAndReturnAsync(serverItem, token);
@@ -41,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         }
 
         /// <inheritdoc />
-        public virtual async Task CreateWithSpecifiedIdAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task CreateWithSpecifiedIdAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
             var serverItem = await MapToServerAsync(item, token);
@@ -49,7 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         }
 
         /// <inheritdoc />
-        public virtual async Task<TClientModel> CreateWithSpecifiedIdAndReturnAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TClientModel> CreateWithSpecifiedIdAndReturnAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
             var serverItem = await MapToServerAsync(item, token);
@@ -68,6 +76,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         public virtual async Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
             await _service.DeleteAllAsync(token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected TServerModel MapToServer(TClientModelCreate clientItem)
+        {
+            return ModelMapper.MapToServer(clientItem);
         }
     }
 }

@@ -11,9 +11,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// Abstract base class that has a default implementation for the methods <see cref="CrdBase{TModel,TId}.CreateAndReturnAsync"/>,
     /// <see cref="CrdBase{TModel,TId}.DeleteAllAsync"/> and <see cref="UpdateAndReturnAsync"/>.
     /// </summary>
-    /// <typeparam name="TModel"></typeparam>
+    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class CrudBase<TModel, TId> :  CrdBase<TModel, TId>, ICrud<TModel, TId>
+    public abstract class CrudBase<TModelCreate, TModel, TId> :  CrdBase<TModelCreate, TModel, TId>, ICrud<TModelCreate, TModel, TId>
     {
         /// <inheritdoc />
         public abstract Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken));

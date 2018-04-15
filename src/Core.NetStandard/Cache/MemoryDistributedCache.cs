@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <summary>
         /// The actual storage of the items.
         /// </summary>
-        protected readonly CrudMemory<byte[], string> ItemStorage = new CrudMemory<byte[], string>();
+        protected readonly CrudMemory<byte[], byte[], string> ItemStorage = new CrudMemory<byte[], byte[], string>();
 
 
         /// <inheritdoc />

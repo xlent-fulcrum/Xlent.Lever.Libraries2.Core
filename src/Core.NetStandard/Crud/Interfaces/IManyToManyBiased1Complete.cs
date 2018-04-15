@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// <summary>
     /// Functionality for persisting many-to-many relations.
     /// </summary>
-    public interface IManyToManyBiased1Complete<TManyToManyModel, TManyModel, TId> : ICrud<TManyToManyModel, TId>, IManyToManyBiased1<TManyModel, TId>
+    public interface IManyToManyBiased1Complete<in TManyToManyModelCreate, TManyToManyModel, TManyModel, TId> : ICrud<TManyToManyModelCreate, TManyToManyModel, TId>, IManyToManyBiased1<TManyModel, TId>
     {
         /// <summary>
         /// Find all items with reference 1 set to <paramref name="id"/>.

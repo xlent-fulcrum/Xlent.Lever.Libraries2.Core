@@ -5,18 +5,18 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
-    /// <inheritdoc cref="CrdMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
+    /// <inheritdoc cref="CrdMapper{TClientModelCreate, TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
     public class
-        CrudMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> :
-            CrdMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>,
-            ICrud<TClientModel, TClientId> 
+        CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId> :
+            CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId>,
+            ICrud<TClientModelCreate, TClientModel, TClientId> 
         where TClientModel : IUniquelyIdentifiable<TClientId>
         where TServerModel : IUniquelyIdentifiable<TServerId>
     {
-        private readonly ICrud<TServerModel, TServerId> _service;
+        private readonly ICrud<TServerModel, TServerModel, TServerId> _service;
 
         /// <inheritdoc />
-        public CrudMapper(TServerLogic serverLogic, ICrud<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerLogic, TServerModel> modelMapper)
+        public CrudMapper(TServerLogic serverLogic, ICrud<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> modelMapper)
         : base(serverLogic, service, modelMapper)
         {
             _service = service;

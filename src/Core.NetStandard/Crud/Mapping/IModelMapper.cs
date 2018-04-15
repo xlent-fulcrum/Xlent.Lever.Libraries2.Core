@@ -17,11 +17,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         Task<TClientModel> MapFromServerAsync(TServerModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Create a server model from a client model (<paramref name="source"/>). This is used when no side effects are allowed.
-        /// </summary>
-        TServerModel MapToServer(TClientModel source);
-
-        /// <summary>
         /// Create a server model from a client model (<paramref name="source"/>). Use <paramref name="logic"/> if you need to access more server objects.
         /// </summary>
         Task<TServerModel> MapToServerAsync(TClientModel source, TServerLogic logic, CancellationToken token = default(CancellationToken));

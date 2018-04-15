@@ -51,6 +51,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <summary>
+        /// A generic method for deep copying.
+        /// </summary>
+        /// <param name="source">The object that should be copied.</param>
+        /// <returns>A copied object.</returns>
+        public static TTarget DeepCopy<TTarget, TSource>(TSource source)
+        where TTarget : TSource
+        {
+            return JsonConvert.DeserializeObject<TTarget>(JsonConvert.SerializeObject(source));
+        }
+
+        /// <summary>
         /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
         public static void MaybeValidate<TModel>(TModel item)

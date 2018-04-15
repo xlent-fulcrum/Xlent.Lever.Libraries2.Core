@@ -7,13 +7,13 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
     /// <inheritdoc cref="CrdServerTranslatorTo{TModel}" />
-    public class CrudServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel>, ICrud<TModel, string>
+    public class CrudServerTranslatorTo<TModelCreate, TModel> : CrdServerTranslatorTo<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
     where TModel : IValidatable
     {
-        private readonly ICrud<TModel, string> _storage;
+        private readonly ICrud<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrudServerTranslatorTo(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public CrudServerTranslatorTo(ICrud<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
         :base(storage, idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;

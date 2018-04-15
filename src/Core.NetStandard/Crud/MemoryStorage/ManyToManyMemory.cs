@@ -19,13 +19,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <typeparam name="TReferenceModel1">The first model of references.</typeparam>
     /// <typeparam name="TReferenceModel2">The second model of references.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class ManyToManyMemory<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> : CrudMemory<TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
-        where TManyToManyModel : class
+    /// <typeparam name="TReferenceModel2Create"></typeparam>
+    /// <typeparam name="TReferenceModel1Create"></typeparam>
+    /// <typeparam name="TManyToManyModelCreate"></typeparam>
+    public class ManyToManyMemory<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1Create, TReferenceModel1, TReferenceModel2Create, TReferenceModel2, TId> : 
+        CrudMemory<TManyToManyModelCreate, TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+        where TManyToManyModel : class, TManyToManyModelCreate
     {
         private readonly GetForeignKeyDelegate _getForeignKey1Delegate;
         private readonly GetForeignKeyDelegate _getForeignKey2Delegate;
-        private readonly ICrd<TReferenceModel1, TId> _foreignHandler1;
-        private readonly ICrd<TReferenceModel2, TId> _foreignHandler2;
+        private readonly ICrd<TReferenceModel1Create, TReferenceModel1, TId> _foreignHandler1;
+        private readonly ICrd<TReferenceModel2Create, TReferenceModel2, TId> _foreignHandler2;
 
         /// <summary>
         /// Constructor
@@ -34,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         /// <param name="getForeignKey2Delegate">See <see cref="GetForeignKeyDelegate"/>.</param>
         /// <param name="foreignHandler1">Functionality to read a specified parent.</param>
         /// <param name="foreignHandler2">Functionality to read a specified parent.</param>
-        public ManyToManyMemory(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, ICrd<TReferenceModel1, TId> foreignHandler1, ICrd<TReferenceModel2, TId> foreignHandler2)
+        public ManyToManyMemory(GetForeignKeyDelegate getForeignKey1Delegate, GetForeignKeyDelegate getForeignKey2Delegate, ICrd<TReferenceModel1Create, TReferenceModel1, TId> foreignHandler1, ICrd<TReferenceModel2Create, TReferenceModel2, TId> foreignHandler2)
         {
             _getForeignKey1Delegate = getForeignKey1Delegate;
             _getForeignKey2Delegate = getForeignKey2Delegate;

@@ -64,14 +64,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         }
 
         /// <summary>
-        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
-        /// </summary>
-        protected TServerModel MapToServer(TClientModel clientItem)
-        {
-            return ModelMapper.MapToServer(clientItem);
-        }
-
-        /// <summary>
         /// A convenience method to map a server <paramref name="id"/> to a a client id.
         /// </summary>
         protected static TClientId MapToClientId(TServerId id)
