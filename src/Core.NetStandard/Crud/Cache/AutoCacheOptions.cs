@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {
     /// <summary>
-    ///  Options that are rules for the <see cref="CrudAutoCache{TModel,TId}"/>.
+    ///  Options that are rules for the <see cref="CrudAutoCache{TModelCreate,TModel,TId}"/>.
     /// </summary>
     public class AutoCacheOptions
     {

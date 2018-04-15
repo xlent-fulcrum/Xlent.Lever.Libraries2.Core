@@ -36,7 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId masterId, TId slaveId, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Returns the slave item uniquely identified by <paramref name="id"/> of the master <paramref name="masterId"/>.
+        /// Returns the slave item uniquely identified by <paramref name="slaveId"/> of the master <paramref name="masterId"/>.
         /// </summary>
         /// <param name="masterId">The specific group to read the items for.</param>
         /// <param name="slaveId">The </param>
@@ -44,7 +44,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         Task<TModel> ReadAsync(TId masterId, TId slaveId, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Delete the slave item uniquely identified by <paramref name="id"/> of the master <paramref name="masterId"/>.
+        /// Delete the slave item uniquely identified by <paramref name="slaveId"/> of the master <paramref name="masterId"/>.
         /// </summary>
         /// <param name="masterId">The specific group to read the items for.</param>
         /// <param name="slaveId">The </param>

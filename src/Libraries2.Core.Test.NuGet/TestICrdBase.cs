@@ -5,22 +5,23 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
-    public abstract class TestICrdBase<TModel, TId> 
-        where TModel : IItemForTesting, new()
+    public abstract class TestICrdBase<TModelCreate, TModel, TId>
+        where TModelCreate : IItemForTesting, new()
+    where TModel : TModelCreate
     {
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICrd<TModel, TId> CrdStorage { get; }
+        protected abstract ICrd<TModelCreate, TModel, TId> CrdStorage { get; }
 
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICrud<TModel, TId> CrudStorage { get; }
+        protected abstract ICrud<TModelCreate, TModel, TId> CrudStorage { get; }
 
         protected async Task<TId> CreateItemAsync(TypeOfTestDataEnum type)
         {
-            var initialItem = new TModel();
+            var initialItem = new TModelCreate();
             initialItem.InitializeWithDataForTesting(type);
             var id = await CrdStorage.CreateAsync(initialItem);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), id);

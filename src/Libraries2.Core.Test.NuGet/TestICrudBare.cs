@@ -10,12 +10,12 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TStorable,TId}"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>
     /// </summary>
     [TestClass]
     public abstract class TestICrudBare<TId> : TestICrdBare<TId>
     {
-        protected override ICrd<TestItemBare, TId> CrdStorage => CrudStorage;
+        protected override ICrd<TestItemBare, TestItemBare, TId> CrdStorage => CrudStorage;
 
         /// <summary>
         /// Try to create an item that is not valid.

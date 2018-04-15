@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\TestItemManyToOneCreate.cs" />
     <Compile Include="Model\TestItemManyToOne.cs" />
     <Compile Include="Model\TestItemTimeStamped.cs" />
     <Compile Include="Model\TestItemValidated.cs" />

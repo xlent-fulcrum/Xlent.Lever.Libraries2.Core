@@ -14,20 +14,20 @@ using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     [TestClass]
-    public class TestAutoCacheManyToOneRecursive : TestAutoCacheBase<ItemWithParentId>
+    public class TestAutoCacheManyToOneRecursive : TestAutoCacheBase<ItemWithParentId, ItemWithParentId>
     {
         private ManyToOneAutoCache<ItemWithParentId, Guid> _autoCache;
 
-        private IManyToOneRelationComplete<ItemWithParentId, Guid> _storage;
+        private IManyToOneRelationComplete<ItemWithParentId, ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrud<ItemWithParentId, Guid> CrudStorage => _storage;
+        protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
 
 
         [TestInitialize]
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCacheRead).FullName);
-            _storage = new ManyToOneMemory<ItemWithParentId, Guid>(item => item.ParentId);
+            _storage = new ManyToOneMemory<ItemWithParentId, ItemWithParentId, Guid>(item => item.ParentId);
             Cache = new MemoryDistributedCache();
             DistributedCacheOptions = new DistributedCacheEntryOptions
             {

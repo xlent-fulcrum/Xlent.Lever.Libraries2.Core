@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         private readonly ICrud<TServerModel, TServerModel, TServerId> _service;
 
         /// <inheritdoc />
-        public CrudMapper(TServerLogic serverLogic, ICrud<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> modelMapper)
+        public CrudMapper(TServerLogic serverLogic, ICrud<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel, TServerId> modelMapper)
         : base(serverLogic, service, modelMapper)
         {
             _service = service;

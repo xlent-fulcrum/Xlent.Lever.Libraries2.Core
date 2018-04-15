@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
-    /// <inheritdoc cref="CrdServerTranslatorTo{TModel}" />
+    /// <inheritdoc cref="CrdServerTranslatorTo{TModelCreate, TModel}" />
     public class CrudServerTranslatorTo<TModelCreate, TModel> : CrdServerTranslatorTo<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
     where TModel : IValidatable
     {

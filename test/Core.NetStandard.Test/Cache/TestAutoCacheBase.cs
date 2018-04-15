@@ -8,16 +8,17 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
-    public abstract class TestAutoCacheBase<TModel>
+    public abstract class TestAutoCacheBase<TModelCreate, TModel>
+    where TModel : TModelCreate
     {
         protected IDistributedCache Cache;
 
-        protected virtual ICrud<TModel, Guid> CrudStorage { get; }
+        protected virtual ICrud<TModelCreate, TModel, Guid> CrudStorage { get; set; }
         protected DistributedCacheEntryOptions DistributedCacheOptions;
         protected readonly string BaseGuidString;
         protected AutoCacheOptions AutoCacheOptions;
 
-        public virtual ReadAutoCache<TModel, Guid> ReadAutoCache { get; }
+        public virtual ReadAutoCache<TModel, Guid> ReadAutoCache { get; set; }
 
         protected TestAutoCacheBase()
         {

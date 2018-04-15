@@ -15,12 +15,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         /// <summary>
         /// A mapping class that can map between the client and server model.
         /// </summary>
-        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> ModelMapper { get; }
+        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel, TServerId> ModelMapper { get; }
 
 
 
         /// <inheritdoc />
-        public CrdMapper(TServerLogic serverLogic, ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel> modelMapper)
+        public CrdMapper(TServerLogic serverLogic, ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel, TServerId> modelMapper)
         : base(serverLogic, service, modelMapper)
         {
             ModelMapper = modelMapper;
@@ -30,21 +30,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         /// <inheritdoc />
         public virtual async Task<TClientId> CreateAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverItem = MapToServer(item);
-            serverItem = await _service.CreateAndReturnAsync(serverItem, token);
-            var clientId = MapToClientId(serverId);
-            item.Id = clientId;
-            await MapToServerAsync(item, token);
-            return clientId;
+            var serverItem = await CreateInServerAndReturnAsync(item, default(TServerId), token);
+            return MapToClientId(serverItem.Id);
         }
 
         /// <inheritdoc />
         public virtual async Task<TClientModel> CreateAndReturnAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverItem = MapToServer(item);
-            serverItem = await _service.CreateAndReturnAsync(serverItem, token);
-            item.Id = MapToClientId(serverItem.Id);
-            await MapToServerAsync(item, token);
+            var serverItem = await CreateInServerAndReturnAsync(item, default(TServerId), token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -52,16 +45,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         public virtual async Task CreateWithSpecifiedIdAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
-            var serverItem = await MapToServerAsync(item, token);
-            await _service.CreateWithSpecifiedIdAsync(serverId, serverItem, token);
+            await CreateInServerAndReturnAsync(item, serverId, token);
         }
 
         /// <inheritdoc />
         public virtual async Task<TClientModel> CreateWithSpecifiedIdAndReturnAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
-            var serverItem = await MapToServerAsync(item, token);
-            serverItem = await _service.CreateWithSpecifiedIdAndReturnAsync(serverId, serverItem, token);
+            var serverItem = await CreateInServerAndReturnAsync(item, serverId, token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -81,9 +72,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected TServerModel MapToServer(TClientModelCreate clientItem)
+        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, TServerId serverId = default(TServerId), CancellationToken token = default(CancellationToken))
         {
-            return ModelMapper.MapToServer(clientItem);
+            return await ModelMapper.CreateInServerAndReturnAsync(clientItem, serverId, token);
         }
     }
 }

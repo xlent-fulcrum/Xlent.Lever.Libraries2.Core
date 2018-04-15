@@ -14,8 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// </summary>
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class ManyToOneMemory<TManyModel, TId> : CrudMemory<TManyModel, TId>, IManyToOneRelationComplete<TManyModel, TId>
-        where TManyModel : class
+    /// <typeparam name="TManyModelCreate"></typeparam>
+    public class ManyToOneMemory<TManyModelCreate, TManyModel, TId> : CrudMemory<TManyModelCreate, TManyModel, TId>, IManyToOneRelationComplete<TManyModelCreate, TManyModel, TId>
+        where TManyModel : class, TManyModelCreate
     {
         private readonly GetParentIdDelegate _getParentIdDelegate;
 

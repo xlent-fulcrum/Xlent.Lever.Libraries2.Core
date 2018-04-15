@@ -12,32 +12,32 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract IManyToOneRelationComplete<TestItemManyToOne<TId, TReferenceId>, TId>
+        protected abstract IManyToOneRelationComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
             ManyStorageRecursive { get; }
 
         /// <summary>
         /// The storage that should be tested
         /// </summary>
         protected abstract
-            IManyToOneRelationComplete<TestItemManyToOne<TId, TReferenceId>, TId>
+            IManyToOneRelationComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
             ManyStorageNonRecursive { get; }
 
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract ICrd<TestItemId<TId>, TId> OneStorage { get; }
+        protected abstract ICrd<TestItemBare, TestItemId<TId>, TId> OneStorage { get; }
 
         protected async Task<TestItemManyToOne<TId, TReferenceId>> CreateItemAsync(
-            ICrd<TestItemManyToOne<TId, TReferenceId>, TId> storage, TypeOfTestDataEnum type, TId parentId)
+            ICrd<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId> storage, TypeOfTestDataEnum type, TId parentId)
         {
             return await CreateItemAsync(storage, type,
                 StorageHelper.ConvertToParameterType<TReferenceId>(parentId));
         }
 
         protected async Task<TestItemManyToOne<TId, TReferenceId>> CreateItemAsync(
-                ICrd<TestItemManyToOne<TId, TReferenceId>, TId> storage, TypeOfTestDataEnum type, TReferenceId parentId)
+                ICrd<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId> storage, TypeOfTestDataEnum type, TReferenceId parentId)
             {
-                var item = new TestItemManyToOne<TId, TReferenceId>();
+                var item = new TestItemManyToOneCreate<TReferenceId>();
             item.InitializeWithDataForTesting(type);
             item.ParentId = parentId;
             var createdItem = await storage.CreateAndReturnAsync(item);
@@ -47,7 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 
         protected async Task<TestItemId<TId>> CreateItemAsync(TypeOfTestDataEnum type)
         {
-            var item = new TestItemId<TId>();
+            var item = new TestItemBare();
             item.InitializeWithDataForTesting(type);
             var createdItem = await OneStorage.CreateAndReturnAsync(item);
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreNotEqual(default(TId), createdItem);

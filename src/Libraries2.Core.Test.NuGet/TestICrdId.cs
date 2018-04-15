@@ -7,10 +7,10 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>
     /// </summary>
     [TestClass]
-    public abstract class TestICrdId<TId> : TestICrdBase<TestItemId<TId>, TId>
+    public abstract class TestICrdId<TId> : TestICrdBase<TestItemBare, TestItemId<TId>, TId>
     { 
         /// <summary>
         /// Create an item with an id.

@@ -10,11 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     /// <typeparam name="TClientModel">The client model.</typeparam>
     /// <typeparam name="TServerLogic">Server logic to use if needed for the mapping.</typeparam>
     /// <typeparam name="TServerModel">The server model.</typeparam>
-    public interface IModelMapperWithCreate<in TClientModelCreate, TClientModel, in TServerLogic, TServerModel> : IModelMapper<TClientModel, TServerLogic, TServerModel>
+    /// <typeparam name="TServerId"></typeparam>
+    public interface IModelMapperWithCreate<in TClientModelCreate, TClientModel, in TServerLogic, TServerModel, in TServerId> : IModelMapper<TClientModel, TServerLogic, TServerModel>
     {
         /// <summary>
         /// Create a server model from a client model (<paramref name="source"/>).
         /// </summary>
-        TServerModel MapToServer(TClientModelCreate source);
+        Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate source, TServerId serverId = default(TServerId), CancellationToken token = default(CancellationToken));
     }
 }
