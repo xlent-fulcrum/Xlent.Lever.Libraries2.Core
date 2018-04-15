@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TModel">The type for the objects in persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the id.</typeparam>
-    public interface ICrud<TModel, TId> : ICrud<TModel, TModel, TId>
+    public interface ICrud<TModel, TId> : ICrud<TModel, TModel, TId>, ICrd<TModel, TId>
     {
     }
 
