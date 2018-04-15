@@ -13,12 +13,12 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         protected IDistributedCache Cache;
 
-        protected virtual ICrud<TModelCreate, TModel, Guid> CrudStorage { get; set; }
+        protected virtual ICrud<TModelCreate, TModel, Guid> CrudStorage { get; }
         protected DistributedCacheEntryOptions DistributedCacheOptions;
         protected readonly string BaseGuidString;
         protected AutoCacheOptions AutoCacheOptions;
 
-        public virtual ReadAutoCache<TModel, Guid> ReadAutoCache { get; set; }
+        public virtual ReadAutoCache<TModel, Guid> ReadAutoCache { get; }
 
         protected TestAutoCacheBase()
         {

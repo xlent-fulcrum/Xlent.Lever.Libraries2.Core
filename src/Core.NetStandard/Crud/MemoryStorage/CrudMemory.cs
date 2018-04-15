@@ -72,6 +72,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
+            if (!Exists(id)) throw new FulcrumNotFoundException($"Update failed. Could not find an item with id {id}.");
 
             await MaybeVerifyEtagForUpdateAsync(id, item, token);
             var itemCopy = CopyItem(item);

@@ -22,6 +22,8 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
 
+        public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
+
 
         [TestInitialize]
         public void Initialize()
