@@ -7,14 +7,14 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
-    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
-    public class ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, IReadAll<TClientModel, TClientId>
+    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
+    public class ReadMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IReadAll<TClientModel, TClientId>
     {
         private readonly IReadAll<TServerModel, TServerId> _service;
 
         /// <inheritdoc />
-        public ReadMapper(TServerLogic serverLogic, IReadAll<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerLogic, TServerModel> modelMapper)
-        : base(serverLogic, modelMapper)
+        public ReadMapper(IReadAll<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
+        : base(modelMapper)
         {
             _service = service;
         }

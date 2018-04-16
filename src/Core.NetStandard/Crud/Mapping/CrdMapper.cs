@@ -5,23 +5,39 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
-    /// <inheritdoc cref="ReadMapper{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
-    public class CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : ReadMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, ICrd<TClientModelCreate, TClientModel, TClientId>
-    where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
-    where TServerModel : IUniquelyIdentifiable<TServerId>
+    /// <inheritdoc cref="CrdMapper{TClientModelCreate,TClientModel,TClientId,TServerModel,TServerId}" />
+    public class CrdMapper<TClientModel, TClientId, TServerModel, TServerId> : CrdMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
+        ICrd<TClientModel, TClientId>
+        where TClientModel : IUniquelyIdentifiable<TClientId>
+        where TServerModel : IUniquelyIdentifiable<TServerId>
+    {
+        /// <inheritdoc />
+        public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service,
+            IModelMapperWithCreate<TClientModel, TServerModel, TServerId> modelMapper)
+            : base(service, modelMapper)
+        {
+        }
+    }
+
+    /// <inheritdoc cref="ReadMapper{TClientModel,TClientId,TServerModel,TServerId}" />
+    public class CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : 
+        ReadMapper<TClientModel, TClientId, TServerModel, TServerId>, 
+        ICrd<TClientModelCreate, TClientModel, TClientId>
+        where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
+        where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         private readonly ICrd<TServerModel, TServerModel, TServerId> _service;
 
         /// <summary>
         /// A mapping class that can map between the client and server model.
         /// </summary>
-        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel, TServerId> ModelMapper { get; }
+        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> ModelMapper { get; }
 
 
 
         /// <inheritdoc />
-        public CrdMapper(TServerLogic serverLogic, ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerLogic, TServerModel, TServerId> modelMapper)
-        : base(serverLogic, service, modelMapper)
+        public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> modelMapper)
+            : base(service, modelMapper)
         {
             ModelMapper = modelMapper;
             _service = service;

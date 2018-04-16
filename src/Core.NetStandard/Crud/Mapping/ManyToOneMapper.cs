@@ -7,14 +7,14 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 {
-    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerLogic,TServerModel,TServerId}" />
-    public class ManyToOneMapper<TClientModel, TClientId, TServerLogic, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
+    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
+    public class ManyToOneMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
     {
         private readonly IManyToOneRelation<TServerModel, TServerId> _service;
 
         /// <inheritdoc />
-        public ManyToOneMapper(TServerLogic storage, IManyToOneRelation<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerLogic, TServerModel> modelMapper)
-        : base(storage, modelMapper)
+        public ManyToOneMapper(IManyToOneRelation<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
+        : base(modelMapper)
         {
             _service = service;
         }

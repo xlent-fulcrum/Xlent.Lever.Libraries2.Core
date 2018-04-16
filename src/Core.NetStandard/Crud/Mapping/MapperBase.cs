@@ -13,26 +13,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     /// <typeparam name="TServerLogic">The server logic to call (possibly with the server model and/or server id).</typeparam>
     /// <typeparam name="TServerModel">The server model type.</typeparam>
     /// <typeparam name="TServerId">The server id type.</typeparam>
-    public abstract class MapperBase<TClientModel, TClientId, TServerLogic, TServerModel, TServerId>
+    public abstract class MapperBase<TClientModel, TClientId, TServerModel, TServerId>
     {
-        /// <summary>
-        /// The server logic to call (possibly with the server model and/or server id).
-        /// </summary>
-        protected TServerLogic ServerLogic { get; }
 
         /// <summary>
         /// A mapping class that can map between the client and server model.
         /// </summary>
-        public IModelMapper<TClientModel, TServerLogic, TServerModel> ModelMapper { get; }
+        public IModelMapper<TClientModel, TServerModel> ModelMapper { get; }
 
         /// <summary>
         /// Set up a new mapper between client and server types.
         /// </summary>
-        /// <param name="serverLogic">The <see cref="ServerLogic"/></param>
         /// <param name="modelMapper">the <see cref="ModelMapper"/>.</param>
-        protected MapperBase(TServerLogic serverLogic, IModelMapper<TClientModel, TServerLogic, TServerModel> modelMapper)
+        protected MapperBase(IModelMapper<TClientModel, TServerModel> modelMapper)
         {
-            ServerLogic = serverLogic;
             ModelMapper = modelMapper;
         }
 
@@ -52,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
 
         protected async Task<TClientModel> MapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.MapFromServerAsync(serverItem, ServerLogic, token);
+            return await ModelMapper.MapFromServerAsync(serverItem, token);
         }
 
         /// <summary>
@@ -60,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         /// </summary>
         protected async Task<TServerModel> MapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.MapToServerAsync(clientItem, ServerLogic, token);
+            return await ModelMapper.MapToServerAsync(clientItem, token);
         }
 
         /// <summary>
