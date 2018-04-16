@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// </summary>
     /// <typeparam name="TModel">The type for the objects in persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
-    public interface ICrd<TModel, TId> : ICrd<TModel, TModel, TId>
+    public interface ICrd<TModel, TId> : ICrd<TModel, TModel, TId>, ICreate<TModel, TId>
     {
     }
 
