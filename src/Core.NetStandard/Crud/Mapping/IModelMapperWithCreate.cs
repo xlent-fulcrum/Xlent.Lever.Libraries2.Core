@@ -7,7 +7,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     /// Interface for mapping between client and server models.
     /// </summary>
     /// <typeparam name="TClientModel">The client model.</typeparam>
-    /// <typeparam name="TServerLogic">Server logic to use if needed for the mapping.</typeparam>
     /// <typeparam name="TServerModel">The server model.</typeparam>
     /// <typeparam name="TServerId"></typeparam>
     public interface IModelMapperWithCreate<TClientModel, TServerModel,
@@ -20,7 +19,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     /// </summary>
     /// <typeparam name="TClientModelCreate">The client model to create an item.</typeparam>
     /// <typeparam name="TClientModel">The client model.</typeparam>
-    /// <typeparam name="TServerLogic">Server logic to use if needed for the mapping.</typeparam>
     /// <typeparam name="TServerModel">The server model.</typeparam>
     /// <typeparam name="TServerId"></typeparam>
     public interface IModelMapperWithCreate<in TClientModelCreate, TClientModel, TServerModel, in TServerId> : IModelMapper<TClientModel, TServerModel>

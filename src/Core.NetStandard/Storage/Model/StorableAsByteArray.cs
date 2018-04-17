@@ -15,13 +15,23 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         {
             get
             {
+                if (typeof(TData) == ByteArray.GetType()) return (TData)(object)ByteArray;
                 var jsonString = Encoding.UTF8.GetString(ByteArray);
                 return JsonConvert.DeserializeObject<TData>(jsonString);
             }
             set
             {
-                var jsonString = JsonConvert.SerializeObject(value);
-                ByteArray = Encoding.UTF8.GetBytes(jsonString);
+                byte[] valueAsBytes;
+                if (typeof(TData) == ByteArray.GetType())
+                {
+                    valueAsBytes = (byte[]) (object) value;
+                }
+                else
+                {
+                    var jsonString = JsonConvert.SerializeObject(value);
+                    valueAsBytes = Encoding.UTF8.GetBytes(jsonString);
+                }
+                ByteArray = valueAsBytes;
             }
         }
     }

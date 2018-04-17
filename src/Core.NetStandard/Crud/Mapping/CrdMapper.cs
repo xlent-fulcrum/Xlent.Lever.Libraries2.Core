@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
@@ -8,8 +10,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     /// <inheritdoc cref="CrdMapper{TClientModelCreate,TClientModel,TClientId,TServerModel,TServerId}" />
     public class CrdMapper<TClientModel, TClientId, TServerModel, TServerId> : CrdMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
         ICrd<TClientModel, TClientId>
-        where TClientModel : IUniquelyIdentifiable<TClientId>
-        where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         /// <inheritdoc />
         public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service,
@@ -23,8 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     public class CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : 
         ReadMapper<TClientModel, TClientId, TServerModel, TServerId>, 
         ICrd<TClientModelCreate, TClientModel, TClientId>
-        where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
-        where TServerModel : IUniquelyIdentifiable<TServerId>
+        where TClientModel : TClientModelCreate
     {
         private readonly ICrd<TServerModel, TServerModel, TServerId> _service;
 
@@ -47,7 +46,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         public virtual async Task<TClientId> CreateAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverItem = await CreateInServerAndReturnAsync(item, default(TServerId), token);
-            return MapToClientId(serverItem.Id);
+            var identifiable = serverItem as IUniquelyIdentifiable<TServerId>;
+            InternalContract.Require(identifiable != null,
+                $"You can only call the method {nameof(CreateAsync)} if the type {typeof(TServerModel).FullName} implements {nameof(IUniquelyIdentifiable<TServerId>)}.");
+            Debug.Assert(identifiable != null, nameof(identifiable) + " != null");
+            return MapToClientId(identifiable.Id);
         }
 
         /// <inheritdoc />

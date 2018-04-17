@@ -9,8 +9,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
     public class
         CrudMapper<TClientModel, TClientId, TServerModel, TServerId> : CrudMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
             ICrud<TClientModel, TClientId>
-        where TClientModel : IUniquelyIdentifiable<TClientId>
-        where TServerModel : IUniquelyIdentifiable<TServerId>
     {
         /// <inheritdoc />
         public CrudMapper(ICrud<TServerModel, TServerModel, TServerId> service,
@@ -25,8 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> :
             CrdMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>,
             ICrud<TClientModelCreate, TClientModel, TClientId>
-        where TClientModel : TClientModelCreate, IUniquelyIdentifiable<TClientId>
-        where TServerModel : IUniquelyIdentifiable<TServerId>
+        where TClientModel : TClientModelCreate
     {
         private readonly ICrud<TServerModel, TServerModel, TServerId> _service;
 
