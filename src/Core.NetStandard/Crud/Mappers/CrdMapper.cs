@@ -5,7 +5,7 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="CrdMapper{TClientModelCreate,TClientModel,TClientId,TServerModel,TServerId}" />
     public class CrdMapper<TClientModel, TClientId, TServerModel, TServerId> : CrdMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
@@ -31,9 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         /// A mapping class that can map between the client and server model.
         /// </summary>
         public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> ModelMapper { get; }
-
-
-
+    
         /// <inheritdoc />
         public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> modelMapper)
             : base(service, modelMapper)

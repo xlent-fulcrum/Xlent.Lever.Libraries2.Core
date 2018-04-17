@@ -100,10 +100,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TId parentId, CancellationToken token = default(CancellationToken))
+        public async Task DeleteChildrenAsync(TId masterId, CancellationToken token = default(CancellationToken))
         {
-            await _storage.DeleteChildrenAsync(parentId, token);
-            await RemoveCachedChildrenInBackgroundAsync(parentId, token);
+            await _storage.DeleteChildrenAsync(masterId, token);
+            await RemoveCachedChildrenInBackgroundAsync(masterId, token);
         }
 
         private async Task RemoveCachedChildrenInBackgroundAsync(TId parentId, CancellationToken token = default(CancellationToken))

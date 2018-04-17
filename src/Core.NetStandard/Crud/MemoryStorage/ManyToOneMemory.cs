@@ -92,13 +92,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(TId parentId, CancellationToken token = default(CancellationToken))
+        public async Task DeleteChildrenAsync(TId masterId, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotNull(parentId, nameof(parentId));
-            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
+            InternalContract.RequireNotNull(masterId, nameof(masterId));
+            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             var errorMessage = $"{nameof(TManyModel)} must implement the interface {nameof(IUniquelyIdentifiable<TId>)} for this method to work.";
             InternalContract.Require(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TManyModel)), errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TManyModel>((o, t) => ReadChildrenWithPagingAsync(parentId, o, null, t), token);
+            var items = new PageEnvelopeEnumerableAsync<TManyModel>((o, t) => ReadChildrenWithPagingAsync(masterId, o, null, t), token);
             var enumerator = items.GetEnumerator();
             while (await enumerator.MoveNextAsync())
             {

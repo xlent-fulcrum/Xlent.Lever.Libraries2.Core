@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <summary>
     /// Interface for mapping between client and server models.

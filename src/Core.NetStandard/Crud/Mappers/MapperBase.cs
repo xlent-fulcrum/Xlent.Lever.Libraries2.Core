@@ -3,14 +3,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <summary>
     /// Map between two models.
     /// </summary>
     /// <typeparam name="TClientModel">The client model type.</typeparam>
     /// <typeparam name="TClientId">The client id type.</typeparam>
-    /// <typeparam name="TServerLogic">The server logic to call (possibly with the server model and/or server id).</typeparam>
     /// <typeparam name="TServerModel">The server model type.</typeparam>
     /// <typeparam name="TServerId">The server id type.</typeparam>
     public abstract class MapperBase<TClientModel, TClientId, TServerModel, TServerId>

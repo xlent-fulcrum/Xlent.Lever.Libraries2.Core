@@ -38,28 +38,5 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             await UpdateAsync(id, item, token);
             return await ReadAsync(id, token);
         }
-
-        /// <summary>
-        /// If <paramref name="item"/> implements <see cref="IOptimisticConcurrencyControlByETag"/>
-        /// then the old value is read using <see cref="ReadBase{TModel,TId}.ReadAsync"/> and the values are verified to be equal.
-        /// The Etag of the item is then set to a new value.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="item"></param>
-        /// <param name="token">Propagates notification that operations should be canceled</param>
-        /// <returns></returns>
-        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
-        {
-            if (item is IOptimisticConcurrencyControlByETag etaggable)
-            {
-                var oldItem = await ReadAsync(id, token);
-                if (oldItem != null)
-                {
-                    var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;
-                    if (oldEtag?.ToLowerInvariant() != etaggable.Etag?.ToLowerInvariant())
-                        throw new FulcrumConflictException($"The updated item ({item}) had an old ETag value.");
-                }
-            }
-        }
     }
 }

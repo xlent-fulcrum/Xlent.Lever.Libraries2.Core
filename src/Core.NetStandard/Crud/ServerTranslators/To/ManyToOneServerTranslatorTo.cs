@@ -43,12 +43,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(string parentId, CancellationToken token = new CancellationToken())
+        public async Task DeleteChildrenAsync(string masterId, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            await translator.Add(parentId).ExecuteAsync();
-            parentId = translator.Translate(parentId);
-            await _storage.DeleteChildrenAsync(parentId, token);
+            await translator.Add(masterId).ExecuteAsync();
+            masterId = translator.Translate(masterId);
+            await _storage.DeleteChildrenAsync(masterId, token);
         }
     }
 }

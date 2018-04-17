@@ -5,15 +5,15 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
+namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
-    public class ManyToOneMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
+    public class ManyToOneBiased1Mapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
     {
-        private readonly IManyToOneRelation<TServerModel, TServerId> _service;
+        private readonly IManyToManyBiased1<TServerModel, TServerId> _service;
 
         /// <inheritdoc />
-        public ManyToOneMapper(IManyToOneRelation<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
+        public ManyToOneBiased1Mapper(IManyToManyBiased1<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
         : base(modelMapper)
         {
             _service = service;
@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         public virtual async Task<PageEnvelope<TClientModel>> ReadChildrenWithPagingAsync(TClientId parentId, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(parentId);
-            var serverPage = await _service.ReadChildrenWithPagingAsync(serverId, offset, limit, token);
+            var serverPage = await _service.ReadReferencedItemsByReference1WithPagingAsync(serverId, offset, limit, token);
             FulcrumAssert.IsNotNull(serverPage);
             return new PageEnvelope<TClientModel>(serverPage.PageInfo, await MapFromServerAsync(serverPage.Data, token));
         }
@@ -32,15 +32,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mapping
         public virtual async Task<IEnumerable<TClientModel>> ReadChildrenAsync(TClientId parentId, int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(parentId);
-            var serverItems = await _service.ReadChildrenAsync(serverId, limit, token);
+            var serverItems = await _service.ReadReferencedItemsByReference1Async(serverId, limit, token);
             return await MapFromServerAsync(serverItems, token);
         }
 
         /// <inheritdoc />
-        public virtual async Task DeleteChildrenAsync(TClientId parentId, CancellationToken token = default(CancellationToken))
+        public virtual async Task DeleteChildrenAsync(TClientId masterId, CancellationToken token = default(CancellationToken))
         {
-            var serverId = MapToServerId(parentId);
-            await _service.DeleteChildrenAsync(serverId, token);
+            var serverId = MapToServerId(masterId);
+            await _service.DeleteReferencedItemsByReference1(serverId, token);
         }
     }
 }
