@@ -51,7 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         public IValueProvider ValueProvider { get; }
 
         /// <inheritdoc />
-        public ITenant Tenant
+        public Tenant Tenant
         {
             get => ValueProvider.GetValue<Tenant>(TenantIdKey);
             set => ValueProvider.SetValue(TenantIdKey, value);

@@ -18,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <param name="name">The name of the application.</param>
         /// <param name="tenant">The tenant that the application itself runs in.</param>
         /// <param name="runTimeLevel">The <see cref="RunTimeLevelEnum"/> for the application itself.</param>
-        public static void NetFrameworkSetup(string name, ITenant tenant, RunTimeLevelEnum runTimeLevel)
+        public static void NetFrameworkSetup(string name, Tenant tenant, RunTimeLevelEnum runTimeLevel)
         {
             FulcrumApplication.Initialize(name, tenant, runTimeLevel);
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;

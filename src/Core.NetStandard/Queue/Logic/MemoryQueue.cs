@@ -242,7 +242,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     public partial class MemoryQueue<T> : IResourceHealth
     {
         /// <inheritdoc />
-        public async Task<HealthResponse> GetResourceHealthAsync(ITenant tenant)
+        public async Task<HealthResponse> GetResourceHealthAsync(Tenant tenant)
         {
             return await Task.FromResult(new HealthResponse("MemoryQueue"));
         }

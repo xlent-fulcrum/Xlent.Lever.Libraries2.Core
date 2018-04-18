@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Context
         /// <summary>
         /// The current Tenant.
         /// </summary>
-        ITenant Tenant { get; set; }
+        Tenant Tenant { get; set; }
 
         /// <summary>
         /// The current configuration.

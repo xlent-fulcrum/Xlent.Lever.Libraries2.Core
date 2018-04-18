@@ -76,6 +76,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item,
             CancellationToken token = default(CancellationToken))
         {
+            if (!Exists(id)) throw new FulcrumNotFoundException($"Could not find an item with id {id}");
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
             await CreateWithSpecifiedIdAsync(id, item, token);

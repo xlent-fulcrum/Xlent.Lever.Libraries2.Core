@@ -16,11 +16,14 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     [TestClass]
     public class TestAutoCacheManyToOneRecursive : TestAutoCacheBase<ItemWithParentId, ItemWithParentId>
     {
-        private ManyToOneAutoCacheComplete<ItemWithParentId, ItemWithParentId, Guid> _autoCache;
+        private ManyToOneAutoCacheComplete<ItemWithParentId, Guid> _autoCache;
 
         private IManyToOneRelationComplete<ItemWithParentId, ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
         protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
+        
+        /// <inheritdoc />
+        public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
 
         public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
 
@@ -39,7 +42,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 AbsoluteExpirationRelativeToNow = DistributedCacheOptions.AbsoluteExpirationRelativeToNow
             };
-            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
         }
 
         [TestMethod]
@@ -48,7 +51,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
             var parentId = Guid.NewGuid();
             var parent = new ItemWithParentId(parentId, "ParentA");
             await PrepareStorageAndCacheAsync(parentId, parent, null);
@@ -83,7 +86,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
             var parentId = Guid.NewGuid();
             var parent = new ItemWithParentId(parentId, "ParentA");
             await PrepareStorageAndCacheAsync(parentId, parent, null);
@@ -105,7 +108,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
+            _autoCache = new ManyToOneAutoCacheComplete<ItemWithParentId, Guid>(_storage, Cache, null, AutoCacheOptions);
             var parentId = Guid.NewGuid();
             var parent = new ItemWithParentId(parentId, "ParentA");
             await PrepareStorageAndCacheAsync(parentId, parent, null);
