@@ -14,46 +14,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     /// <typeparam name="TServerId">The server id type.</typeparam>
     public abstract class MapperBase<TClientModel, TClientId, TServerModel, TServerId>
     {
-
-        /// <summary>
-        /// A mapping class that can map between the client and server model.
-        /// </summary>
-        public IModelMapper<TClientModel, TServerModel> ModelMapper { get; }
-
         /// <summary>
         /// Set up a new mapper between client and server types.
         /// </summary>
-        /// <param name="modelMapper">the <see cref="ModelMapper"/>.</param>
-        protected MapperBase(IModelMapper<TClientModel, TServerModel> modelMapper)
+        protected MapperBase()
         {
-            ModelMapper = modelMapper;
-        }
-
-        /// <summary>
-        /// A convenience method to map a list of <paramref name="serverItems"/> into a list of client items.
-        /// </summary>
-        protected async Task<TClientModel[]> MapFromServerAsync(IEnumerable<TServerModel> serverItems, CancellationToken token = default(CancellationToken))
-        {
-            if (serverItems == null) return null;
-            var clientItemTasks = serverItems.Select(async si => await MapFromServerAsync(si, token));
-            return await Task.WhenAll(clientItemTasks);
-        }
-
-        /// <summary>
-        /// A convenience method to map a <paramref name="serverItem"/> to a a client item.
-        /// </summary>
-
-        protected async Task<TClientModel> MapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
-        {
-            return await ModelMapper.MapFromServerAsync(serverItem, token);
-        }
-
-        /// <summary>
-        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
-        /// </summary>
-        protected async Task<TServerModel> MapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
-        {
-            return await ModelMapper.MapToServerAsync(clientItem, token);
         }
 
         /// <summary>

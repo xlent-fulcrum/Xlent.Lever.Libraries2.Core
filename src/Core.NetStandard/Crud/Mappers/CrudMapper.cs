@@ -11,7 +11,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         /// <inheritdoc />
         public CrudMapper(ICrud<TServerModel, TServerModel, TServerId> service,
-            IModelMapperWithCreate<TClientModel, TServerModel, TServerId> modelMapper)
+            ICrudModelMapper<TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
         }
@@ -26,11 +26,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         private readonly ICrud<TServerModel, TServerModel, TServerId> _service;
 
+        /// <summary>
+        /// A mapping class that can map between the client and server model.
+        /// </summary>
+        public ICrudModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> CrudModelMapper { get; }
+
         /// <inheritdoc />
-        public CrudMapper(ICrud<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> modelMapper)
+        public CrudMapper(ICrud<TServerModel, TServerModel, TServerId> service, ICrudModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
             _service = service;
+            CrudModelMapper = modelMapper;
         }
 
         /// <inheritdoc />
@@ -48,6 +54,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
             var serverItem = await MapToServerAsync(item, token);
             serverItem = await _service.UpdateAndReturnAsync(serverId, serverItem, token);
             return await MapFromServerAsync(serverItem, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected async Task<TServerModel> MapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
+        {
+            return await CrudModelMapper.MapToServerAsync(clientItem, token);
         }
     }
 }

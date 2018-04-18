@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         /// <inheritdoc />
         public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service,
-            IModelMapperWithCreate<TClientModel, TServerModel, SlaveToMasterId<TServerId>>
+            ISlaveToMasterModelMapper<TClientModel, TClientId, TServerModel>
                 modelMapper)
             : base(service, modelMapper)
         {
@@ -35,20 +35,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <summary>
         /// A mapping class that can map between the client and server model.
         /// </summary>
-        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, SlaveToMasterId<TServerId>> ModelMapper { get; }
+        public ISlaveToMasterModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> SlaveToMasterModelMapper { get; }
 
         /// <inheritdoc />
-        public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, SlaveToMasterId<TServerId>> modelMapper)
+        public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service, ISlaveToMasterModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
-            ModelMapper = modelMapper;
             _service = service;
+            SlaveToMasterModelMapper = modelMapper;
         }
 
         /// <inheritdoc />
         public async Task<SlaveToMasterId<TClientId>> CreateAsync(TClientId masterId, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverItem = await CreateInServerAndReturnAsync(item, null, token);
+            var serverItem = await CreateInServerAndReturnAsync(masterId, item, token);
             var identifiable = serverItem as IUniquelyIdentifiable<SlaveToMasterId<TServerId>>;
             InternalContract.Require(identifiable != null,
                 $"You can only call the method {nameof(CreateAsync)} if the type {typeof(TServerModel).FullName} implements {nameof(IUniquelyIdentifiable<TServerId>)}.");
@@ -60,7 +60,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public async Task<TClientModel> CreateAndReturnAsync(TClientId masterId, TClientModelCreate item,
             CancellationToken token = default(CancellationToken))
         {
-            var serverItem = await CreateInServerAndReturnAsync(item, null, token);
+            var serverItem = await CreateInServerAndReturnAsync(masterId, item, token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -68,16 +68,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public async Task CreateWithSpecifiedIdAsync(SlaveToMasterId<TClientId> id, TClientModelCreate item,
             CancellationToken token = default(CancellationToken))
         {
-            var serverId = MapToServerId(id);
-            await CreateInServerAndReturnAsync(item, serverId, token);
+            await CreateInServerAndReturnAsync(id, item, token);
         }
 
         /// <inheritdoc />
         public async Task<TClientModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TClientId> id, TClientModelCreate item,
             CancellationToken token = default(CancellationToken))
         {
-            var serverId = MapToServerId(id);
-            var serverItem = await CreateInServerAndReturnAsync(item, serverId, token);
+            var serverItem = await CreateInServerAndReturnAsync(id, item, token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -118,9 +116,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, SlaveToMasterId<TServerId> serverId = null, CancellationToken token = default(CancellationToken))
+        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientId masterId, TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.CreateInServerAndReturnAsync(clientItem, serverId, token);
+            return await SlaveToMasterModelMapper.CreateAndReturnAsync(masterId, clientItem, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected async Task<TServerModel> CreateInServerAndReturnAsync(SlaveToMasterId<TClientId> masterId, TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
+        {
+            return await SlaveToMasterModelMapper.CreateWithSpecifiedIdAndReturnAsync(masterId, clientItem, token);
         }
     }
 }

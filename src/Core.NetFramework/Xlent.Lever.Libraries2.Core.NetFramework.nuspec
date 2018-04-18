@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.24.12-rc</version>
+    <version>1.24.18-rc</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.24.12-rc Added TModelCreate to ICreate.
+      1.24.18-rc Added TModelCreate to ICreate.
       1.23.0 ISlaveToMaster now has two types, not three
       1.22.2 Chained crud implementations
       1.21.3 Renamed CRUD-implementations.

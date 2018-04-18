@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -12,11 +13,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         private readonly IManyToManyBiased1<TServerModel, TServerId> _service;
 
+        /// <summary>
+        /// A mapping class that can map between the client and server model.
+        /// </summary>
+        public IReadModelMapper<TClientModel, TServerModel> ReadModelMapper { get; }
+
         /// <inheritdoc />
-        public ManyToOneBiased1Mapper(IManyToManyBiased1<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
-        : base(modelMapper)
+        public ManyToOneBiased1Mapper(IManyToManyBiased1<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
+        : base()
         {
             _service = service;
+            ReadModelMapper = modelMapper;
         }
 
         /// h<inheritdoc />
@@ -41,6 +48,24 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         {
             var serverId = MapToServerId(masterId);
             await _service.DeleteReferencedItemsByReference1(serverId, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a list of <paramref name="serverItems"/> into a list of client items.
+        /// </summary>
+        protected async Task<TClientModel[]> MapFromServerAsync(IEnumerable<TServerModel> serverItems, CancellationToken token = default(CancellationToken))
+        {
+            if (serverItems == null) return null;
+            var clientItemTasks = serverItems.Select(async si => await MapFromServerAsync(si, token));
+            return await Task.WhenAll(clientItemTasks);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="serverItem"/> to a a client item.
+        /// </summary>
+        protected async Task<TClientModel> MapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
+        {
+            return await ReadModelMapper.MapFromServerAsync(serverItem, token);
         }
     }
 }

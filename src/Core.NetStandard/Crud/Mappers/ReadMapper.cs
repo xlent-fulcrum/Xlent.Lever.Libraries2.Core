@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -12,11 +13,16 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         private readonly IReadAll<TServerModel, TServerId> _service;
 
+        /// <summary>
+        /// A mapping class that can map between the client and server model.
+        /// </summary>
+        public IReadModelMapper<TClientModel, TServerModel> ReadModelMapper { get; }
+
         /// <inheritdoc />
-        public ReadMapper(IReadAll<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
-        : base(modelMapper)
+        public ReadMapper(IReadAll<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
         {
             _service = service;
+            ReadModelMapper = modelMapper;
         }
 
         /// <inheritdoc />
@@ -40,6 +46,25 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         {
             var serverItems = await _service.ReadAllAsync(limit, token);
             return await MapFromServerAsync(serverItems, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a list of <paramref name="serverItems"/> into a list of client items.
+        /// </summary>
+        protected async Task<TClientModel[]> MapFromServerAsync(IEnumerable<TServerModel> serverItems, CancellationToken token = default(CancellationToken))
+        {
+            if (serverItems == null) return null;
+            var clientItemTasks = serverItems.Select(async si => await MapFromServerAsync(si, token));
+            return await Task.WhenAll(clientItemTasks);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="serverItem"/> to a a client item.
+        /// </summary>
+
+        protected async Task<TClientModel> MapFromServerAsync(TServerModel serverItem, CancellationToken token = default(CancellationToken))
+        {
+            return await ReadModelMapper.MapFromServerAsync(serverItem, token);
         }
     }
 }

@@ -12,11 +12,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         private readonly IRud<TServerModel, TServerId> _service;
 
+        /// <summary>
+        /// A mapping class that can map between the client and server model.
+        /// </summary>
+        public IRudModelMapper<TClientModel, TServerModel> RudModelMapper { get; }
+
         /// <inheritdoc />
-        public RudMapper(IRud<TServerModel, TServerId> service, IModelMapper<TClientModel, TServerModel> modelMapper)
+        public RudMapper(IRud<TServerModel, TServerId> service, IRudModelMapper<TClientModel, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
             _service = service;
+            RudModelMapper = modelMapper;
         }
 
         /// <inheritdoc />
@@ -52,6 +58,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
             var serverItem = await MapToServerAsync(item, token);
             serverItem = await _service.UpdateAndReturnAsync(serverId, serverItem, token);
             return await MapFromServerAsync(serverItem, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected async Task<TServerModel> MapToServerAsync(TClientModel clientItem, CancellationToken token = default(CancellationToken))
+        {
+            return await RudModelMapper.MapToServerAsync(clientItem, token);
         }
     }
 }

@@ -18,13 +18,11 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         private ManyToOneAutoCacheComplete<ItemWithParentId, Guid> _autoCache;
 
-        private IManyToOneRelationComplete<ItemWithParentId, ItemWithParentId, Guid> _storage;
+        private IManyToOneRelationComplete<ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
         protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
         
         /// <inheritdoc />
-        public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
-
         public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
 
 
@@ -32,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCacheRead).FullName);
-            _storage = new ManyToOneMemory<ItemWithParentId, ItemWithParentId, Guid>(item => item.ParentId);
+            _storage = new ManyToOneMemory<ItemWithParentId, Guid>(item => item.ParentId);
             Cache = new MemoryDistributedCache();
             DistributedCacheOptions = new DistributedCacheEntryOptions
             {

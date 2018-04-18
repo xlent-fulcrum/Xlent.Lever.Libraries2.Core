@@ -13,7 +13,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     {
         /// <inheritdoc />
         public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service,
-            IModelMapperWithCreate<TClientModel, TServerModel, TServerId> modelMapper)
+            ICrdModelMapper<TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
         }
@@ -30,20 +30,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <summary>
         /// A mapping class that can map between the client and server model.
         /// </summary>
-        public new IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> ModelMapper { get; }
+        public ICrdModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> CrdModelMapper { get; }
     
         /// <inheritdoc />
-        public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, TServerId> modelMapper)
+        public CrdMapper(ICrd<TServerModel, TServerModel, TServerId> service, ICrdModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
-            ModelMapper = modelMapper;
+            CrdModelMapper = modelMapper;
             _service = service;
         }
 
         /// <inheritdoc />
         public virtual async Task<TClientId> CreateAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverItem = await CreateInServerAndReturnAsync(item, default(TServerId), token);
+            var serverItem = await CreateInServerAndReturnAsync(item, token);
             var identifiable = serverItem as IUniquelyIdentifiable<TServerId>;
             InternalContract.Require(identifiable != null,
                 $"You can only call the method {nameof(CreateAsync)} if the type {typeof(TServerModel).FullName} implements {nameof(IUniquelyIdentifiable<TServerId>)}.");
@@ -54,7 +54,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <inheritdoc />
         public virtual async Task<TClientModel> CreateAndReturnAsync(TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverItem = await CreateInServerAndReturnAsync(item, default(TServerId), token);
+            var serverItem = await CreateInServerAndReturnAsync(item, token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -62,14 +62,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public virtual async Task CreateWithSpecifiedIdAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
             var serverId = MapToServerId(id);
-            await CreateInServerAndReturnAsync(item, serverId, token);
+            await CreateInServerAndReturnAsync(id,item , token);
         }
 
         /// <inheritdoc />
         public virtual async Task<TClientModel> CreateWithSpecifiedIdAndReturnAsync(TClientId id, TClientModelCreate item, CancellationToken token = default(CancellationToken))
         {
-            var serverId = MapToServerId(id);
-            var serverItem = await CreateInServerAndReturnAsync(item, serverId, token);
+            var serverItem = await CreateInServerAndReturnAsync(id, item, token);
             return await MapFromServerAsync(serverItem, token);
         }
 
@@ -89,9 +88,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, TServerId serverId = default(TServerId), CancellationToken token = default(CancellationToken))
+        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await ModelMapper.CreateInServerAndReturnAsync(clientItem, serverId, token);
+            return await CrdModelMapper.CreateAndReturnAsync(clientItem, token);
+        }
+
+        /// <summary>
+        /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
+        /// </summary>
+        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientId id, TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
+        {
+            return await CrdModelMapper.CreateWithSpecifiedIdAndReturnAsync(id, clientItem, token);
         }
     }
 }
