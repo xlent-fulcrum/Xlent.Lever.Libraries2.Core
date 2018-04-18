@@ -11,7 +11,21 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
-    public class SlaveToMasterMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : 
+    public class SlaveToMasterMapper<TClientModel, TClientId, TServerModel, TServerId> :
+        SlaveToMasterMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
+        ISlaveToMasterComplete<TClientModel, TClientId>
+    {
+        /// <inheritdoc />
+        public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service,
+            IModelMapperWithCreate<TClientModel, TServerModel, SlaveToMasterId<TServerId>>
+                modelMapper)
+            : base(service, modelMapper)
+        {
+        }
+    }
+
+    /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
+    public class SlaveToMasterMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> :
         RudMapper<TClientModel, SlaveToMasterId<TClientId>, TServerModel, SlaveToMasterId<TServerId>>,
         ISlaveToMasterComplete<TClientModelCreate, TClientModel, TClientId>
         where TClientModel : TClientModelCreate
@@ -25,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 
         /// <inheritdoc />
         public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service, IModelMapperWithCreate<TClientModelCreate, TClientModel, TServerModel, SlaveToMasterId<TServerId>> modelMapper)
-        : base(service, modelMapper)
+            : base(service, modelMapper)
         {
             ModelMapper = modelMapper;
             _service = service;
