@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// The tenant that the application belongs to.
         /// Mandatory.
         /// </summary>
-        public ITenant ApplicationTenant { get; set; }
+        public Tenant ApplicationTenant { get; set; }
 
         /// <summary>
         /// The name of the calling client.
@@ -32,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// The tenant that the client belongs to. This is for multi tenant applications. For single tenant applications, this property should be null.
         /// Optional.
         /// </summary>
-        public ITenant ClientTenant { get; set; }
+        public Tenant ClientTenant { get; set; }
         
         /// <summary>
         /// The time that the log message was created

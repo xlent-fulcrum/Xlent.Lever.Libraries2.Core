@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Platform.Configurations
         /// <summary>
         /// The tenant behind this running service
         /// </summary>
-        ITenant ServiceTenant { get; }
+        Tenant ServiceTenant { get; }
 
         /// <summary>
         /// Gets the configuration for the current <see cref="ServiceTenant"/>.
@@ -29,6 +29,6 @@ namespace Xlent.Lever.Libraries2.Core.Platform.Configurations
         /// </summary>
         /// <param name="tenant"></param>
         /// <returns></returns>
-        Task<ILeverConfiguration> GetConfigurationForAsync(ITenant tenant);
+        Task<ILeverConfiguration> GetConfigurationForAsync(Tenant tenant);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Application
@@ -28,9 +29,11 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <returns>The found string or null.</returns>
         public string GetString(string name, bool isMandatory)
         {
+            // We must not have InternalContract and stuff here, since we may not have set up logging, etc.
+            if (string.IsNullOrWhiteSpace(name)) throw new FulcrumContractException($"Parameter {nameof(name)} was empty.");
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
             var value = _appSettingGetter.GetAppSetting(name);
-            if (isMandatory) FulcrumAssert.IsNotNull(value, null, $"Missing app setting: {name}");
+            if (isMandatory && string.IsNullOrWhiteSpace(value)) throw new FulcrumContractException($"Missing app setting: {name}");
             return value;
         }
 
@@ -43,10 +46,11 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <returns>The found enumeration value or null.</returns>
         public T GetEnum<T>(string name, bool isMandatory) where T : struct
         {
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            // We must not have InternalContract and stuff here, since we may not have set up logging, etc.
+            if (string.IsNullOrWhiteSpace(name)) throw new FulcrumContractException($"Parameter {nameof(name)} was empty.");
             var valueAsString = GetString(name, isMandatory);
             if (valueAsString == null) return default(T);
-            FulcrumAssert.IsTrue(Enum.TryParse(valueAsString, out T value), null, $"App setting {name} ({valueAsString}) must have one of the values for {typeof(T).FullName}.");
+            if (!Enum.TryParse(valueAsString, out T value)) throw new FulcrumContractException($"App setting {name} ({valueAsString}) must have one of the values for {typeof(T).FullName}.");
             return value;
         }
 
@@ -57,7 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <param name="environmentSettingName">The name of the app setting for the environment part of the tenant.</param>
         /// <param name="isMandatory">Throw an excepton if this is true and no value was found.</param>
         /// <returns>The found enumeration value or null.</returns>
-        public ITenant GetTenant(string organizationSettingName, string environmentSettingName, bool isMandatory)
+        public Tenant GetTenant(string organizationSettingName, string environmentSettingName, bool isMandatory)
         {
             var organization = GetString(organizationSettingName, isMandatory);
             if (organization == null) return null;

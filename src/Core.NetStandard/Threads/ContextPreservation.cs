@@ -18,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
     public class ContextPreservation : ILoggable
     {
         private const int MaxDepthForBackgroundThreads = 5;
-        private readonly ITenant _clientTenant;
+        private readonly Tenant _clientTenant;
         private readonly string _correlationId;
         private readonly string _callingClientName;
         private readonly ILeverConfiguration _configuration;

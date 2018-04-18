@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Health
     [TestClass]
     public class HealthTest
     {
-        private static readonly ITenant Tenant = new Tenant("Super", "Mario");
+        private static readonly Tenant Tenant = new Tenant("Super", "Mario");
         private IResourceHealth2 _goombaResource;
 
         [TestInitialize]
@@ -47,7 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Health
             Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(HealthInfo.StatusEnum.Ok, aggregatedHealthResponse.Resources.First().Status);
         }
 
-        private static Task<HealthInfo> HealthDelegateMethod(ITenant tenant)
+        private static Task<HealthInfo> HealthDelegateMethod(Tenant tenant)
         {
             return Task.FromResult(new HealthInfo
             {
@@ -62,7 +62,7 @@ namespace Xlent.Lever.Libraries2.Core.Health
     {
         public const string Name = "GOOMBA";
 
-        public Task<HealthInfo> GetResourceHealth2Async(ITenant tenant)
+        public Task<HealthInfo> GetResourceHealth2Async(Tenant tenant)
         {
             return Task.FromResult(new HealthInfo
             {

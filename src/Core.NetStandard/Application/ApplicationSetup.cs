@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <summary>
         /// The tenant for the application. For a multi-tenant application, this is the application tenant not any caller tenant.
         /// </summary>
-        public ITenant Tenant { get; set; }
+        public Tenant Tenant { get; set; }
 
         /// <summary>
         /// How to deal with background threads.

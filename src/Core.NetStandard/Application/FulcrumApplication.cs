@@ -1,6 +1,7 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging;
+using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 using Xlent.Lever.Libraries2.Core.Threads;
 
@@ -28,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <param name="tenant">The tenant that the application itself runs in.</param>
         /// <param name="level">The run time level for the application itself.</param>
         /// <remarks>Will setup all mandatory fields for <see cref="Setup"/>, but you might want to override those values when this method returns."/></remarks>
-        public static void Initialize(string name, ITenant tenant, RunTimeLevelEnum level)
+        public static void Initialize(string name, Tenant tenant, RunTimeLevelEnum level)
         {
             InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
             InternalContract.RequireValidated(tenant, nameof(tenant));
@@ -71,6 +72,11 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// Checks if the run time environment is in production stage.
         /// </summary>
         public static bool IsInProduction => Setup.RunTimeLevel == RunTimeLevelEnum.Production;
+
+        /// <summary>
+        /// Checks if the run time environment is in production stage or a production simulation stage
+        /// </summary>
+        public static bool IsInProductionOrProductionSimulation => IsInProduction || IsInProductionSimulation;
 
         /// <summary>
         /// If we are in production, this method does nothing. Otherwise it calls <see cref="Validate"/>.

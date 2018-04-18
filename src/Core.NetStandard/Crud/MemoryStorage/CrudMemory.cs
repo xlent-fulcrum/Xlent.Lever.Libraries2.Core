@@ -70,6 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         public override async Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
+            if (!Exists(id)) throw new FulcrumNotFoundException($"Could not find an item with id {id}");
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
 

@@ -13,7 +13,7 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         /// <summary>
         /// The current Tenant
         /// </summary>
-        public ITenant Tenant { get; }
+        public Tenant Tenant { get; }
 
         private readonly Model.Health _health;
         private int _warnings;
@@ -25,14 +25,14 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         /// The signature for a resource health method.
         /// </summary>
         /// <returns></returns>
-        public delegate Task<HealthInfo> GetResourceHealthDelegate(ITenant tenant);
+        public delegate Task<HealthInfo> GetResourceHealthDelegate(Tenant tenant);
 
         /// <summary>
         /// Create ResourceHealthAggregator2 with an <see cref="ITenant"/> and the name of the service
         /// </summary>
         /// <param name="tenant">The tenant that we should focus on.</param>
         /// <param name="serviceName">The name of the resource.</param>
-        public ResourceHealthAggregator2(ITenant tenant, string serviceName)
+        public ResourceHealthAggregator2(Tenant tenant, string serviceName)
         {
             Tenant = tenant;
             _health = new Model.Health(serviceName);
