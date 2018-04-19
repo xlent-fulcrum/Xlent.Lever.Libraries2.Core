@@ -8,10 +8,10 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>
     /// </summary>
     [TestClass]
-    public abstract class TestICrdValidated<TId> : TestICrdBase<TestItemValidated<TId>, TId>
+    public abstract class TestICrdValidated<TId> : TestICrdBase<TestItemBare, TestItemValidated<TId>, TId>
     {
         /// <summary>
         /// Try to create an item that is not valid.

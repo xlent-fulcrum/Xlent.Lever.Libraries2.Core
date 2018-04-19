@@ -7,20 +7,31 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
     /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
-    public class CrdServerTranslatorTo<TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModel, string>
-    where TModel : IValidatable
+    public class CrdServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel, TModel>, ICrd<TModel, string>
     {
-        private readonly ICrd<TModel, string> _storage;
-
         /// <inheritdoc />
-        public CrdServerTranslatorTo(ICrd<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
-        : base(storage, idConceptName, getServerNameMethod, translatorService)
+        public CrdServerTranslatorTo(ICrd<TModel, string> storage, string idConceptName,
+            System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+            : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
-            _storage = storage;
         }
+    }
 
-        /// <inheritdoc />
-        public async Task<string> CreateAsync(TModel item, CancellationToken token = new CancellationToken())
+    /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
+        public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
+            where TModel : TModelCreate
+        {
+            private readonly ICrd<TModelCreate, TModel, string> _storage;
+
+            /// <inheritdoc />
+            public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+                : base(storage, idConceptName, getServerNameMethod, translatorService)
+            {
+                _storage = storage;
+            }
+
+            /// <inheritdoc />
+            public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(item).ExecuteAsync();
@@ -29,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateAndReturnAsync(TModel item, CancellationToken token = new CancellationToken())
+        public async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(item).ExecuteAsync();
@@ -38,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task CreateWithSpecifiedIdAsync(string id, TModel item, CancellationToken token = new CancellationToken())
+        public async Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(id).Add(item).ExecuteAsync();
@@ -48,7 +59,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModel item, CancellationToken token = new CancellationToken())
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(id).Add(item).ExecuteAsync();

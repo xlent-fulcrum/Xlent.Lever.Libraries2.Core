@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <summary>
         /// If <paramref name="item"/> implements <see cref="IValidatable"/>, then it is validated.
         /// </summary>
-        protected static void MaybeValidate(TModel item)
+        protected static void MaybeValidate<T>(T item)
         {
             StorageHelper.MaybeValidate(item);
         }

@@ -5,15 +5,26 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
 {
-    /// <inheritdoc cref="CrdServerTranslatorFrom{TModel}" />
-    public class CrudServerTranslatorFrom<TModel> : CrdServerTranslatorFrom<TModel>, ICrud<TModel, string>
-    where TModel : IValidatable
+    /// <inheritdoc cref="CrdServerTranslatorFrom{TModelCreate, TModel}" />
+    public class CrudServerTranslatorFrom<TModel> : CrudServerTranslatorFrom<TModel, TModel>, ICrud<TModel, string>
     {
-        private readonly ICrud<TModel, string> _storage;
+        /// <inheritdoc />
+        public CrudServerTranslatorFrom(ICrud<TModel, string> storage, string idConceptName,
+            System.Func<string> getServerNameMethod)
+            : base(storage, idConceptName, getServerNameMethod)
+        {
+        }
+    }
+
+    /// <inheritdoc cref="CrdServerTranslatorFrom{TModelCreate, TModel}" />
+    public class CrudServerTranslatorFrom<TModelCreate, TModel> : CrdServerTranslatorFrom<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
+        where TModel : TModelCreate
+    {
+        private readonly ICrud<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrudServerTranslatorFrom(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
-        :base(storage, idConceptName, getServerNameMethod)
+        public CrudServerTranslatorFrom(ICrud<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
+            : base(storage, idConceptName, getServerNameMethod)
         {
             _storage = storage;
         }

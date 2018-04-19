@@ -14,13 +14,13 @@ using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     [TestClass]
-    public class TestAutoCacheManyToOneRecursive : TestAutoCacheBase<ItemWithParentId>
+    public class TestAutoCacheManyToOneRecursive : TestAutoCacheBase<ItemWithParentId, ItemWithParentId>
     {
         private ManyToOneAutoCacheComplete<ItemWithParentId, Guid> _autoCache;
 
         private IManyToOneRelationComplete<ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrud<ItemWithParentId, Guid> CrudStorage => _storage;
+        protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
         
         /// <inheritdoc />
         public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;
@@ -44,7 +44,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         [TestMethod]
-        [Ignore] // The test fails when all tests are run for the solution, but not if only the tests for Cache is run!?!
         public async Task ReadChildren()
         {
             AutoCacheOptions.SaveCollections = true;
@@ -65,6 +64,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains(child1A));
             UT.Assert.IsTrue(enumerable.Contains(child2A));
+            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
 
             var child1B = new ItemWithParentId(childId1, "Child1B", parentId);
             await _storage.UpdateAsync(childId1, child1B);

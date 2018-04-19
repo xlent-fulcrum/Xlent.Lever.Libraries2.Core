@@ -11,7 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// Decorate values from the server into concept values.
     /// </summary>
     public class ManyToOneServerTranslatorFrom<TModel> : ServerTranslatorBase, IManyToOneRelation<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IManyToOneRelation<TModel, string> _storage;
 
@@ -40,9 +39,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(string parentId, CancellationToken token = new CancellationToken())
+        public async Task DeleteChildrenAsync(string masterId, CancellationToken token = new CancellationToken())
         {
-            await _storage.DeleteChildrenAsync(parentId, token);
+            await _storage.DeleteChildrenAsync(masterId, token);
         }
     }
 }

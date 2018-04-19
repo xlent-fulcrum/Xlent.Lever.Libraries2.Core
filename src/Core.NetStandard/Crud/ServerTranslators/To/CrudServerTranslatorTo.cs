@@ -6,21 +6,32 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
-    /// <inheritdoc cref="CrdServerTranslatorTo{TModel}" />
-    public class CrudServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel>, ICrud<TModel, string>
-    where TModel : IValidatable
+    /// <inheritdoc cref="CrdServerTranslatorTo{TModelCreate, TModel}" />
+    public class CrudServerTranslatorTo<TModel> : CrudServerTranslatorTo<TModel, TModel>, ICrud<TModel, string>
     {
-        private readonly ICrud<TModel, string> _storage;
-
         /// <inheritdoc />
-        public CrudServerTranslatorTo(ICrud<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
-        :base(storage, idConceptName, getServerNameMethod, translatorService)
+        public CrudServerTranslatorTo(ICrud<TModel, string> storage, string idConceptName,
+            System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+            : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
-            _storage = storage;
         }
+    }
 
-        /// <inheritdoc />
-        public async Task UpdateAsync(string id, TModel item, CancellationToken token = new CancellationToken())
+    /// <inheritdoc cref="CrdServerTranslatorTo{TModelCreate, TModel}" />
+        public class CrudServerTranslatorTo<TModelCreate, TModel> : CrdServerTranslatorTo<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
+            where TModel : TModelCreate
+        {
+            private readonly ICrud<TModelCreate, TModel, string> _storage;
+
+            /// <inheritdoc />
+            public CrudServerTranslatorTo(ICrud<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+                : base(storage, idConceptName, getServerNameMethod, translatorService)
+            {
+                _storage = storage;
+            }
+
+            /// <inheritdoc />
+            public async Task UpdateAsync(string id, TModel item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(id).Add(item).ExecuteAsync();

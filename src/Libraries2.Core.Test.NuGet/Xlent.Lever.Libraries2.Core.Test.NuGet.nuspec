@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.Test</id>
-    <version>0.4.0-rc</version>
+    <version>0.5.2-rc</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Library for testing implementation of Core interfaces.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      0.5.2-rc Introduced TModelCreate
       0.4.0-rc Crud moved
       0.3.1 Renamed CRUD-implementations.
       0.3.0 Added CancellationToken to all ICrud-related interfaces.

@@ -7,12 +7,12 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>"/>
     /// </summary>
     [TestClass]
     public abstract class TestICrudTimeStamped<TId> : TestICrdTimeStamped<TId>
     {
-        protected override ICrd<TestItemTimestamped<TId>, TId> CrdStorage => CrudStorage;
+        protected override ICrd<TestItemBare, TestItemTimestamped<TId>, TId> CrdStorage => CrudStorage;
 
         /// <summary>
         /// Create an item with an id.

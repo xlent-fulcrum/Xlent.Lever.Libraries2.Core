@@ -10,11 +10,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// <summary>
     /// Use this to put an "intelligent" cache between you and your ICrud storage.
     /// </summary>
-    /// <typeparam name="TModel"></typeparam>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrdAutoCache<TModel, TId> : ReadAutoCache<TModel, TId>, ICrd<TModel, TId>
+    public class CrdAutoCache<TModel, TId> : CrdAutoCache<TModel, TModel, TId>, ICrd<TModel, TId>
     {
-        private readonly ICrd<TModel, TId> _storage;
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -24,6 +23,30 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
         public CrdAutoCache(ICrd<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+            : base(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
+        {
+        }
+
+    }
+
+    /// <summary>
+    /// Use this to put an "intelligent" cache between you and your ICrud storage.
+    /// </summary>
+    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
+    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
+    /// <typeparam name="TId"></typeparam>
+    public class CrdAutoCache<TModelCreate, TModel, TId> : ReadAutoCache<TModel, TId>, ICrd<TModelCreate, TModel, TId> where TModel : TModelCreate
+    {
+        private readonly ICrd<TModelCreate, TModel, TId> _storage;
+
+        /// <summary>
+        /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <param name="cache"></param>
+        /// <param name="flushCacheDelegateAsync"></param>
+        /// <param name="options"></param>
+        public CrdAutoCache(ICrd<TModelCreate, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -37,16 +60,16 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrdAutoCache(ICrd<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
+        public CrdAutoCache(ICrd<TModelCreate, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
-        :base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
+        : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
             _storage = storage;
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateAndReturnAsync(TModel item, CancellationToken token = default(CancellationToken))
+        public async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(item, nameof(item));
             var createdItem = await _storage.CreateAndReturnAsync(item, token);
@@ -55,7 +78,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         }
 
         /// <inheritdoc />
-        public async Task<TId> CreateAsync(TModel item, CancellationToken token = default(CancellationToken))
+        public async Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(item, nameof(item));
             var id = await _storage.CreateAsync(item, token);
@@ -64,7 +87,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));
@@ -74,7 +97,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         }
 
         /// <inheritdoc />
-        public async Task CreateWithSpecifiedIdAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
+        public async Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotDefaultValue(item, nameof(item));

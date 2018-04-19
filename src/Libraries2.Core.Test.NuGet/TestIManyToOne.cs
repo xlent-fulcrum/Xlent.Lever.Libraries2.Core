@@ -7,7 +7,7 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Test.NuGet
 {
     /// <summary>
-    /// Tests for testing any storage that implements <see cref="ICrud{TModel,TId}"/>
+    /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>
     /// </summary>
     [TestClass]
     public abstract class TestIManyToOne<TId, TReferenceId> : TestIManyToOneBase<TId, TReferenceId> 

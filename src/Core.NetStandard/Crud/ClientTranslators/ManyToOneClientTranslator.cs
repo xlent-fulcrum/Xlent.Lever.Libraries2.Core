@@ -11,7 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
     public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOneRelation<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IManyToOneRelation<TModel, string> _storage;
 
@@ -45,11 +44,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         }
 
         /// <inheritdoc />
-        public async Task DeleteChildrenAsync(string parentId, CancellationToken token = new CancellationToken())
+        public async Task DeleteChildrenAsync(string masterId, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
-            await _storage.DeleteChildrenAsync(parentId, token);
+            masterId = translator.Decorate(IdConceptName, masterId);
+            await _storage.DeleteChildrenAsync(masterId, token);
         }
     }
 }

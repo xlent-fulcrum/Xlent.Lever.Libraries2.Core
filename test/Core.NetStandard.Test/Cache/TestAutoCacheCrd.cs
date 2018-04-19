@@ -14,22 +14,22 @@ using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
     [TestClass]
-    public class TestAutoCacheCrd : TestAutoCacheBase<string>
+    public class TestAutoCacheCrd : TestAutoCacheBase<string, string>
     {
-        private CrdAutoCache<string, Guid> _autoCache;
+        private CrdAutoCache<string, string, Guid> _autoCache;
 
         /// <inheritdoc />
         public override ReadAutoCache<string, Guid> ReadAutoCache => _autoCache;
 
-        private ICrud<string, Guid> _storage;
+        private ICrud<string, string, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrud<string, Guid> CrudStorage => _storage;
+        protected override ICrud<string, string, Guid> CrudStorage => _storage;
 
         [TestInitialize]
         public void Initialize()
         {
             FulcrumApplicationHelper.UnitTestSetup(typeof(TestAutoCacheCrd).FullName);
-            _storage = new CrudMemory<string, Guid>();
+            _storage = new CrudMemory<string, string, Guid>();
             Cache = new MemoryDistributedCache();
             DistributedCacheOptions = new DistributedCacheEntryOptions
             {
@@ -39,7 +39,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             {
                 AbsoluteExpirationRelativeToNow = DistributedCacheOptions.AbsoluteExpirationRelativeToNow
             };
-            _autoCache = new CrudAutoCache<string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task CreateStorageWithIdWith_SaveOption_ReadCache()
         {
             AutoCacheOptions.SaveAll = true;
-            _autoCache = new CrudAutoCache<string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
             var id = Guid.NewGuid();
             await _autoCache.CreateWithSpecifiedIdAsync(id, "A"); // Will update cache thanks to SaveAll
             await PrepareStorageAsync(id, "B");
@@ -113,7 +113,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         public async Task CreateStorage_SaveOption_ReadCache()
         {
             AutoCacheOptions.SaveAll = true;
-            _autoCache = new CrudAutoCache<string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, string, Guid>(_storage, ToGuid, Cache, null, AutoCacheOptions);
             var id = await _autoCache.CreateAsync("A"); // Will update cache thanks to SaveAll
             await PrepareStorageAsync(id, "B");
             await VerifyAsync(id, "B", "A");
@@ -133,7 +133,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         {
             AutoCacheOptions.SaveCollections = true;
             AutoCacheOptions.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(10);
-            _autoCache = new CrudAutoCache<string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
+            _autoCache = new CrudAutoCache<string, string, Guid>(_storage, item => ToGuid(item, 1), Cache, null, AutoCacheOptions);
             var id1 = ToGuid("A1", 1);
             await PrepareStorageAndCacheAsync(id1, "A1", null);
             var id2 = ToGuid("B1", 1);
