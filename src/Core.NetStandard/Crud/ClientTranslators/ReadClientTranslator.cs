@@ -11,7 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
     public class ReadClientTranslator<TModel> : ClientTranslatorBase, IReadAll<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IReadAll<TModel, string> _storage;
 

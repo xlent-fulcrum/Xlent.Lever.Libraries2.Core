@@ -7,14 +7,25 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
+    public class CrdClientTranslator<TModel> : CrdClientTranslator<TModel, TModel>, ICrd<TModel, string>
+    {
+        /// <inheritdoc />
+        public CrdClientTranslator(ICrd<TModel, string> storage, string idConceptName,
+            System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+            : base(storage, idConceptName, getClientNameMethod, translatorService)
+        {
+        }
+    }
+
+    /// <inheritdoc />
     public class CrdClientTranslator<TModelCreate, TModel> : ReadClientTranslator<TModel>, ICrd<TModelCreate, TModel, string>
-    where TModel : TModelCreate, IValidatable
+        where TModel : TModelCreate
     {
         private readonly ICrd<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
         public CrdClientTranslator(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
-        :base(storage, idConceptName, getClientNameMethod, translatorService)
+            : base(storage, idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;
         }

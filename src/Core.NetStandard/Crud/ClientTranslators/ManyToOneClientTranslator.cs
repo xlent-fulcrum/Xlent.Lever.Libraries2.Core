@@ -11,7 +11,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
     public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOneRelation<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IManyToOneRelation<TModel, string> _storage;
 

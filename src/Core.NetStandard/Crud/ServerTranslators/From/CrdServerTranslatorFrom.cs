@@ -6,14 +6,25 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
 {
     /// <inheritdoc cref="ReadServerTranslatorFrom{TModel}" />
+    public class CrdServerTranslatorFrom<TModel> : CrdServerTranslatorFrom<TModel, TModel>, ICrd<TModel, string>
+    {
+        /// <inheritdoc />
+        public CrdServerTranslatorFrom(ICrd<TModel, string> storage, string idConceptName,
+            System.Func<string> getServerNameMethod)
+            : base(storage, idConceptName, getServerNameMethod)
+        {
+        }
+    }
+
+    /// <inheritdoc cref="ReadServerTranslatorFrom{TModel}" />
     public class CrdServerTranslatorFrom<TModelCreate, TModel> : ReadServerTranslatorFrom<TModel>, ICrd<TModelCreate, TModel, string>
-    where TModel : TModelCreate
+        where TModel : TModelCreate
     {
         private readonly ICrd<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
         public CrdServerTranslatorFrom(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
-        : base(storage, idConceptName, getServerNameMethod)
+            : base(storage, idConceptName, getServerNameMethod)
         {
             _storage = storage;
         }
