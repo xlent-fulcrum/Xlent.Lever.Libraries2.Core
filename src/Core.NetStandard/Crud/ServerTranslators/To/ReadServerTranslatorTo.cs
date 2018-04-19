@@ -12,7 +12,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// Translate concept values to the server
     /// </summary>
     public class ReadServerTranslatorTo<TModel> : ServerTranslatorBase, IReadAll<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IReadAll<TModel, string> _storage;
 

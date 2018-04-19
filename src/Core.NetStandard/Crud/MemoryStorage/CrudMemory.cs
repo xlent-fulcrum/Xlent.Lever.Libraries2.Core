@@ -27,11 +27,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     public class CrudMemory<TModelCreate, TModel, TId> : RudMemory<TModel, TId>, ICrud<TModelCreate, TModel, TId>
         where TModel : TModelCreate
     {
-        /// <summary>
-        /// The actual storage of the items.
-        /// </summary>
-        protected readonly ConcurrentDictionary<TId, TModel> MemoryItems = new ConcurrentDictionary<TId, TModel>();
-
         /// <inheritdoc />
         public async Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {

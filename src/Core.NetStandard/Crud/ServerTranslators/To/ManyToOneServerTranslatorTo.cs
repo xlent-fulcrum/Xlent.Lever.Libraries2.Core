@@ -12,7 +12,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// Translate concept values to the server
     /// </summary>
     public class ManyToOneServerTranslatorTo<TModel> : ServerTranslatorBase, IManyToOneRelation<TModel, string>
-    where TModel : IValidatable
     {
         private readonly IManyToOneRelation<TModel, string> _storage;
 

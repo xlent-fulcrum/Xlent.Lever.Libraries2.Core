@@ -7,20 +7,31 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
     /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
-    public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
-    where TModel : TModelCreate, IValidatable
+    public class CrdServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel, TModel>, ICrd<TModel, string>
     {
-        private readonly ICrd<TModelCreate, TModel, string> _storage;
-
         /// <inheritdoc />
-        public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
-        : base(storage, idConceptName, getServerNameMethod, translatorService)
+        public CrdServerTranslatorTo(ICrd<TModel, string> storage, string idConceptName,
+            System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+            : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
-            _storage = storage;
         }
+    }
 
-        /// <inheritdoc />
-        public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
+    /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
+        public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
+            where TModel : TModelCreate
+        {
+            private readonly ICrd<TModelCreate, TModel, string> _storage;
+
+            /// <inheritdoc />
+            public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+                : base(storage, idConceptName, getServerNameMethod, translatorService)
+            {
+                _storage = storage;
+            }
+
+            /// <inheritdoc />
+            public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(item).ExecuteAsync();

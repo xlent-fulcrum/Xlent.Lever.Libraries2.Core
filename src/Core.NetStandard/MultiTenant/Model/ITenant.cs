@@ -7,7 +7,7 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
     /// <summary>
     /// Information about a tenant in the Fulcrum multi tenant runtime.
     /// </summary>
-    [Obsolete("Use Tenant.")]
+    [Obsolete("Use Tenant.", true)]
     public interface ITenant : IValidatable, ILoggable
     {
         /// <summary>
