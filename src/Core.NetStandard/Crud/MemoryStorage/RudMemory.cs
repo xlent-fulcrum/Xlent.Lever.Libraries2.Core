@@ -26,11 +26,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
-            lock (MemoryItems)
-            {
-                var itemCopy = GetMemoryItem(id, false);
-                return Task.FromResult(itemCopy);
-            }
+            var itemCopy = GetMemoryItem(id, false);
+            return Task.FromResult(itemCopy);
         }
 
         /// <inheritdoc />
@@ -41,15 +38,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             MaybeValidate(item);
             if (!Exists(id)) throw new FulcrumNotFoundException($"Update failed. Could not find an item with id {id}.");
 
-            await MaybeVerifyEtagForUpdateAsync(id, item, token);
+            var oldValue = await MaybeVerifyEtagForUpdateAsync(id, item, token);
             var itemCopy = CopyItem(item);
             MaybeUpdateTimeStamps(itemCopy, false);
             MaybeCreateNewEtag(itemCopy);
 
-            lock (MemoryItems)
-            {
-                MemoryItems.TryAdd(id, itemCopy);
-            }
+            MemoryItems[id] = itemCopy;
         }
 
         /// <inheritdoc />
@@ -59,11 +53,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         public override async Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
-            lock (MemoryItems)
-            {
-                if (!MemoryItems.ContainsKey(id)) return;
-                MemoryItems.TryRemove(id, out var _);
-            }
+
+            MemoryItems.TryRemove(id, out var _);
 
             await Task.Yield();
         }
@@ -86,10 +77,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         /// <inheritdoc />
         public override Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
-            lock (MemoryItems)
-            {
-                MemoryItems.Clear();
-            }
+            MemoryItems.Clear();
             return Task.FromResult(0);
         }
 
@@ -102,18 +90,16 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         /// <param name="item"></param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
         /// <returns></returns>
-        protected virtual async Task MaybeVerifyEtagForUpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
+        protected virtual async Task<TModel> MaybeVerifyEtagForUpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
         {
-            if (item is IOptimisticConcurrencyControlByETag etaggable)
-            {
-                var oldItem = await ReadAsync(id, token);
-                if (oldItem != null)
-                {
-                    var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;
-                    if (oldEtag?.ToLowerInvariant() != etaggable.Etag?.ToLowerInvariant())
-                        throw new FulcrumConflictException($"The updated item ({item}) had an old ETag value.");
-                }
-            }
+            var oldItem = await ReadAsync(id, token);
+            if (!(item is IOptimisticConcurrencyControlByETag etaggable)) return oldItem;
+            if (Equals(oldItem, default(TModel))) return oldItem;
+            var oldEtag = (oldItem as IOptimisticConcurrencyControlByETag)?.Etag;
+            if (oldEtag?.ToLowerInvariant() != etaggable.Etag?.ToLowerInvariant())
+                throw new FulcrumConflictException($"The updated item ({item}) had an old ETag value.");
+
+            return oldItem;
         }
 
         #region private

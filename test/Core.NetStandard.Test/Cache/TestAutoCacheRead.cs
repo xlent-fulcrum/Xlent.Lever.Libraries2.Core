@@ -100,7 +100,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await VerifyAsync(id, "A", null, "A");
             await PrepareStorageAsync(id, "B");
             UT.Assert.IsNotNull(AutoCacheOptions.AbsoluteExpirationRelativeToNow);
-            await Task.Delay(AutoCacheOptions.AbsoluteExpirationRelativeToNow.Value);
+            await Task.Delay(AutoCacheOptions.AbsoluteExpirationRelativeToNow.Value.Add(TimeSpan.FromMilliseconds(100)));
             await VerifyAsync(id, "B", "A", "B");
 
         }
@@ -130,7 +130,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         }
 
         [TestMethod]
-        [Ignore] // The test fails when all tests are run for the solution, but not if only the tests for Cache is run!?!
         public async Task ReadAll()
         {
             AutoCacheOptions.SaveCollections = true;
@@ -146,6 +145,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains("A1"));
             UT.Assert.IsTrue(enumerable.Contains("B1"));
+            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
 
             await _storage.UpdateAsync(id1, "A2");
             await _storage.UpdateAsync(id2, "B2");
