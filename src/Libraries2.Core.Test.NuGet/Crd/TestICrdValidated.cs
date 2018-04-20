@@ -2,10 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Test.NuGet
+namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Crd
 {
     /// <summary>
     /// Tests for testing any storage that implements <see cref="ICrud{TModelCreate,TModel,TId}"/>
