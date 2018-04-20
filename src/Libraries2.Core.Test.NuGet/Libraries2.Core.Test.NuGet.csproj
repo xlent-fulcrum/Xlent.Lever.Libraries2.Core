@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Crd\TestICrdBare - Copy.cs" />
+    <Compile Include="Crd\TestParameters.cs" />
     <Compile Include="Model\TestItemManyToOneCreate.cs" />
     <Compile Include="Model\TestItemManyToOne.cs" />
     <Compile Include="Model\TestItemTimeStamped.cs" />
