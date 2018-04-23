@@ -145,7 +145,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains("A1"));
             UT.Assert.IsTrue(enumerable.Contains("B1"));
-            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await _autoCache.DelayUntilNoOperationActiveAsync();
 
             await _storage.UpdateAsync(id1, "A2");
             await _storage.UpdateAsync(id2, "B2");
@@ -170,7 +170,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(id2, "B1", null);
             var result = await _autoCache.ReadAllAsync();
             UT.Assert.IsNotNull(result);
-            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await _autoCache.DelayUntilNoOperationActiveAsync();
             await VerifyAsync(id1, "A1");
             await VerifyAsync(id2, "B1");
         }

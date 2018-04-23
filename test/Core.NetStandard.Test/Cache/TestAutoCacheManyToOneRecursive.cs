@@ -64,7 +64,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             UT.Assert.AreEqual(2, enumerable.Length);
             UT.Assert.IsTrue(enumerable.Contains(child1A));
             UT.Assert.IsTrue(enumerable.Contains(child2A));
-            while (_autoCache.IsCollectionOperationActive()) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await _autoCache.DelayUntilNoOperationActiveAsync();
 
             var child1B = new ItemWithParentId(childId1, "Child1B", parentId);
             await _storage.UpdateAsync(childId1, child1B);
@@ -96,7 +96,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             await PrepareStorageAndCacheAsync(childId2, child2A, null);
             var result = await _autoCache.ReadChildrenAsync(parentId);
             UT.Assert.IsNotNull(result);
-            while (_autoCache.IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await _autoCache.DelayUntilNoOperationActiveAsync(parentId);
             await VerifyAsync(childId1, child1A);
             await VerifyAsync(childId2, child2A);
         }
@@ -119,7 +119,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
             // Read into cache
             await _autoCache.ReadChildrenAsync(parentId);
             await _autoCache.DeleteChildrenAsync(parentId);
-            while (_autoCache.IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
+            await _autoCache.DelayUntilNoOperationActiveAsync(parentId);
 
             // Even though the items have been updated, the result will be fetched from the cache.
             var result = await _autoCache.ReadChildrenAsync(parentId);

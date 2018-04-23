@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
 using Xlent.Lever.Libraries2.Core.Storage.Logic;
@@ -11,16 +12,13 @@ using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 namespace Xlent.Lever.Libraries2.Core.Storage
 {
     [TestClass]
-    public class MemoryCrudTestsId : TestICrudId<Guid>
+    public class MemoryCrudTestParameters : TestParameters
     {
-        private ICrud<TestItemBare, TestItemId<Guid>, Guid> _storage;
 
-        [TestInitialize]
-        public void Inititalize()
+        /// <inheritdoc />
+        public MemoryCrudTestParameters() : base(new CrudMemory<TestItemBare, Guid>())
         {
-            _storage = new CrudMemory<TestItemBare, TestItemId<Guid>, Guid>();
+            FulcrumApplicationHelper.UnitTestSetup(nameof(MemoryCrudTestParameters));
         }
-
-        protected override ICrud<TestItemBare, TestItemId<Guid>, Guid> CrudStorage => _storage;
     }
 }

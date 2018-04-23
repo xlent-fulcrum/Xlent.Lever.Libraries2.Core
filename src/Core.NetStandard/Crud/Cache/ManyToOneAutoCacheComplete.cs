@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,10 +94,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        public bool IsCollectionOperationActive(TId parentId)
+        protected bool IsCollectionOperationActive(TId parentId)
         {
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             return IsCollectionOperationActive(CacheKeyForChildrenCollection(parentId));
+        }
+
+        /// <summary>
+        /// Wait until any background thread is active saving results from a ReadAll() operation.
+        /// </summary>
+        public async Task DelayUntilNoOperationActiveAsync(TId parentId)
+        {
+            var count = 0;
+            while (count++ < 5 && !IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(1));
+            while (IsCollectionOperationActive(parentId)) await Task.Delay(TimeSpan.FromMilliseconds(10));
         }
 
         /// <inheritdoc />

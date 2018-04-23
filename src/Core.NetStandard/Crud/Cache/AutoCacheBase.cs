@@ -74,9 +74,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <summary>
         /// True while a background thread is active saving results from a ReadAll() operation.
         /// </summary>
-        public bool IsCollectionOperationActive()
+        protected bool IsCollectionOperationActive()
         {
             return IsCollectionOperationActive(ReadAllCacheKey);
+        }
+
+        /// <summary>
+        /// Wait until any background thread is active saving results from a ReadAll() operation.
+        /// </summary>
+        public async Task DelayUntilNoOperationActiveAsync(string key = null)
+        {
+            if (key == null) key = ReadAllCacheKey;
+            var count = 0;
+            while (count++ < 5 && !IsCollectionOperationActive(key)) await Task.Delay(TimeSpan.FromMilliseconds(1));
+            while (IsCollectionOperationActive(key)) await Task.Delay(TimeSpan.FromMilliseconds(10));
         }
 
         /// <summary>

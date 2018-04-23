@@ -18,6 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> {Value = false};
         private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
+        private static bool _applicationValidated;
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -115,6 +116,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <param name="exception">Optional exception</param>
         public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
         {
+            if (!_applicationValidated)
+            {
+                FulcrumApplication.Validate();
+                _applicationValidated = true;
+            }
             var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
             if (LoggingInProgress.Value)
             {

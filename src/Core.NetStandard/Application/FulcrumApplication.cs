@@ -1,5 +1,7 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System;
+using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
@@ -50,7 +52,14 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// <remarks>This should be used initially for any Fulcrum library that depends on these settings.</remarks>
         public static void Validate()
         {
-            InternalContract.RequireValidated(Setup, nameof(Setup), $"{typeof(FulcrumApplication).FullName} needs to be setup at application startup. Please use the {nameof(Initialize)} or a {nameof(FulcrumApplicationHelper)}.");
+            try
+            {
+                Setup.Validate(null, $"{nameof(FulcrumApplication)}.{nameof(FulcrumApplication.Setup)}");
+            }
+            catch (Exception e)
+            {
+                throw new FulcrumContractException($"{e.Message} Indicates that {nameof(FulcrumApplication)} has not been initialized properly at application startup. Please use the method {nameof(Initialize)} or a helper from {nameof(FulcrumApplicationHelper)}.");
+            }
         }
 
         /// <summary>

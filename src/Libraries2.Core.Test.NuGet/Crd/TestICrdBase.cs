@@ -3,7 +3,7 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Test.NuGet
+namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Crd
 {
     public abstract class TestICrdBase<TModelCreate, TModel, TId>
         where TModelCreate : IItemForTesting, new()
