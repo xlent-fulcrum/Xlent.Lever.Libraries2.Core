@@ -1,19 +1,18 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Newtonsoft.Json;
+using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Storage.Model
+namespace Xlent.Lever.Libraries2.Core.Storage.Logic
 {
     /// <summary>
     /// The headers of a request
     /// </summary>
-    [Obsolete("Use the version in the namespace Xlent.Lever.Libraries2.Core.Storage.Logic", true)]
     public class StorableAsByteArray<TData, TId> : StorableByteArray<TId>, IStorableAsByteArray<TData, TId>
     {
         /// <summary>
         /// This property is stored serialized as a byte array
         /// </summary>
-        public TData Data
+        public virtual TData Data
         {
             get
             {

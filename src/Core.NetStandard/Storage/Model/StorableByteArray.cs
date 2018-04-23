@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// Copy another object of the same type.
         /// </summary>
         /// <param name="source"></param>
-        [Obsolete("Use StorageHelper.DeepCopy")]
+        [Obsolete("Use StorageHelper.DeepCopy", true)]
         public void DeepCopy(StorableByteArray<TId> source)
         {
             InternalContract.RequireNotNull(source, nameof(source));
@@ -34,7 +34,7 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         /// <summary>
         /// Clone this object.
         /// </summary>
-        [Obsolete("Use StorageHelper.DeepCopy")]
+        [Obsolete("Use StorageHelper.DeepCopy", true)]
         public StorableByteArray<TId> DeepCopy()
         {
             return StorageHelper.DeepCopy(this);
