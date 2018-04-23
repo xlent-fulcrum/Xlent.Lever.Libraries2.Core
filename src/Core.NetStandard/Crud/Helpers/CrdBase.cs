@@ -30,14 +30,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     public abstract class CrdBase<TModelCreate, TModel, TId> : ReadBase<TModel, TId>, ICrd<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
         /// <inheritdoc />
-        public virtual async Task<TId> CreateAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
-        {
-            InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
-            var id = StorageHelper.CreateNewId<TId>();
-            await CreateWithSpecifiedIdAsync(id, item, token);
-            return id;
-        }
+        public abstract Task<TId> CreateAsync(TModelCreate item,
+            CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
         public virtual async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
