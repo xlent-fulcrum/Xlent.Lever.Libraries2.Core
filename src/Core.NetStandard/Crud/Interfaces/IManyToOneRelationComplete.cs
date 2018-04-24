@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TManyModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public interface IManyToOneRelationComplete<TManyModel, TId> : IManyToOneRelationComplete<TManyModel, TManyModel, TId>
+    public interface IManyToOneRelationComplete<TManyModel, TId> : IManyToOneRelationComplete<TManyModel, TManyModel, TId>, ICrud<TManyModel, TId>, ICrudWithSpecifiedId<TManyModel, TId>
     {
     }
 
@@ -15,7 +15,7 @@
     /// <typeparam name="TManyModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TManyModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public interface IManyToOneRelationComplete<in TManyModelCreate, TManyModel, TId> : ICrud<TManyModelCreate, TManyModel, TId>, IManyToOneRelation<TManyModel, TId> where TManyModel : TManyModelCreate
+    public interface IManyToOneRelationComplete<in TManyModelCreate, TManyModel, TId> : ICrud<TManyModelCreate, TManyModel, TId>, ICrudWithSpecifiedId<TManyModelCreate, TManyModel, TId>, IManyToOneRelation<TManyModel, TId> where TManyModel : TManyModelCreate
     {
     }
 }
