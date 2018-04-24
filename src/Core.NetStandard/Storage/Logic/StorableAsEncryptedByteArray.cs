@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
-using Xlent.Lever.AsyncCaller2.Bll;
+using Xlent.Lever.Libraries2.Core.Security;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Logic
