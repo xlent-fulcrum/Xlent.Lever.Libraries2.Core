@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
 
         private IManyToOneRelationComplete<ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
+        protected override ICrudWithSpecifiedId<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
         
         /// <inheritdoc />
         public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;

@@ -98,7 +98,10 @@
     <Compile Include="Core\Crud\Helpers\SlaveToMasterCompleteBase.cs" />
     <Compile Include="Core\Crud\Helpers\StorageHelper.cs" />
     <Compile Include="Core\Crud\Interfaces\ICrd.cs" />
+    <Compile Include="Core\Crud\Interfaces\ICrdWithSpecifiedId.cs" />
     <Compile Include="Core\Crud\Interfaces\ICreate.cs" />
+    <Compile Include="Core\Crud\Interfaces\ICreateWithSpecifiedId.cs" />
+    <Compile Include="Core\Crud\Interfaces\ICrudWithSpecifiedId.cs" />
     <Compile Include="Core\Crud\Interfaces\IRud.cs" />
     <Compile Include="Core\Crud\Interfaces\ICrud.cs" />
     <Compile Include="Core\Crud\Interfaces\IDelete.cs" />
@@ -113,6 +116,7 @@
     <Compile Include="Core\Crud\Interfaces\IManyToOneRelationComplete.cs" />
     <Compile Include="Core\Crud\Interfaces\IRead.cs" />
     <Compile Include="Core\Crud\Interfaces\IReadAll.cs" />
+    <Compile Include="Core\Crud\Interfaces\ISlaveToMaster.cs" />
     <Compile Include="Core\Crud\Interfaces\ISlaveToMasterComplete.cs" />
     <Compile Include="Core\Crud\Interfaces\IUpdate.cs" />
     <Compile Include="Core\Crud\Mappers\ICrdModelMapper.cs" />
@@ -130,7 +134,6 @@
     <Compile Include="Core\Crud\Mappers\MapperBase.cs" />
     <Compile Include="Core\Crud\Mappers\MapperHelper.cs" />
     <Compile Include="Core\Crud\Mappers\ReadMapper.cs" />
-    <Compile Include="Core\Crud\Mappers\StorableAsByteArrayMapper.cs" />
     <Compile Include="Core\Crud\MemoryStorage\RudMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\CrudMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\ManyToManyMemory.cs" />

@@ -49,26 +49,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
-        {
-            var translator = CreateTranslator();
-            await translator.Add(id).Add(item).ExecuteAsync();
-            id = translator.Translate(id);
-            item = translator.Translate(item);
-            await _storage.CreateWithSpecifiedIdAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item, CancellationToken token = new CancellationToken())
-        {
-            var translator = CreateTranslator();
-            await translator.Add(id).Add(item).ExecuteAsync();
-            id = translator.Translate(id);
-            item = translator.Translate(item);
-            return await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
         public async Task DeleteAsync(string id, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();

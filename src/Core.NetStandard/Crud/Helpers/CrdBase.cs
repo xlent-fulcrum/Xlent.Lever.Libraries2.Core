@@ -43,18 +43,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken));
-
-        /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
-        {
-            InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
-            await CreateWithSpecifiedIdAsync(id, item, token);
-            return await ReadAsync(id, token);
-        }
-
-        /// <inheritdoc />
         public abstract Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
