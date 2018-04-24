@@ -10,7 +10,7 @@ namespace Xlent.Lever.Libraries2.Core.Security
     public class SymmetricCrypto
     {
         private readonly byte[] _symmetricEncryptionKey;
-        private readonly byte[] _iv;
+        private byte[] _iv;
 
         /// <summary>
         /// Constructor.
@@ -20,7 +20,6 @@ namespace Xlent.Lever.Libraries2.Core.Security
         public SymmetricCrypto(byte[] symmetricEncryptionKey)
         {
             _symmetricEncryptionKey = symmetricEncryptionKey;
-            _iv = iv;
         }
 
         /// <summary>
@@ -31,17 +30,14 @@ namespace Xlent.Lever.Libraries2.Core.Security
         public SymmetricCrypto(byte[] symmetricEncryptionKey, ref byte[] iv)
         {
             _symmetricEncryptionKey = symmetricEncryptionKey;
-            if (iv == null)
-            {
-
-            }
+            if (iv == null) iv = GenerateIv(symmetricEncryptionKey.Length);
             _iv = iv;
         }
 
         /// <summary>
         /// Encrypt <paramref name="rawPlaintext"/>, using the symmetric key.
         /// <param name="rawPlaintext">The text to be encrypted.</param>
-        /// <param name="iv">A unique key for this translation. Use null if you want a unique iv to be generated.</param>
+        /// <param name="iv">The IV to use for this encryption. Use null if you want a unique iv to be generated.</param>
         /// </summary>
         public byte[] Encrypt(byte[] rawPlaintext, ref byte[] iv)
         {
@@ -54,18 +50,29 @@ namespace Xlent.Lever.Libraries2.Core.Security
         /// </summary>
         public byte[] Encrypt(byte[] rawPlaintext)
         {
-            InternalContract.Require(_iv != null, );
-            return ConvertText(rawPlaintext, ref iv);
+            InternalContract.Require(_iv != null, $"IV has not been set when calling the constructor.");
+            return ConvertText(rawPlaintext, ref _iv);
         }
 
         /// <summary>
-        /// Decrypt <paramref name="cipherText"/>, using the symmetric key.
-        /// <param name="iv"></param>
+        /// Decrypt <paramref name="cipherText"/> using the symmetric key
+        /// <param name="cipherText">The text to be decrypted</param>.
+        /// <param name="iv">The IV to use for this decryption.</param>
         /// </summary>
         public byte[] Decrypt(byte[] cipherText, byte[] iv)
         {
             InternalContract.RequireNotNull(iv, nameof(iv));
             return ConvertText(cipherText, ref iv);
+        }
+
+        /// <summary>
+        /// Decrypt <paramref name="cipherText"/> using the symmetric key
+        /// <param name="cipherText">The text to be decrypted</param>.
+        /// </summary>
+        public byte[] Decrypt(byte[] cipherText)
+        {
+            InternalContract.Require(_iv != null, $"IV has not been set when calling the constructor.");
+            return ConvertText(cipherText, ref _iv);
         }
 
         private byte[] ConvertText(byte[] text, ref byte[] iv)
@@ -100,19 +107,10 @@ namespace Xlent.Lever.Libraries2.Core.Security
             {
                 aes.KeySize = keySizeInBytes * 8;
 
-                    aes.GenerateIV();
-                    iv = aes.IV;
-                }
-                using (var ms = new MemoryStream())
-                {
-                    using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(text, 0, text.Length);
-                    }
-
-                    return ms.ToArray();
-                }
+                aes.GenerateIV();
+                return aes.IV;
             }
         }
     }
 }
+
