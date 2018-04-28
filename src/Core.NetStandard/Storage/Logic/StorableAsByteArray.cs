@@ -16,14 +16,14 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Logic
         {
             get
             {
-                if (typeof(TData) == ByteArray.GetType()) return (TData)(object)ByteArray;
+                if (typeof(TData) == typeof(byte[])) return (TData)(object)ByteArray;
                 var jsonString = Encoding.UTF8.GetString(ByteArray);
                 return JsonConvert.DeserializeObject<TData>(jsonString);
             }
             set
             {
                 byte[] valueAsBytes;
-                if (typeof(TData) == ByteArray.GetType())
+                if (typeof(TData) == typeof(byte[]))
                 {
                     valueAsBytes = (byte[]) (object) value;
                 }
