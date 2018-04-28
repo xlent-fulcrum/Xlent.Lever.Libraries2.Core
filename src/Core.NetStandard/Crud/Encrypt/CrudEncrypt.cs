@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 
-namespace Xlent.Lever.AsyncCaller2.Bll.Encrypt
+namespace Xlent.Lever.Libraries2.Core.Crud.Encrypt
 {
     /// <inheritdoc cref="CrdEncrypt{TModel,TId}" />
     public class CrudEncrypt <TModel, TId>: CrdEncrypt<TModel, TId>, ICrud<TModel, TId>

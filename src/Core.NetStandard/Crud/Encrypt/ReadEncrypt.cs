@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Security;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.AsyncCaller2.Bll.Encrypt
+namespace Xlent.Lever.Libraries2.Core.Crud.Encrypt
 {
     /// <inheritdoc />
     public class ReadEncrypt <TModel, TId>: IReadAll<TModel, TId>

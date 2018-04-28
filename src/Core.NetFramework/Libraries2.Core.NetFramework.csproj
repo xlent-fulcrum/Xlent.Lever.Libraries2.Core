@@ -91,6 +91,9 @@
     <Compile Include="Core\Crud\ClientTranslators\CrudClientTranslator.cs" />
     <Compile Include="Core\Crud\ClientTranslators\ManyToOneClientTranslator.cs" />
     <Compile Include="Core\Crud\ClientTranslators\ReadClientTranslator.cs" />
+    <Compile Include="Core\Crud\Encrypt\CrdEncrypt.cs" />
+    <Compile Include="Core\Crud\Encrypt\CrudEncrypt.cs" />
+    <Compile Include="Core\Crud\Encrypt\ReadEncrypt.cs" />
     <Compile Include="Core\Crud\Helpers\CrdBase.cs" />
     <Compile Include="Core\Crud\Helpers\CrudBase.cs" />
     <Compile Include="Core\Crud\Helpers\ReadBase.cs" />
@@ -185,7 +188,6 @@
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumeratorAsync.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerator.cs" />
     <Compile Include="Core\Crud\Model\SlaveToMasterId.cs" />
-    <Compile Include="Core\Storage\Logic\StorableAsEncryptedByteArray.cs" />
     <Compile Include="Core\Storage\Logic\StorableAsByteArray.cs" />
     <Compile Include="Core\Threads\BasicThreadHandler.cs" />
     <Compile Include="Core\Threads\IThreadHandler.cs" />
@@ -231,7 +233,6 @@
     <Compile Include="Core\Storage\Model\ITimeStamped.cs" />
     <Compile Include="Core\Storage\Model\PageEnvelope.cs" />
     <Compile Include="Core\Storage\Model\PageInfo.cs" />
-    <Compile Include="Core\Storage\Model\StorableAsByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableByteArray.cs" />
     <Compile Include="Core\Storage\Model\StorableItem.cs" />
     <Compile Include="Core\Translation\ConceptValue.cs" />

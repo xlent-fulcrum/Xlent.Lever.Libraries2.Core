@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Security;
 
-namespace Xlent.Lever.AsyncCaller2.Bll.Encrypt
+namespace Xlent.Lever.Libraries2.Core.Crud.Encrypt
 {
     /// <inheritdoc cref="ReadEncrypt{TModel,TId}" />
     public class CrdEncrypt <TModel, TId>: ReadEncrypt<TModel, TId>, ICrd<TModel, TId>
