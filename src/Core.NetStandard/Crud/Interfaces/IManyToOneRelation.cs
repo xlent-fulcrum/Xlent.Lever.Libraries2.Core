@@ -28,8 +28,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         Task<IEnumerable<TManyModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Delete all child items for a specific parent, <paramref name="masterId"/>.
+        /// Delete all child items for a specific parent, <paramref name="parentId"/>.
         /// </summary>
-        Task DeleteChildrenAsync(TId masterId, CancellationToken token = default(CancellationToken));
+        Task DeleteChildrenAsync(TId parentId, CancellationToken token = default(CancellationToken));
     }
 }
