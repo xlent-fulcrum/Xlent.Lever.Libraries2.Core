@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<IEnumerable<TModel>> ReadChildrenAsync(TId masterId, int limit = Int32.MaxValue,
+        public virtual async Task<IEnumerable<TModel>> ReadChildrenAsync(TId masterId, int limit = int.MaxValue,
             CancellationToken token = default(CancellationToken))
         {
             return await StorageHelper.ReadPagesAsync((offset, ct) => ReadChildrenWithPagingAsync(masterId, offset, null, ct), limit, token);
