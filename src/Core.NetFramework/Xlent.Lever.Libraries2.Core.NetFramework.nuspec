@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.25.4</version>
+    <version>1.26.0-rc</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.26.0-rc Refactored Crud.
       1.25.4 Added Crud PassThrough classes.
       1.25.3 Added some basic encryption support. Now has separate CRUD-interfaces for ICreateWithSpecifiedId.
       1.24.21 Added TModelCreate to ICreate.
@@ -19,7 +20,7 @@
       1.21.3 Renamed CRUD-implementations.
       1.21.2 Added biased versions of the many-to-many interfaces.
       1.21.0 Added CancellationToken to all ICrud-related interfaces.
-      1.20.11 Updated ManyToMany interface. 
+      1.20.11 Updated ManyToMany interface.
       1.20.10 Simplified some ManyToOne interfaces
       1.20.9 Removed the ReadParentAsync() method from ManyToOne interfaces.
       1.20.8 Adjusted storage interfaces.
