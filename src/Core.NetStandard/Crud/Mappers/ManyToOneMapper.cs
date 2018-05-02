@@ -9,9 +9,9 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
-    public class ManyToOneMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
+    public class ManyToOneMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOne<TClientModel, TClientId>
     {
-        private readonly IManyToOneRelation<TServerModel, TServerId> _service;
+        private readonly IManyToOne<TServerModel, TServerId> _service;
 
         /// <summary>
         /// A mapping class that can map between the client and server model.
@@ -19,7 +19,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public IReadModelMapper<TClientModel, TServerModel> ReadModelMapper { get; }
 
         /// <inheritdoc />
-        public ManyToOneMapper(IManyToOneRelation<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
+        public ManyToOneMapper(IManyToOne<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
         {
             _service = service;
             ReadModelMapper = modelMapper;
@@ -40,13 +40,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
             var serverId = MapToServerId(parentId);
             var serverItems = await _service.ReadChildrenAsync(serverId, limit, token);
             return await MapFromServerAsync(serverItems, token);
-        }
-
-        /// <inheritdoc />
-        public virtual async Task DeleteChildrenAsync(TClientId masterId, CancellationToken token = default(CancellationToken))
-        {
-            var serverId = MapToServerId(masterId);
-            await _service.DeleteChildrenAsync(serverId, token);
         }
 
         /// <summary>

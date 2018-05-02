@@ -46,15 +46,42 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         }
 
         /// <inheritdoc />
-        public async Task DeleteAsync(string id, CancellationToken token = new CancellationToken())
+        public Task DeleteAsync(string id, CancellationToken token = new CancellationToken())
         {
-            await _storage.DeleteAsync(id, token);
+            return _storage.DeleteAsync(id, token);
         }
 
         /// <inheritdoc />
-        public async Task DeleteAllAsync(CancellationToken token = new CancellationToken())
+        public Task DeleteAllAsync(CancellationToken token = new CancellationToken())
         {
-            await _storage.DeleteAllAsync(token);
+            return _storage.DeleteAllAsync(token);
+        }
+
+        /// <inheritdoc />
+        public Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.CreateWithSpecifiedIdAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item,
+            CancellationToken token = default(CancellationToken))
+        {
+            var decoratedResult = await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
+            var translator = CreateTranslator();
+            return translator.DecorateItem(decoratedResult);
+        }
+
+        /// <inheritdoc />
+        public Task<Lock> ClaimLockAsync(string id, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ClaimLockAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ReleaseLockAsync(@lock, token);
         }
     }
 }

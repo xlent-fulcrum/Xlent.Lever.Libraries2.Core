@@ -23,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         TReferenceModel2, TId> :
         ManyToManyMemory<TManyToManyModel, TManyToManyModel, TReferenceModel1, TReferenceModel1,
             TReferenceModel2, TReferenceModel2, TId>,
-        ICrud<TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+        ICrud<TManyToManyModel, TId>, IManyToManyComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
     {
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <typeparam name="TReferenceModel1Create"></typeparam>
     /// <typeparam name="TManyToManyModelCreate"></typeparam>
     public class ManyToManyMemory<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1Create, TReferenceModel1, TReferenceModel2Create, TReferenceModel2, TId> :
-        CrudMemory<TManyToManyModelCreate, TManyToManyModel, TId>, IManyToManyRelationComplete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+        CrudMemory<TManyToManyModelCreate, TManyToManyModel, TId>, IManyToManyComplete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
         where TManyToManyModel : TManyToManyModelCreate 
         where TReferenceModel1 : TReferenceModel1Create 
         where TReferenceModel2 : TReferenceModel2Create

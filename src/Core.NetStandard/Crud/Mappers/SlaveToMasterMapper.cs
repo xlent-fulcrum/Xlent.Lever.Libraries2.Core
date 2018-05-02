@@ -13,10 +13,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
     public class SlaveToMasterMapper<TClientModel, TClientId, TServerModel, TServerId> :
         SlaveToMasterMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
-        ISlaveToMasterComplete<TClientModel, TClientId>
+        ISlaveToMaster<TClientModel, TClientId>
     {
         /// <inheritdoc />
-        public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service,
+        public SlaveToMasterMapper(ISlaveToMaster<TServerModel, TServerId> service,
             ISlaveToMasterModelMapper<TClientModel, TClientId, TServerModel>
                 modelMapper)
             : base(service, modelMapper)
@@ -27,10 +27,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
     public class SlaveToMasterMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> :
         RudMapper<TClientModel, SlaveToMasterId<TClientId>, TServerModel, SlaveToMasterId<TServerId>>,
-        ISlaveToMasterComplete<TClientModelCreate, TClientModel, TClientId>
+        ISlaveToMaster<TClientModelCreate, TClientModel, TClientId>
         where TClientModel : TClientModelCreate
     {
-        private readonly ISlaveToMasterComplete<TServerModel, TServerId> _service;
+        private readonly ISlaveToMaster<TServerModel, TServerId> _service;
 
         /// <summary>
         /// A mapping class that can map between the client and server model.
@@ -38,7 +38,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public ISlaveToMasterModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> SlaveToMasterModelMapper { get; }
 
         /// <inheritdoc />
-        public SlaveToMasterMapper(ISlaveToMasterComplete<TServerModel, TServerId> service, ISlaveToMasterModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> modelMapper)
+        public SlaveToMasterMapper(ISlaveToMaster<TServerModel, TServerId> service, ISlaveToMasterModelMapper<TClientModelCreate, TClientModel, TClientId, TServerModel> modelMapper)
             : base(service, modelMapper)
         {
             _service = service;

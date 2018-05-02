@@ -18,9 +18,9 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     [TestClass]
     public abstract class TestParameters
     {
-        private readonly ICrdWithSpecifiedId<TestItemBare, Guid> _implementation;
+        private readonly ICrd<TestItemBare, Guid> _implementation;
 
-        public TestParameters(ICrdWithSpecifiedId<TestItemBare, Guid> implementation)
+        public TestParameters(ICrd<TestItemBare, Guid> implementation)
         {
             _implementation = implementation;
         }

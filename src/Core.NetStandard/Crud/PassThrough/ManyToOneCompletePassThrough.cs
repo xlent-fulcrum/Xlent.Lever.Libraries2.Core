@@ -7,47 +7,34 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
-    /// <inheritdoc cref="IManyToOneRelationComplete{TManyModelCreate, TManyModel,TId}" />
+    /// <inheritdoc cref="ManyToOneCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
     public class ManyToOneCompletePassThrough<TModel, TId> : 
         ManyToOneCompletePassThrough<TModel, TModel, TId>,
-        IManyToOneRelationComplete<TModel, TId>
+        IManyToOneComplete<TModel, TId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public ManyToOneCompletePassThrough(IManyToOneRelationComplete<TModel, TId> nextLevel)
+        public ManyToOneCompletePassThrough(IManyToOneComplete<TModel, TId> nextLevel)
             : base(nextLevel)
         {
         }
     }
 
-    /// <inheritdoc cref="IManyToOneRelationComplete{TManyModelCreate, TManyModel,TId}" />
-    public class ManyToOneCompletePassThrough<TModelCreate, TModel, TId> : CrudPassThrough<TModelCreate, TModel, TId>, IManyToOneRelationComplete<TModelCreate, TModel, TId> where TModel : TModelCreate
+    /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TId}" />
+    public class ManyToOneCompletePassThrough<TModelCreate, TModel, TId> : CrudPassThrough<TModelCreate, TModel, TId>, IManyToOneComplete<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
-        private readonly IManyToOneRelationComplete<TModelCreate, TModel, TId> _nextLevel;
+        private readonly IManyToOneComplete<TModelCreate, TModel, TId> _nextLevel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public ManyToOneCompletePassThrough(IManyToOneRelationComplete<TModelCreate, TModel, TId> nextLevel)
+        public ManyToOneCompletePassThrough(IManyToOneComplete<TModelCreate, TModel, TId> nextLevel)
             : base(nextLevel)
         {
             _nextLevel = nextLevel;
-        }
-
-        /// <inheritdoc />
-        public virtual Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.CreateWithSpecifiedIdAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item,
-            CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
         }
 
         /// <inheritdoc />

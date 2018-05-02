@@ -9,7 +9,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// Functionality for persisting objects that has no life of their own, but are only relevant with their master.
     /// Examples: A list of rows on an invoice, a list of attributes of an object, the contact details of a person.
     /// </summary>
-    public interface ISlaveToMasterComplete<TModel, TId> : ISlaveToMasterComplete<TModel, TModel, TId>, ISlaveToMaster<TModel, TId>
+    public interface ICreateSlaveWithSpecifiedId<TModel, TId> : ICreateSlaveWithSpecifiedId<TModel, TModel, TId>
     {
     }
 
@@ -17,11 +17,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// Functionality for persisting objects that has no life of their own, but are only relevant with their master.
     /// Examples: A list of rows on an invoice, a list of attributes of an object, the contact details of a person.
     /// </summary>
-    public interface ISlaveToMasterComplete<in TModelCreate, TModel, TId> : ISlaveToMaster<TModelCreate, TModel, TId>
+    public interface ICreateSlaveWithSpecifiedId<in TModelCreate, TModel, TId>
         where TModel : TModelCreate
     {
         /// <summary>
-        /// Same as <see cref="ISlaveToMaster{TModelCreate,TModel,TId}.CreateAsync"/>, but you can specify the new id.
+        /// Same as <see cref="ICreateSlave{TModelCreate,TModel,TId}.CreateAsync"/>, but you can specify the new id.
         /// </summary>
         /// <param name="id">The id to use for the new item.</param>
         /// <param name="item">The item to create in storage.</param>
@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         Task CreateWithSpecifiedIdAsync(SlaveToMasterId<TId> id, TModelCreate item, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Same as <see cref="ISlaveToMaster{TModelCreate,TModel,TId}.CreateAndReturnAsync"/>, but you can specify the new id.
+        /// Same as <see cref="ICreateSlave{TModelCreate,TModel,TId}.CreateAndReturnAsync"/>, but you can specify the new id.
         /// </summary>
         /// <param name="id">The id to use for the new item.</param>
         /// <param name="item">The item to store.</param>

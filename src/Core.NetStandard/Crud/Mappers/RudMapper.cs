@@ -34,13 +34,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         }
 
         /// <inheritdoc />
-        public virtual async Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        public virtual Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
-            await _service.DeleteAllAsync(token);
+            return _service.DeleteAllAsync(token);
         }
 
         /// <inheritdoc />
-        public async Task UpdateAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task UpdateAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -50,7 +50,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         }
 
         /// <inheritdoc />
-        public async Task<TClientModel> UpdateAndReturnAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TClientModel> UpdateAndReturnAsync(TClientId id, TClientModel item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -58,6 +58,19 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
             var serverItem = await MapToServerAsync(item, token);
             serverItem = await _service.UpdateAndReturnAsync(serverId, serverItem, token);
             return await MapFromServerAsync(serverItem, token);
+        }
+
+        /// <inheritdoc />
+        public virtual async Task<Lock> ClaimLockAsync(TClientId id, CancellationToken token = default(CancellationToken))
+        {
+            var serverId = MapToServerId(id);
+            return await _service.ClaimLockAsync(serverId, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _service.ReleaseLockAsync(@lock, token);
         }
 
         /// <summary>

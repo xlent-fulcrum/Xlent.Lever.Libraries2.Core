@@ -10,12 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class ReadServerTranslatorFrom<TModel> : ServerTranslatorBase, IReadAll<TModel, string>
+    public class ReadServerTranslatorFrom<TModel> : ServerTranslatorBase, IRead<TModel, string>
     {
-        private readonly IReadAll<TModel, string> _storage;
+        private readonly IRead<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ReadServerTranslatorFrom(IReadAll<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
+        public ReadServerTranslatorFrom(IRead<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
         :base(idConceptName, getServerNameMethod)
         {
             _storage = storage;

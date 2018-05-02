@@ -14,9 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class ReadAutoCache<TModel, TId> : AutoCacheBase<TModel, TId>, IReadAll<TModel, TId>
+    public class ReadAutoCache<TModel, TId> : AutoCacheBase<TModel, TId>, IRead<TModel, TId>
     {
-        private readonly IReadAll<TModel, TId> _storage;
+        private readonly IRead<TModel, TId> _storage;
         private const string ReadAllCacheKey = "ReadAllCacheKey";
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public ReadAutoCache(IReadAll<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public ReadAutoCache(IRead<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -40,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public ReadAutoCache(IReadAll<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null) 
+        public ReadAutoCache(IRead<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null) 
             : base(getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
             InternalContract.RequireNotNull(storage, nameof(storage));

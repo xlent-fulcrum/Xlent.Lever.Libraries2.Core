@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Translation;
@@ -10,12 +9,12 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
-    public class ReadClientTranslator<TModel> : ClientTranslatorBase, IReadAll<TModel, string>
+    public class ReadClientTranslator<TModel> : ClientTranslatorBase, IRead<TModel, string>
     {
-        private readonly IReadAll<TModel, string> _storage;
+        private readonly IRead<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ReadClientTranslator(IReadAll<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        public ReadClientTranslator(IRead<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
         :base(idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;

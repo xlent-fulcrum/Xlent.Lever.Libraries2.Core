@@ -33,7 +33,7 @@
       1.19.4 Bug: Misspelled interface name.
       1.19.3 Renamed new interface methods.
       1.19.1 Added MemoryPersistance implementations of the new interfaces.
-      1.19.0 Added IManyToOneRelation and IManyToManyRelation.
+      1.19.0 Added IManyToOne and IManyToMany.
       1.18.5 Fix: Added missing dependency for Newtonsoft.Json.
       1.18.4 Bug: Attribute ThreadStatic was used in async methods. Replaced it with AsyncLocal.
       1.18.3 Bug: The memory queue could run actions in parallel that interfered with each other.

@@ -9,7 +9,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
-    public class ManyToOneBiased1Mapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOneRelation<TClientModel, TClientId>
+    public class ManyToOneBiased1Mapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IManyToOne<TClientModel, TClientId>
     {
         private readonly IManyToManyBiased1<TServerModel, TServerId> _service;
 

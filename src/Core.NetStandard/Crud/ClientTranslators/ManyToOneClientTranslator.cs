@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Translation;
@@ -10,12 +9,12 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc />
-    public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOneRelation<TModel, string>
+    public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOne<TModel, string>
     {
-        private readonly IManyToOneRelation<TModel, string> _storage;
+        private readonly IManyToOne<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneClientTranslator(IManyToOneRelation<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        public ManyToOneClientTranslator(IManyToOne<TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
         :base(idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;
@@ -41,14 +40,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
             var array = result as TModel[] ?? result.ToArray();
             await translator.Add(array).ExecuteAsync();
             return translator.Translate(array);
-        }
-
-        /// <inheritdoc />
-        public async Task DeleteChildrenAsync(string masterId, CancellationToken token = new CancellationToken())
-        {
-            var translator = CreateTranslator();
-            masterId = translator.Decorate(IdConceptName, masterId);
-            await _storage.DeleteChildrenAsync(masterId, token);
         }
     }
 }

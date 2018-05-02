@@ -51,5 +51,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             }
             await Task.WhenAll(taskList);
         }
+
+        /// <inheritdoc />
+        public abstract Task<Lock> ClaimLockAsync(TId id, CancellationToken token = default(CancellationToken));
+
+        /// <inheritdoc />
+        public abstract Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken));
     }
 }

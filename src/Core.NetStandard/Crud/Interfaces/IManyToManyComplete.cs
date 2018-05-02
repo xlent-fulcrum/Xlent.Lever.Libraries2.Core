@@ -7,8 +7,8 @@
     /// <typeparam name="TReferenceModel1"></typeparam>
     /// <typeparam name="TReferenceModel2"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public interface IManyToManyRelationComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> :
-        IManyToManyRelationComplete<TManyToManyModel, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
+    public interface IManyToManyComplete<TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> :
+        IManyToManyComplete<TManyToManyModel, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId>
     {
     }
     /// <summary>
@@ -19,8 +19,8 @@
     /// <typeparam name="TReferenceModel1"></typeparam>
     /// <typeparam name="TReferenceModel2"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public interface IManyToManyRelationComplete<in TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> :
-        IManyToManyRelation<TReferenceModel1, TReferenceModel2, TId>,
+    public interface IManyToManyComplete<in TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TReferenceModel2, TId> :
+        IManyToMany<TReferenceModel1, TReferenceModel2, TId>,
         IManyToManyBiased1Complete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel2, TId>,
         IManyToManyBiased2Complete<TManyToManyModelCreate, TManyToManyModel, TReferenceModel1, TId> where TManyToManyModel : TManyToManyModelCreate
     {

@@ -9,9 +9,9 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
     /// <inheritdoc cref="MapperBase{TClientModel,TClientId,TServerModel,TServerId}" />
-    public class ReadMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IReadAll<TClientModel, TClientId>
+    public class ReadMapper<TClientModel, TClientId, TServerModel, TServerId> : MapperBase<TClientModel, TClientId, TServerModel, TServerId>, IRead<TClientModel, TClientId>
     {
-        private readonly IReadAll<TServerModel, TServerId> _service;
+        private readonly IRead<TServerModel, TServerId> _service;
 
         /// <summary>
         /// A mapping class that can map between the client and server model.
@@ -19,7 +19,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         public IReadModelMapper<TClientModel, TServerModel> ReadModelMapper { get; }
 
         /// <inheritdoc />
-        public ReadMapper(IReadAll<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
+        public ReadMapper(IRead<TServerModel, TServerId> service, IReadModelMapper<TClientModel, TServerModel> modelMapper)
         {
             _service = service;
             ReadModelMapper = modelMapper;

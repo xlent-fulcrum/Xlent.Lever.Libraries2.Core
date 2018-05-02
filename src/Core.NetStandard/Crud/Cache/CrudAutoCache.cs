@@ -12,8 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// </summary>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrudAutoCache<TModel, TId> : CrudAutoCache<TModel, TModel, TId>,
-        ICrud<TModel, TId>
+    public class CrudAutoCache<TModel, TId> : CrudAutoCache<TModel, TModel, TId>, ICrud<TModel, TId>
     {
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -22,7 +21,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrudAutoCache(ICrudWithSpecifiedId<TModel, TId> storage, IDistributedCache cache,
+        public CrudAutoCache(ICrud<TModel, TId> storage, IDistributedCache cache,
             FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
@@ -37,7 +36,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrudAutoCache(ICrudWithSpecifiedId<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
+        public CrudAutoCache(ICrud<TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
@@ -53,7 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// <typeparam name="TId"></typeparam>
     public class CrudAutoCache<TModelCreate, TModel, TId> : CrdAutoCache<TModelCreate, TModel, TId>, ICrud<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
-        private readonly ICrudWithSpecifiedId<TModelCreate, TModel, TId> _storage;
+        private readonly ICrud<TModelCreate, TModel, TId> _storage;
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -62,7 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrudAutoCache(ICrudWithSpecifiedId<TModelCreate, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public CrudAutoCache(ICrud<TModelCreate, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -76,7 +75,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrudAutoCache(ICrudWithSpecifiedId<TModelCreate, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public CrudAutoCache(ICrud<TModelCreate, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
             _storage = storage;

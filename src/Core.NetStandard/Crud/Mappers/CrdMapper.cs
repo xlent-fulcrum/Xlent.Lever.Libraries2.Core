@@ -80,25 +80,38 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         }
 
         /// <inheritdoc />
-        public virtual async Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        public virtual Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
-            await _service.DeleteAllAsync(token);
+            return _service.DeleteAllAsync(token);
+        }
+
+        /// <inheritdoc />
+        public virtual async Task<Lock> ClaimLockAsync(TClientId id, CancellationToken token = default(CancellationToken))
+        {
+            var serverId = MapToServerId(id);
+            return await _service.ClaimLockAsync(serverId, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _service.ReleaseLockAsync(@lock, token);
         }
 
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
+        protected Task<TServerModel> CreateInServerAndReturnAsync(TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await CrdModelMapper.CreateAndReturnAsync(clientItem, token);
+            return CrdModelMapper.CreateAndReturnAsync(clientItem, token);
         }
 
         /// <summary>
         /// A convenience method to map a <paramref name="clientItem"/> to a a server item.
         /// </summary>
-        protected async Task<TServerModel> CreateInServerAndReturnAsync(TClientId id, TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
+        protected Task<TServerModel> CreateInServerAndReturnAsync(TClientId id, TClientModelCreate clientItem, CancellationToken token = default(CancellationToken))
         {
-            return await CrdModelMapper.CreateWithSpecifiedIdAndReturnAsync(id, clientItem, token);
+            return CrdModelMapper.CreateWithSpecifiedIdAndReturnAsync(id, clientItem, token);
         }
     }
 }

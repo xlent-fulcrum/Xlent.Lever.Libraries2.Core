@@ -86,5 +86,30 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         {
             return _nextLevel.UpdateAsync(id, item, token);
         }
+
+        /// <inheritdoc />
+        public virtual Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.CreateWithSpecifiedIdAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task<TModel> CreateWithSpecifiedIdAndReturnAsync(TId id, TModelCreate item,
+            CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task<Lock> ClaimLockAsync(TId id, CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.ClaimLockAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.ReleaseLockAsync(@lock, token);
+        }
     }
 }

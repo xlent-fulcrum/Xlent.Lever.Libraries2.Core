@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
 {
     /// <summary>
-    /// Delete an item of type <see cref="IUniquelyIdentifiable{TId}"/>.
+    /// Delete items./>.
     /// </summary>
-    /// <typeparam name="TId">The type for the <see cref="IUniquelyIdentifiable{TId}.Id"/> property.</typeparam>
     public interface IDelete<in TId>
     {
         /// <summary>
@@ -16,5 +16,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// <param name="id">The id of the item that should be deleted.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
         Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken));
+
+        /// <summary>
+        /// Delete all the items from storage.
+        /// </summary>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        /// <remarks>
+        /// The implementor of this method can decide that it is not a valid method to expose.
+        /// In that case, the method should throw a <see cref="FulcrumNotImplementedException"/>.
+        /// </remarks>
+        Task DeleteAllAsync(CancellationToken token = default(CancellationToken));
     }
 }

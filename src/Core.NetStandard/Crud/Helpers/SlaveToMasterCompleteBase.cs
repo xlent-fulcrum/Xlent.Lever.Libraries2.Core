@@ -14,12 +14,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// Abstract base class that has a default implementation for <see cref="ReadChildrenAsync"/>
     /// and <see cref="DeleteChildrenAsync"/>.
     /// </summary>
-    public abstract class SlaveToMasterCompleteBase<TModelCreate, TModel, TId> : RudBase<TModel, SlaveToMasterId<TId>>, ISlaveToMasterComplete<TModelCreate, TModel, TId> 
+    public abstract class SlaveToMasterCompleteBase<TModelCreate, TModel, TId> : RudBase<TModel, SlaveToMasterId<TId>>, ISlaveToMaster<TModelCreate, TModel, TId> 
         where TModel : TModelCreate
     {
 
         /// <inheritdoc />
-        public async Task<SlaveToMasterId<TId>> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<SlaveToMasterId<TId>> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
+        public virtual async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotNull(item, nameof(item));
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TId> id, TModelCreate item,
+        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TId> id, TModelCreate item,
             CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));

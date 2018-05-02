@@ -12,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// </summary>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrdAutoCache<TModel, TId> : CrdAutoCache<TModel, TModel, TId>, ICrdWithSpecifiedId<TModel, TId>
+    public class CrdAutoCache<TModel, TId> : CrdAutoCache<TModel, TModel, TId>, ICrd<TModel, TId>
     {
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrdAutoCache(ICrdWithSpecifiedId<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public CrdAutoCache(ICrd<TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -35,9 +35,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrdAutoCache<TModelCreate, TModel, TId> : ReadAutoCache<TModel, TId>, ICrdWithSpecifiedId<TModelCreate, TModel, TId> where TModel : TModelCreate
+    public class CrdAutoCache<TModelCreate, TModel, TId> : ReadAutoCache<TModel, TId>, ICrd<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
-        private readonly ICrdWithSpecifiedId<TModelCreate, TModel, TId> _storage;
+        private readonly ICrd<TModelCreate, TModel, TId> _storage;
 
         /// <summary>
         /// Constructor for TModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrdAutoCache(ICrdWithSpecifiedId<TModelCreate, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public CrdAutoCache(ICrd<TModelCreate, TModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<TId>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -60,7 +60,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public CrdAutoCache(ICrdWithSpecifiedId<TModelCreate, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
+        public CrdAutoCache(ICrd<TModelCreate, TModel, TId> storage, GetIdDelegate<TModel, TId> getIdDelegate,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
         : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
@@ -151,6 +151,18 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
             var key = GetCacheKeyFromId(id);
             var cachedItem = await Cache.GetAsync(key, token);
             return cachedItem != null;
+        }
+
+        /// <inheritdoc />
+        public Task<Lock> ClaimLockAsync(TId id, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ClaimLockAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ReleaseLockAsync(@lock, token);
         }
     }
 }
