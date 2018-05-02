@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
     }
 
     /// <inheritdoc />
-    public class CrudPassThrough<TModelCreate, TModel, TId> : ICrud<TModelCreate, TModel, TId> where TModel : TModelCreate
+    public class CrudPassThrough<TModelCreate, TModel, TId> : RudPassThrough<TModel, TId>, ICrud<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
         private readonly ICrud<TModelCreate, TModel, TId> _nextLevel;
 
@@ -29,6 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
         public CrudPassThrough(ICrud<TModelCreate, TModel, TId> nextLevel)
+        :base(nextLevel)
         {
             _nextLevel = nextLevel;
         }
@@ -46,48 +47,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         }
 
         /// <inheritdoc />
-        public virtual Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.DeleteAllAsync(token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.DeleteAsync(id, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAllAsync(limit, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAllWithPagingAsync(offset, limit, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAsync(id, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<TModel> UpdateAndReturnAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.UpdateAndReturnAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task UpdateAsync(TId id, TModel item, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.UpdateAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
         public virtual Task CreateWithSpecifiedIdAsync(TId id, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             return _nextLevel.CreateWithSpecifiedIdAsync(id, item, token);
@@ -98,18 +57,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
             CancellationToken token = default(CancellationToken))
         {
             return _nextLevel.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<Lock> ClaimLockAsync(TId id, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ClaimLockAsync(id, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReleaseLockAsync(@lock, token);
         }
     }
 }
