@@ -145,8 +145,10 @@
     <Compile Include="Core\Crud\MemoryStorage\ManyToManyMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\ManyToOneMemory.cs" />
     <Compile Include="Core\Crud\MemoryStorage\SlaveToMasterMemory.cs" />
+    <Compile Include="Core\Crud\PassThrough\CrdPassThrough.cs" />
     <Compile Include="Core\Crud\PassThrough\ManyToOneCompletePassThrough.cs" />
     <Compile Include="Core\Crud\PassThrough\CrudPassThrough.cs" />
+    <Compile Include="Core\Crud\PassThrough\ReadPassThrough.cs" />
     <Compile Include="Core\Crud\PassThrough\RudPassThrough.cs" />
     <Compile Include="Core\Crud\PassThrough\SlaveToMasterPassThrough.cs" />
     <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFrom.cs" />

@@ -7,7 +7,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
     /// <inheritdoc />
-    public class RudPassThrough<TModel, TId> : IRud<TModel, TId>
+    public class RudPassThrough<TModel, TId> : ReadPassThrough<TModel, TId>, IRud<TModel, TId>
     {
         private readonly IRud<TModel, TId> _nextLevel;
 
@@ -16,6 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
         public RudPassThrough(IRud<TModel, TId> nextLevel)
+            : base(nextLevel)
         {
             _nextLevel = nextLevel;
         }
@@ -30,24 +31,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         public virtual Task DeleteAsync(TId id, CancellationToken token = default(CancellationToken))
         {
             return _nextLevel.DeleteAsync(id, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAllAsync(limit, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<PageEnvelope<TModel>> ReadAllWithPagingAsync(int offset, int? limit = null, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAllWithPagingAsync(offset, limit, token);
-        }
-
-        /// <inheritdoc />
-        public virtual Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken))
-        {
-            return _nextLevel.ReadAsync(id, token);
         }
 
         /// <inheritdoc />
