@@ -10,48 +10,33 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
 {
+    /// <inheritdoc cref="SlaveToMasterCompleteBase{TModelCreate,TModel,TId}" />
+    public abstract class SlaveToMasterCompleteBase<TModel, TId> :
+        SlaveToMasterCompleteBase<TModel, TModel, TId>,
+        ISlaveToMasterComplete<TModel, TId>
+    {
+    }
+
     /// <summary>
     /// Abstract base class that has a default implementation for <see cref="ReadChildrenAsync"/>
     /// and <see cref="DeleteChildrenAsync"/>.
     /// </summary>
-    public abstract class SlaveToMasterCompleteBase<TModelCreate, TModel, TId> : RudBase<TModel, SlaveToMasterId<TId>>, ISlaveToMaster<TModelCreate, TModel, TId> 
+    public abstract class SlaveToMasterCompleteBase<TModelCreate, TModel, TId> :
+        RudBase<TModel, SlaveToMasterId<TId>>,
+        ISlaveToMasterComplete<TModelCreate, TModel, TId>
         where TModel : TModelCreate
     {
+        /// <inheritdoc />
+        public abstract Task<SlaveToMasterId<TId>> CreateAsync(TId masterId, TModelCreate item,
+        CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
-        public virtual async Task<SlaveToMasterId<TId>> CreateAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
+        public async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
             InternalContract.RequireNotNull(item, nameof(item));
             MaybeValidate(item);
-            var slaveId = StorageHelper.CreateNewId<TId>();
-            var id = new SlaveToMasterId<TId>(masterId, slaveId);
-            await CreateWithSpecifiedIdAsync(id, item, token);
-            return id;
-        }
-
-        /// <inheritdoc />
-        public virtual async Task<TModel> CreateAndReturnAsync(TId masterId, TModelCreate item, CancellationToken token = default(CancellationToken))
-        {
-            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
-            InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
-            var slaveId = StorageHelper.CreateNewId<TId>();
-            var id = new SlaveToMasterId<TId>(masterId, slaveId);
-            return await CreateWithSpecifiedIdAndReturnAsync(id, item, token);
-        }
-
-        /// <inheritdoc />
-        public abstract Task CreateWithSpecifiedIdAsync(SlaveToMasterId<TId> id, TModelCreate item,
-            CancellationToken token = default(CancellationToken));
-
-        /// <inheritdoc />
-        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TId> id, TModelCreate item,
-            CancellationToken token = default(CancellationToken))
-        {
-            InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
-            await CreateWithSpecifiedIdAsync(id, item, token);
+            var id = await CreateAsync(masterId, item, token);
             return await ReadAsync(id, token);
         }
 
@@ -73,7 +58,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
             var errorMessage = $"The method {nameof(DeleteChildrenAsync)} of the abstract base class {nameof(SlaveToMasterCompleteBase<TModelCreate, TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<SlaveToMasterId<TId>>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
-            var items = new PageEnvelopeEnumerableAsync<TModel>((offset,ct) => ReadChildrenWithPagingAsync(masterId, offset, null, ct), token);
+            var items = new PageEnvelopeEnumerableAsync<TModel>((offset, ct) => ReadChildrenWithPagingAsync(masterId, offset, null, ct), token);
             var enumerator = items.GetEnumerator();
             var taskList = new List<Task>();
             while (await enumerator.MoveNextAsync())
@@ -85,6 +70,22 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
                 taskList.Add(DeleteAsync(identifiable.Id, token));
             }
             await Task.WhenAll(taskList);
+        }
+
+        /// <inheritdoc />
+        public abstract Task CreateWithSpecifiedIdAsync(SlaveToMasterId<TId> id, TModelCreate item,
+            CancellationToken token = default(CancellationToken));
+
+        /// <inheritdoc />
+        public virtual async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TId> id, TModelCreate item,
+            CancellationToken token = default(CancellationToken))
+        {
+            InternalContract.RequireNotNull(id, nameof(id));
+            InternalContract.RequireValidated(id, nameof(id));
+            InternalContract.RequireNotNull(item, nameof(item));
+            MaybeValidate(item);
+            await CreateWithSpecifiedIdAsync(id, item, token);
+            return await ReadAsync(id, token);
         }
     }
 }

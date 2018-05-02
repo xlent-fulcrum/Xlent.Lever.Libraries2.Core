@@ -8,30 +8,31 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
     /// <inheritdoc cref="ManyToOneCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
-    public class SlaveToMasterPassThrough<TModel, TId> :
-        SlaveToMasterPassThrough<TModel, TModel, TId>,
+    public class SlaveToMasterCompletePassThrough<TModel, TId> :
+        SlaveToMasterCompletePassThrough<TModel, TModel, TId>,
         ISlaveToMaster<TModel, TId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public SlaveToMasterPassThrough(ISlaveToMaster<TModel, TId> nextLevel)
+        public SlaveToMasterCompletePassThrough(ISlaveToMasterComplete<TModel, TId> nextLevel)
             : base(nextLevel)
         {
         }
     }
 
     /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TId}" />
-    public class SlaveToMasterPassThrough<TModelCreate, TModel, TId> : ISlaveToMaster<TModelCreate, TModel, TId> where TModel : TModelCreate
+    public class SlaveToMasterCompletePassThrough<TModelCreate, TModel, TId> : RudPassThrough<TModel, SlaveToMasterId<TId>>, ISlaveToMasterComplete<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
-        private readonly ISlaveToMaster<TModelCreate, TModel, TId> _nextLevel;
+        private readonly ISlaveToMasterComplete<TModelCreate, TModel, TId> _nextLevel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public SlaveToMasterPassThrough(ISlaveToMaster<TModelCreate, TModel, TId> nextLevel)
+        public SlaveToMasterCompletePassThrough(ISlaveToMasterComplete<TModelCreate, TModel, TId> nextLevel)
+        :base(nextLevel)
         {
             _nextLevel = nextLevel;
         }

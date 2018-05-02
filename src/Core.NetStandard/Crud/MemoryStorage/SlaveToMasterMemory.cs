@@ -6,7 +6,6 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Helpers;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.Model;
-using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
@@ -21,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <summary>
     /// Functionality for persisting objects in groups.
     /// </summary>
-    public class SlaveToMasterMemory<TModelCreate, TModel, TId> : CrudMemory<TModelCreate, TModel, SlaveToMasterId<TId>>, ISlaveToMaster<TModelCreate, TModel, TId>
+    public class SlaveToMasterMemory<TModelCreate, TModel, TId> : CrudMemory<TModelCreate, TModel, SlaveToMasterId<TId>>, ISlaveToMasterComplete<TModelCreate, TModel, TId>
         where TModel : TModelCreate
     {
         /// <summary>
