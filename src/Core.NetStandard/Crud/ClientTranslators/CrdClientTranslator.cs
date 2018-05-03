@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="CrdClientTranslator{TModel}" />
     public class CrdClientTranslator<TModel> : CrdClientTranslator<TModel, TModel>, ICrd<TModel, string>
     {
         /// <inheritdoc />
@@ -17,7 +16,9 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Decorate from client and translate to client.
+    /// </summary>
     public class CrdClientTranslator<TModelCreate, TModel> : ReadClientTranslator<TModel>, ICrd<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
@@ -62,6 +63,41 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         public async Task DeleteAllAsync(CancellationToken token = new CancellationToken())
         {
             await _storage.DeleteAllAsync(token);
+        }
+
+        /// <inheritdoc />
+        public async Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            id = translator.Decorate(IdConceptName, id);
+            item = translator.DecorateItem(item);
+            await _storage.CreateWithSpecifiedIdAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item,
+            CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            id = translator.Decorate(IdConceptName, id);
+            item = translator.DecorateItem(item);
+            var decoratedResult = await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
+            await translator.Add(decoratedResult).ExecuteAsync();
+            return translator.Translate(decoratedResult);
+        }
+
+        /// <inheritdoc />
+        public async Task<Lock> ClaimLockAsync(string id, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            id = translator.Decorate(IdConceptName, id);
+            return await _storage.ClaimLockAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ReleaseLockAsync(@lock, token);
         }
     }
 }

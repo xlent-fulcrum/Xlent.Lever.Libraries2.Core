@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Helpers;
@@ -14,7 +13,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// </summary>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrudMemory<TModel, TId> : CrudMemory<TModel, TModel, TId>, ICrud<TModel, TId>, ICrudWithSpecifiedId<TModel, TId>
+    public class CrudMemory<TModel, TId> : CrudMemory<TModel, TModel, TId>, ICrud<TModel, TId>
     {
     }
 
@@ -24,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId"></typeparam>
-    public class CrudMemory<TModelCreate, TModel, TId> : RudMemory<TModel, TId>, ICrud<TModelCreate, TModel, TId>, ICrudWithSpecifiedId<TModelCreate, TModel, TId>
+    public class CrudMemory<TModelCreate, TModel, TId> : RudMemory<TModel, TId>, ICrud<TModelCreate, TModel, TId>
         where TModel : TModelCreate
     {
         /// <inheritdoc />

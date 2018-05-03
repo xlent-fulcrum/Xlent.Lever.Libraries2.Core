@@ -9,17 +9,17 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Encrypt
 {
     /// <inheritdoc />
-    public class ReadEncrypt <TModel, TId>: IReadAll<TModel, TId>
+    public class ReadEncrypt <TModel, TId>: IRead<TModel, TId>
     {
         private readonly SymmetricCrypto _symmetricCrypto;
-        private readonly IReadAll<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> _storage;
+        private readonly IRead<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> _storage;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="storage"></param>
         /// <param name="symmetricEncryptionKey"></param>
-        public ReadEncrypt(IReadAll<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> storage, byte[] symmetricEncryptionKey)
+        public ReadEncrypt(IRead<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> storage, byte[] symmetricEncryptionKey)
         {
             _storage = storage;
             _symmetricCrypto = new SymmetricCrypto(symmetricEncryptionKey);

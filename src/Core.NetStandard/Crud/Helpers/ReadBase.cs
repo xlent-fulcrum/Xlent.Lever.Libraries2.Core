@@ -13,9 +13,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
     /// </summary>
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TId"></typeparam>
-    public abstract class ReadBase<TModel, TId> : IReadAll<TModel, TId>
+    public abstract class ReadBase<TModel, TId> : IRead<TModel, TId>
     {
-
         /// <inheritdoc />
         public abstract Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken));
 
@@ -25,7 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <inheritdoc />
         public virtual async Task<IEnumerable<TModel>> ReadAllAsync(int limit = int.MaxValue, CancellationToken token = default(CancellationToken))
         {
-            return await StorageHelper.ReadPagesAsync((offset,ct) => ReadAllWithPagingAsync(offset, null, ct), limit, token);
+            return await StorageHelper.ReadPagesAsync((offset, ct) => ReadAllWithPagingAsync(offset, null, ct), limit, token);
         }
 
         /// <summary>

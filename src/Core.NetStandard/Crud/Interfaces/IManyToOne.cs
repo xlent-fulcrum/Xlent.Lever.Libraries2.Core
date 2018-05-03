@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// <summary>
     /// Functionality for persisting groups of objects.
     /// </summary>
-    public interface IManyToOneRelation<TManyModel, in TId>
+    public interface IManyToOne<TManyModel, in TId>
     {
         /// <summary>
         /// Read all child items for a specific parent, <paramref name="parentId"/>.
@@ -26,10 +26,5 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// <param name="limit">The maximum number of items to return.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
         Task<IEnumerable<TManyModel>> ReadChildrenAsync(TId parentId, int limit = int.MaxValue, CancellationToken token = default(CancellationToken));
-
-        /// <summary>
-        /// Delete all child items for a specific parent, <paramref name="parentId"/>.
-        /// </summary>
-        Task DeleteChildrenAsync(TId parentId, CancellationToken token = default(CancellationToken));
     }
 }

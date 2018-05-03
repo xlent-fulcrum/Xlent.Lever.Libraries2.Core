@@ -1,9 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Helpers;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
+using Xlent.Lever.Libraries2.Core.Crud.Mappers;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
@@ -16,6 +19,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
     /// <typeparam name="TId"></typeparam>
     public class RudMemory<TModel, TId> : RudBase<TModel, TId>
     {
+        /// <summary>
+        /// Needed for providing lock functionality.
+        /// </summary>
+        private readonly ConcurrentDictionary<string, Lock> _locks = new ConcurrentDictionary<string, Lock>();
+
         /// <summary>
         /// The actual storage of the items.
         /// </summary>
@@ -79,6 +87,52 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         {
             MemoryItems.Clear();
             return Task.FromResult(0);
+        }
+
+        /// <inheritdoc />
+        public override Task<Lock> ClaimLockAsync(TId id, CancellationToken token = default(CancellationToken))
+        {
+            InternalContract.RequireNotDefaultValue(id, nameof(id));
+
+            var key = MapperHelper.MapToType<string, TId>(id);
+            var newLock = new Lock
+            {
+                ItemId = key,
+                LockId = Guid.NewGuid().ToString(),
+                ValidUntil = DateTimeOffset.Now.AddSeconds(30)
+            };
+            while (true)
+            {
+                token.ThrowIfCancellationRequested();
+                if (_locks.TryAdd(key, newLock)) return Task.FromResult(newLock);
+                if (!_locks.TryGetValue(key, out var oldLock)) continue;
+                var remainingTime = oldLock.ValidUntil.Subtract(DateTimeOffset.Now);
+                if (remainingTime > TimeSpan.Zero)
+                {
+                    var message = $"Item {key} is locked by someone else. The lock will be released before {oldLock.ValidUntil}";
+                    var exception = new FulcrumTryAgainException(message)
+                    {
+                        RecommendedWaitTimeInSeconds = remainingTime.Seconds
+                    };
+                    throw exception;
+                }
+                if (_locks.TryUpdate(key, newLock, oldLock)) return Task.FromResult(newLock);
+            }
+        }
+
+        /// <inheritdoc />
+        public override Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            InternalContract.RequireNotNull(@lock, nameof(@lock));
+            InternalContract.RequireValidated(@lock, nameof(@lock));
+            var key = @lock.ItemId;
+            // Try to temporarily add additional time to make sure that nobody steals the lock while we are releasing it.
+            // The TryUpdate will return false if there is no lock or if the current lock differs from the lock we want to release.
+            @lock.ValidUntil = DateTimeOffset.Now.AddSeconds(30);
+            if (!_locks.TryUpdate(key, @lock, @lock)) return Task.CompletedTask;
+            // Finally remove the lock
+            _locks.TryRemove(key, out var currentLock);
+            return Task.CompletedTask;
         }
 
         /// <summary>

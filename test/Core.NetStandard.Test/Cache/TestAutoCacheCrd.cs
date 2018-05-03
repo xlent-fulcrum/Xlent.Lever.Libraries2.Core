@@ -7,8 +7,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
@@ -21,9 +19,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// <inheritdoc />
         public override ReadAutoCache<string, Guid> ReadAutoCache => _autoCache;
         
-        private ICrudWithSpecifiedId<string, string, Guid> _storage;
+        private ICrud<string, string, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrudWithSpecifiedId<string, string, Guid> CrudStorage => _storage;
+        protected override ICrud<string, string, Guid> CrudStorage => _storage;
 
         [TestInitialize]
         public void Initialize()

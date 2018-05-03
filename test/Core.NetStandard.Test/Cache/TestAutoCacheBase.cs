@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
 {
@@ -13,7 +12,7 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         protected IDistributedCache Cache;
 
-        protected virtual ICrudWithSpecifiedId<TModelCreate, TModel, Guid> CrudStorage { get; }
+        protected virtual ICrud<TModelCreate, TModel, Guid> CrudStorage { get; }
         protected DistributedCacheEntryOptions DistributedCacheOptions;
         protected readonly string BaseGuidString;
         protected AutoCacheOptions AutoCacheOptions;

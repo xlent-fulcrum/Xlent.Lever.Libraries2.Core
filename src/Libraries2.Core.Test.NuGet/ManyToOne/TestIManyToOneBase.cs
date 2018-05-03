@@ -10,14 +10,14 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.ManyToOne
         /// <summary>
         /// The storage that should be tested
         /// </summary>
-        protected abstract IManyToOneRelationComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
+        protected abstract IManyToOneComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
             ManyStorageRecursive { get; }
 
         /// <summary>
         /// The storage that should be tested
         /// </summary>
         protected abstract
-            IManyToOneRelationComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
+            IManyToOneComplete<TestItemManyToOneCreate<TReferenceId>, TestItemManyToOne<TId, TReferenceId>, TId>
             ManyStorageNonRecursive { get; }
 
         /// <summary>

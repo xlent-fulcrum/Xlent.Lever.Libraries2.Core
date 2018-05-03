@@ -7,8 +7,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Xlent.Lever.Libraries2.Core.Cache
@@ -18,9 +16,9 @@ namespace Xlent.Lever.Libraries2.Core.Cache
     {
         private ManyToOneAutoCacheComplete<ItemWithParentId, Guid> _autoCache;
 
-        private IManyToOneRelationComplete<ItemWithParentId, Guid> _storage;
+        private IManyToOneComplete<ItemWithParentId, Guid> _storage;
         /// <inheritdoc />
-        protected override ICrudWithSpecifiedId<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
+        protected override ICrud<ItemWithParentId, ItemWithParentId, Guid> CrudStorage => _storage;
         
         /// <inheritdoc />
         public override ReadAutoCache<ItemWithParentId, Guid> ReadAutoCache => _autoCache;

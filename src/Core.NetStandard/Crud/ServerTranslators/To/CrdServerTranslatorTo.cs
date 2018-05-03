@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Translation;
 
@@ -18,20 +17,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     }
 
     /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
-        public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
-            where TModel : TModelCreate
+    public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
+        where TModel : TModelCreate
+    {
+        private readonly ICrd<TModelCreate, TModel, string> _storage;
+
+        /// <inheritdoc />
+        public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+            : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
-            private readonly ICrd<TModelCreate, TModel, string> _storage;
+            _storage = storage;
+        }
 
-            /// <inheritdoc />
-            public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
-                : base(storage, idConceptName, getServerNameMethod, translatorService)
-            {
-                _storage = storage;
-            }
-
-            /// <inheritdoc />
-            public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
+        /// <inheritdoc />
+        public async Task<string> CreateAsync(TModelCreate item, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
             await translator.Add(item).ExecuteAsync();
@@ -58,9 +57,45 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
         }
 
         /// <inheritdoc />
-        public async Task DeleteAllAsync(CancellationToken token = new CancellationToken())
+        public Task DeleteAllAsync(CancellationToken token = new CancellationToken())
         {
-            await _storage.DeleteAllAsync(token);
+            return _storage.DeleteAllAsync(token);
+        }
+
+        /// <inheritdoc />
+        public async Task CreateWithSpecifiedIdAsync(string id, TModelCreate item, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            await translator.Add(id).Add(item).ExecuteAsync();
+            id = translator.Translate(id);
+            item = translator.Translate(item);
+            await _storage.CreateWithSpecifiedIdAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public async Task<TModel> CreateWithSpecifiedIdAndReturnAsync(string id, TModelCreate item,
+            CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            await translator.Add(id).Add(item).ExecuteAsync();
+            id = translator.Translate(id);
+            item = translator.Translate(item);
+            return await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
+        }
+
+        /// <inheritdoc />
+        public async Task<Lock> ClaimLockAsync(string id, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            await translator.Add(id).ExecuteAsync();
+            id = translator.Translate(id);
+            return await _storage.ClaimLockAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task ReleaseLockAsync(Lock @lock, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.ReleaseLockAsync(@lock, token);
         }
     }
 }

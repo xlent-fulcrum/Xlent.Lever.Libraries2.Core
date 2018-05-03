@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Xlent.Lever.Libraries2.Core.Crud.Helpers;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Logic;
-using Xlent.Lever.Libraries2.Core.Storage.Model;
-using Xlent.Lever.Libraries2.Core.Test.NuGet.Crd;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 using A = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
@@ -18,9 +14,9 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     [TestClass]
     public abstract class TestParameters
     {
-        private readonly ICrdWithSpecifiedId<TestItemBare, Guid> _implementation;
+        private readonly ICrd<TestItemBare, Guid> _implementation;
 
-        public TestParameters(ICrdWithSpecifiedId<TestItemBare, Guid> implementation)
+        public TestParameters(ICrd<TestItemBare, Guid> implementation)
         {
             _implementation = implementation;
         }

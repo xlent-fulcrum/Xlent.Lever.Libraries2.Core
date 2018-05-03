@@ -16,7 +16,6 @@ namespace Xlent.Lever.Libraries2.Core.Security
         /// Constructor.
         /// </summary>
         /// <param name="symmetricEncryptionKey">The symmetric key to use both to encrypt and to decrypt.</param>
-        /// <param name="iv">. Will be used when you call the Encrypt/Decrypt methods without the iv parameter.</param>
         public SymmetricCrypto(byte[] symmetricEncryptionKey)
         {
             _symmetricEncryptionKey = symmetricEncryptionKey;

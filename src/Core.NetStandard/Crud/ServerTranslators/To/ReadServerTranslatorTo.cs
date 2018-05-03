@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 using Xlent.Lever.Libraries2.Core.Translation;
@@ -11,12 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class ReadServerTranslatorTo<TModel> : ServerTranslatorBase, IReadAll<TModel, string>
+    public class ReadServerTranslatorTo<TModel> : ServerTranslatorBase, IRead<TModel, string>
     {
-        private readonly IReadAll<TModel, string> _storage;
+        private readonly IRead<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ReadServerTranslatorTo(IReadAll<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public ReadServerTranslatorTo(IRead<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
         :base(idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;

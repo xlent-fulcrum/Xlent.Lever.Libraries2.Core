@@ -15,7 +15,8 @@
     /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
     /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
     /// <typeparam name="TId">The type for the id.</typeparam>
-    public interface ICrud<in TModelCreate, TModel, TId> : ICrd<TModelCreate, TModel, TId>, IUpdate<TModel, TId> where TModel : TModelCreate
+    public interface ICrud<in TModelCreate, TModel, TId> : ICrd<TModelCreate, TModel, TId>, IRud<TModel, TId>
+        where TModel : TModelCreate
     {
     }
 }
