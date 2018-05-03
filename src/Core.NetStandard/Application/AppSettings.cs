@@ -55,7 +55,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         }
 
         /// <summary>
-        /// Get an <see cref="ITenant"/>.
+        /// Get an <see cref="Tenant"/>.
         /// </summary>
         /// <param name="organizationSettingName">The name of the app setting for the organization part of the tenant.</param>
         /// <param name="environmentSettingName">The name of the app setting for the environment part of the tenant.</param>

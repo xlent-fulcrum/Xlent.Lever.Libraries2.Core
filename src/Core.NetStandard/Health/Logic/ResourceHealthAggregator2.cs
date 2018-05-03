@@ -28,7 +28,7 @@ namespace Xlent.Lever.Libraries2.Core.Health.Logic
         public delegate Task<HealthInfo> GetResourceHealthDelegate(Tenant tenant);
 
         /// <summary>
-        /// Create ResourceHealthAggregator2 with an <see cref="ITenant"/> and the name of the service
+        /// Create ResourceHealthAggregator2 with an <see cref="Tenant"/> and the name of the service
         /// </summary>
         /// <param name="tenant">The tenant that we should focus on.</param>
         /// <param name="serviceName">The name of the resource.</param>
