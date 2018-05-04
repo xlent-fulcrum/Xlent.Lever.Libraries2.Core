@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.26.8</version>
+    <version>1.26.10</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      1.26.8 Made Tenant implement ITenant temporarily to let us use old versions of the SDK:s.
+      1.26.10 Made Tenant implement ITenant temporarily to let us use old versions of the SDK:s.
       1.26.6 Refactored Crud.
       1.25.4 Added Crud PassThrough classes.
       1.25.3 Added some basic encryption support. Now has separate CRUD-interfaces for ICreateWithSpecifiedId.
@@ -124,7 +124,7 @@
     <tags>fulcrum lever</tags>
     <dependencies>
       <group targetFramework="net46">
-        <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="Newtonsoft.Json" version="10.0.3" />
       </group>
     </dependencies>
   </metadata>
