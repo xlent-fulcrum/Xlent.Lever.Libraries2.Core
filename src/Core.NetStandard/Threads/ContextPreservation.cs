@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
@@ -50,7 +51,11 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             _correlationId = correlationProvider.CorrelationId;
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
         public void ExecuteActionFailSafe(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
             try
@@ -65,17 +70,45 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             }
             catch (Exception e)
             {
-                try
+                SafeLog(e);
+            }
+        }
+
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public async Task ExecuteActionFailSafeAsync(Func<CancellationToken, Task> asyncMethod, CancellationToken token = default(CancellationToken))
+        {
+            try
+            {
+                RestoreContext();
+                await asyncMethod(token);
+                lock (ClassLock)
                 {
-                    var message = $"Background thread failed:\r{e.ToLogString()}." +
-                                  $"\rApplication information: {FulcrumApplication.ToLogString()}" +
-                                  $"\rContext information: {ToLogString()}";
-                    Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
+                    if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
+                    ThreadCallDepth.Value--;
                 }
-                catch (Exception)
-                {
-                    // Give up
-                }
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
+        private void SafeLog(Exception e)
+        {
+            try
+            {
+                var message = $"Background thread failed:\r{e.ToLogString()}." +
+                              $"\rApplication information: {FulcrumApplication.ToLogString()}" +
+                              $"\rContext information: {ToLogString()}";
+                Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
+            }
+            catch (Exception)
+            {
+                // Give up
             }
         }
 
