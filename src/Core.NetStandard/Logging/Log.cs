@@ -6,6 +6,7 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Queue.Logic;
+using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -130,8 +131,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                Task.Run(async () => await LogQueue.AddMessageAsync(logInstanceInformation).ConfigureAwait(false))
-                    .Wait();
+                ThreadHelper.CallAsyncFromSync(async () => await LogQueue.AddMessageAsync(logInstanceInformation));
             }
         }
 
