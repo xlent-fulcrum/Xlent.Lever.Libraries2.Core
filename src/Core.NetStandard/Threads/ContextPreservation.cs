@@ -97,6 +97,28 @@ namespace Xlent.Lever.Libraries2.Core.Threads
             }
         }
 
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        public async Task ExecuteActionFailSafeAsync(Func<Task> asyncMethod)
+        {
+            try
+            {
+                RestoreContext();
+                await asyncMethod();
+                lock (ClassLock)
+                {
+                    if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
+                    ThreadCallDepth.Value--;
+                }
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
         private void SafeLog(Exception e)
         {
             try
