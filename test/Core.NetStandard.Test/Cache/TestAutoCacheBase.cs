@@ -5,7 +5,7 @@ using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
-namespace Xlent.Lever.Libraries2.Core.Cache
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 {
     public abstract class TestAutoCacheBase<TModelCreate, TModel>
     where TModel : TModelCreate

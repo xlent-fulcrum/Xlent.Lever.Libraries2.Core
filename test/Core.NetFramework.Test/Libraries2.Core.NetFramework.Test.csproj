@@ -7,7 +7,7 @@
     <ProjectGuid>{4AF964D6-4819-4479-BE48-58437778D277}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Xlent.Lever.Libraries2</RootNamespace>
+    <RootNamespace>Xlent.Lever.Libraries2.Core.NetFramework.Test</RootNamespace>
     <AssemblyName>Xlent.Lever.Libraries2.Core.NetFramework.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -73,6 +73,10 @@
     <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
     <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\ServerTranslatorBase.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\Support\TestModelCreate.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\Support\TestModel.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFromTest.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />

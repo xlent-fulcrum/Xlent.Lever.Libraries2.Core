@@ -3,9 +3,10 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.Threads;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Xlent.Lever.Libraries2.Core.Threads
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Threads
 {
     [TestClass]
     public class TestThreadHelper

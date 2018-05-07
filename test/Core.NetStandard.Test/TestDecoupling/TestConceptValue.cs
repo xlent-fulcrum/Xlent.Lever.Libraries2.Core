@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.Core.TestDecoupling
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestDecoupling
 {
     [TestClass]
     public class TestConceptValue

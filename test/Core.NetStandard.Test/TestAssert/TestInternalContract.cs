@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
-using Xlent.Lever.Libraries2.Core.Support;
+using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support;
 
-namespace Xlent.Lever.Libraries2.Core.TestAssert
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
 {
     [TestClass]
     public class TestInternalContract

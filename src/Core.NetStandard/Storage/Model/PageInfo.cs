@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System.Activities.Expressions;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
@@ -52,6 +53,26 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
             if (Total != null)
             {
                 FulcrumValidate.IsGreaterThanOrEqualTo(0, Total.Value, nameof(Total), errorLocaction);
+            }
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (!(obj is PageInfo other)) return false;
+            return int.Equals(Offset, other.Offset) && int.Equals(Limit, other.Limit) &&
+                   int.Equals(Returned, other.Returned) && int.Equals(Total, other.Total);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                return (Offset * 397) ^ Limit;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
             }
         }
     }

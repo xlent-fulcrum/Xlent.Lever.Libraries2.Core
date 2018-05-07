@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 
-namespace Xlent.Lever.Libraries2.Core.Error
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Error
 {
     [TestClass]
     public class ErrorTest
