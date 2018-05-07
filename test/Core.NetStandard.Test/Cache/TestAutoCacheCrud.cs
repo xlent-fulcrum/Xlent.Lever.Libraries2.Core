@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
-using Microsoft.Extensions.Caching.Distributed;
+using Xlent.Lever.Libraries2.Core.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Cache;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
-using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Xlent.Lever.Libraries2.Core.Cache
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 {
     [TestClass]
     public class TestAutoCacheCrud : TestAutoCacheBase<string, string>

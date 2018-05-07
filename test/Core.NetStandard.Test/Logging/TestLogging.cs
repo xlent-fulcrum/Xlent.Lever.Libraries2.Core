@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
+using Xlent.Lever.Libraries2.Core.Logging;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
-namespace Xlent.Lever.Libraries2.Core.Logging
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
 {
     [TestClass]
     public class TestLogging
@@ -128,12 +129,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     HasFailed = true;
                     Message =
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Logging.Log.OnlyForUnitTest_LoggingInProgress}";
+                        $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress}";
                 }
             }
             Console.WriteLine(message.Message);
             // Try to provoke a recursive log call of this method
-            if (!HasFailed) Logging.Log.LogError(recursiveLogMessage);
+            if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
             await Task.Yield();
             lock (ClassLock)
             {

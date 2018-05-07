@@ -2,7 +2,7 @@
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Support
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support
 {
     public class PersonStorableItem : StorableItem, INameable
     {

@@ -1,6 +1,6 @@
 ﻿using Xlent.Lever.Libraries2.Core.Assert;
 
-namespace Xlent.Lever.Libraries2.Core.Support
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support
 {
     internal class Validatable : IValidatable
     {

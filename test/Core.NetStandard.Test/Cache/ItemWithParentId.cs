@@ -1,7 +1,7 @@
 ﻿using System;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Cache
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 {
     public class ItemWithParentId : IUniquelyIdentifiable<Guid>
     {

@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
-using Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.Support;
+using Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From;
+using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Crud.ServerTranslators.Support;
 using Xlent.Lever.Libraries2.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Crud.ServerTranslators.From
 {
     [TestClass]
     public class CrdServerTranslatorFromTest

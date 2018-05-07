@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Context;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Xlent.Lever.Libraries2.Core.Context
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Context
 {
     [TestClass]
     public class TestAsyncLocalValueProvider

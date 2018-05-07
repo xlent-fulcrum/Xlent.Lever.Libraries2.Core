@@ -5,7 +5,7 @@ using Xlent.Lever.Libraries2.Core.Health.Logic;
 using Xlent.Lever.Libraries2.Core.Health.Model;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Health
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Health
 {
     [TestClass]
     public class HealthTest

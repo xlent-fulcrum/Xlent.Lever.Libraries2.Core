@@ -4,7 +4,7 @@ using Xlent.Lever.Libraries2.Core.Queue.Model;
 using Xlent.Lever.Libraries2.Core.Test.NuGet;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
-namespace Xlent.Lever.Libraries2.Core.Storage
+namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Storage
 {
     [TestClass]
     public class MemoryQueueTest : TestIQueue
