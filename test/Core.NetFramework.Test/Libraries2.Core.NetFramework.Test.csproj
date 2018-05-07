@@ -73,6 +73,7 @@
     <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
     <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
+    <Compile Include="Core\Crud\ServerTranslators\ServerTranslatorBase.cs" />
     <Compile Include="Core\Crud\ServerTranslators\Support\TestModelCreate.cs" />
     <Compile Include="Core\Crud\ServerTranslators\Support\TestModel.cs" />
     <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFromTest.cs" />
