@@ -2,12 +2,15 @@
 
 namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Crud.ServerTranslators.Support
 {
-    internal class TestModelCreate
+    public class TestModelCreate
     {
         public const string StatusConceptName = "testmodel.status";
-        public string Name { get; set; }
 
         [TranslationConcept("testmodel.status")]
         public string Status { get; set; }
+
+        public static string DecoratedStatus(string name, string status) => $"({StatusConceptName}!~{name}!{status})";
+
+        public string DecoratedStatus(string name) => DecoratedStatus(name, Status);
     }
 }
