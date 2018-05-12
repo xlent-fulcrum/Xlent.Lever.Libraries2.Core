@@ -17,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="ICrud{TModel,TId}" />
     public class CrudPassThrough<TModelCreate, TModel, TId> : RudPassThrough<TModel, TId>, ICrud<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
         private readonly ICrud<TModelCreate, TModel, TId> _nextLevel;

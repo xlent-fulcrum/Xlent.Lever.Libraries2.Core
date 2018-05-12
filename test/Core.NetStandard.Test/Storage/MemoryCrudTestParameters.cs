@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Crud.MemoryStorage;
-using Xlent.Lever.Libraries2.Core.Test.NuGet;
+using Xlent.Lever.Libraries2.Core.Test.NuGet.Crd;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 
 namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Storage

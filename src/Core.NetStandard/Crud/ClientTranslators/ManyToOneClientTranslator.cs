@@ -8,7 +8,7 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IManyToOne{TManyModel,TId}" />
     public class ManyToOneClientTranslator<TModel> : ClientTranslatorBase, IManyToOne<TModel, string>
     {
         private readonly IManyToOne<TModel, string> _storage;

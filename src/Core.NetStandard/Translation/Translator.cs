@@ -160,7 +160,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
             var jsonString = JsonConvert.SerializeObject(item);
             foreach (Match match in _conceptValueInStringRegex.Matches(jsonString))
             {
-                FulcrumAssert.IsGreaterThanOrEqualTo(1, match.Groups.Count, null, $"Expected match to have at least one group");
+                FulcrumAssert.IsGreaterThanOrEqualTo(1, match.Groups.Count, null, "Expected match to have at least one group.");
                 var conceptPath = match.Groups[1].ToString();
                 _conceptValues.Add(conceptPath);
             }

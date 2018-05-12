@@ -22,8 +22,5 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         {
             return StorageHelper.ReadPagesAsync((offset, ct) => ReadChildrenWithPagingAsync(parentId, offset, null, ct), limit, token);
         }
-
-        /// <inheritdoc />
-        public abstract Task DeleteChildrenAsync(TId parentId, CancellationToken token = default(CancellationToken));
     }
 }

@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Test.NuGet.Model;
 using A = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Xlent.Lever.Libraries2.Core.Test.NuGet
+namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Crd
 {
     /// <summary>
     /// Tests for testing any storage that implements <see cref="ICrd{TModelCreate,TModel,TId}"/>
@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet
     {
         private readonly ICrd<TestItemBare, Guid> _implementation;
 
-        public TestParameters(ICrd<TestItemBare, Guid> implementation)
+        protected TestParameters(ICrd<TestItemBare, Guid> implementation)
         {
             _implementation = implementation;
         }

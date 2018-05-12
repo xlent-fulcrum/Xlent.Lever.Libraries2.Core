@@ -1,5 +1,4 @@
-﻿using System.Activities.Expressions;
-using Xlent.Lever.Libraries2.Core.Assert;
+﻿using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Storage.Model
 {
@@ -61,8 +60,8 @@ namespace Xlent.Lever.Libraries2.Core.Storage.Model
         {
             if (obj == null) return false;
             if (!(obj is PageInfo other)) return false;
-            return int.Equals(Offset, other.Offset) && int.Equals(Limit, other.Limit) &&
-                   int.Equals(Returned, other.Returned) && int.Equals(Total, other.Total);
+            return Equals(Offset, other.Offset) && Equals(Limit, other.Limit) &&
+                   Equals(Returned, other.Returned) && Equals(Total, other.Total);
         }
 
         /// <inheritdoc />

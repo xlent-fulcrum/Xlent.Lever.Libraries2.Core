@@ -7,14 +7,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Encrypt
     /// <inheritdoc cref="CrdEncrypt{TModel,TId}" />
     public class CrudEncrypt <TModel, TId>: CrdEncrypt<TModel, TId>, ICrud<TModel, TId>
     {
-        private readonly ICrud<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> _storage;
+        private readonly ICrud<Storage.Logic.StorableAsByteArray<TModel, TId>, TId> _storage;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="storage"></param>
         /// <param name="symmetricEncryptionKey"></param>
-        public CrudEncrypt(ICrud<Libraries2.Core.Storage.Logic.StorableAsByteArray<TModel, TId>, TId> storage, byte[] symmetricEncryptionKey)
+        public CrudEncrypt(ICrud<Storage.Logic.StorableAsByteArray<TModel, TId>, TId> storage, byte[] symmetricEncryptionKey)
         :base(storage, symmetricEncryptionKey)
         {
             _storage = storage;

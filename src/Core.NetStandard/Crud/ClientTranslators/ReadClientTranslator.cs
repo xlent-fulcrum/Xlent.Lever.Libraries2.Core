@@ -8,7 +8,7 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IRead{TModel,TId}" />
     public class ReadClientTranslator<TModel> : ClientTranslatorBase, IRead<TModel, string>
     {
         private readonly IRead<TModel, string> _storage;

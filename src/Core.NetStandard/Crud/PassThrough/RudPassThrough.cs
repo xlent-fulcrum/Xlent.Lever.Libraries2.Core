@@ -4,7 +4,7 @@ using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="IRud{TModel,TId}" />
     public class RudPassThrough<TModel, TId> : ReadPassThrough<TModel, TId>, IRud<TModel, TId>
     {
         private readonly IRud<TModel, TId> _nextLevel;

@@ -5,7 +5,7 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
-    /// <inheritdoc />
+    /// <inheritdoc cref="ICrud{TModel,TId}" />
     public class CrudClientTranslator<TModel> : CrudClientTranslator<TModel, TModel>, ICrud<TModel, string>
     {
         /// <inheritdoc />
@@ -16,7 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="ICrud{TModel,TId}" />
     public class CrudClientTranslator<TModelCreate, TModel> : CrdClientTranslator<TModelCreate, TModel>, ICrud<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {

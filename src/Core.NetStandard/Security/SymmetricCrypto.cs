@@ -49,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Security
         /// </summary>
         public byte[] Encrypt(byte[] rawPlaintext)
         {
-            InternalContract.Require(_iv != null, $"IV has not been set when calling the constructor.");
+            InternalContract.Require(_iv != null, "IV has not been set when calling the constructor.");
             return ConvertText(rawPlaintext, ref _iv);
         }
 
@@ -70,7 +70,7 @@ namespace Xlent.Lever.Libraries2.Core.Security
         /// </summary>
         public byte[] Decrypt(byte[] cipherText)
         {
-            InternalContract.Require(_iv != null, $"IV has not been set when calling the constructor.");
+            InternalContract.Require(_iv != null, "IV has not been set when calling the constructor.");
             return ConvertText(cipherText, ref _iv);
         }
 

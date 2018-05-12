@@ -7,7 +7,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
-    /// <inheritdoc cref="ManyToOneCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
+    /// <inheritdoc cref="SlaveToMasterCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
     public class SlaveToMasterCompletePassThrough<TModel, TId> :
         SlaveToMasterCompletePassThrough<TModel, TModel, TId>,
         ISlaveToMaster<TModel, TId>

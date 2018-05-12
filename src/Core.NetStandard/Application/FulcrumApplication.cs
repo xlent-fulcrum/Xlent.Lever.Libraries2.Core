@@ -53,7 +53,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         {
             try
             {
-                Setup.Validate(null, $"{nameof(FulcrumApplication)}.{nameof(FulcrumApplication.Setup)}");
+                Setup.Validate(null, $"{nameof(FulcrumApplication)}.{nameof(Setup)}");
             }
             catch (Exception e)
             {
