@@ -8,6 +8,6 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// <summary>
         /// The <see cref="Tenant"/> running the service itself.
         /// </summary>
-        public Tenant Tenant { get; set; }
+        public Tenant ServiceTenant { get; set; }
     }
 }
