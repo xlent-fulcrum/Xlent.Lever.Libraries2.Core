@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.29.0</version>
+    <version>1.29.1</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.29.1 Added missing CRUD classes.
       1.29.0 Crud Read now returns null instead of throwing FulcrumNotFoundException.
       1.28.2 Added Crud Mapper classes.
       1.27.1 FireAndForget now supports async methods explicitly. Added ThreadHelper.CallAsyncFromSync() to standardize how we move from sync to async.
