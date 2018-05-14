@@ -191,6 +191,7 @@
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
+    <Compile Include="Core\Platform\ServiceMetas\ServiceInformationWithTenant.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
     <Compile Include="Core\Security\SymmetricCrypto.cs" />
     <Compile Include="Core\Storage\Logic\PageEnvelopeEnumerableAsync.cs" />
