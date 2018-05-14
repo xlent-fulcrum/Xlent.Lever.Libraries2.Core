@@ -24,16 +24,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <inheritdoc />
         public async Task<IDistributedCache> GetOrCreateDistributedCacheAsync(string key)
         {
-            try
-            {
-                return await _storage.ReadAsync(key);
-            }
-            catch (FulcrumNotFoundException)
-            {
-                var cache = new DistributedCacheMemory();
-                await _storage.CreateWithSpecifiedIdAsync(key, cache);
-                return cache;
-            }
+            var item = await _storage.ReadAsync(key);
+            if (item != null) return item;
+            var cache = new DistributedCacheMemory();
+            await _storage.CreateWithSpecifiedIdAsync(key, cache);
+            return cache;
         }
     }
 }

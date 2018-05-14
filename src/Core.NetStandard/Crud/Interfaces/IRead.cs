@@ -16,8 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
         /// <summary>
         /// Returns the item uniquely identified by <paramref name="id"/> from storage.
         /// </summary>
-        /// <returns>The found item.</returns>
-        /// <exception cref="FulcrumNotFoundException">Thrown if the <paramref name="id"/> could not be found.</exception>
+        /// <returns>The found item or null.</returns>
         Task<TModel> ReadAsync(TId id, CancellationToken token = default(CancellationToken));
 
         /// <summary>

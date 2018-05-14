@@ -45,11 +45,10 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Crd
         /// Try to read an item that doesn't exist yet.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(FulcrumNotFoundException))]
         public async Task Read_NotFound_Async()
         {
-            await CrdStorage.ReadAsync(StorageHelper.CreateNewId<TId>());
-            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("Expected an exception");
+            var item = await CrdStorage.ReadAsync(StorageHelper.CreateNewId<TId>());
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(item);
         }
 
         /// <summary>
@@ -63,15 +62,8 @@ namespace Xlent.Lever.Libraries2.Core.Test.NuGet.Crd
             var id = await CrdStorage.CreateAsync(initialItem);
             await CrdStorage.ReadAsync(id);
             await CrdStorage.DeleteAsync(id);
-            try
-            {
-                await CrdStorage.ReadAsync(id);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("Expected an exception");
-            }
-            catch (FulcrumNotFoundException)
-            {
-                // As expected
-            }
+            var item = await CrdStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(item);
         }
 
         /// <summary>

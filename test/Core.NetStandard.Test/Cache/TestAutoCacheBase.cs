@@ -50,15 +50,9 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
             }
             else
             {
-                try
-                {
-                    var value = await CrudStorage.ReadAsync(id);
-                    if (!Equals(value,storageValue)) await CrudStorage.UpdateAsync(id, storageValue);
-                }
-                catch (FulcrumNotFoundException)
-                {
-                    await CrudStorage.CreateWithSpecifiedIdAsync(id, storageValue);
-                }
+                var value = await CrudStorage.ReadAsync(id);
+                if (value == null) await CrudStorage.CreateWithSpecifiedIdAsync(id, storageValue);
+                else if (!Equals(value, storageValue)) await CrudStorage.UpdateAsync(id, storageValue);
             }
         }
 
@@ -96,15 +90,8 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 
         protected async Task VerifyStorage(Guid id, TModel expectedStorageValue)
         {
-            try
-            {
-                var actualStorageValue = await CrudStorage.ReadAsync(id);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedStorageValue, actualStorageValue, "Storage verification failed.");
-            }
-            catch (FulcrumNotFoundException)
-            {
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(expectedStorageValue, $"Nothing found in storage, but expected \"{expectedStorageValue}\".");
-            }
+            var actualStorageValue = await CrudStorage.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedStorageValue, actualStorageValue, "Storage verification failed.");
         }
 
         protected async Task VerifyCache(Guid id, TModel expectedCacheValue, bool isBeforeRead)
@@ -124,15 +111,8 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 
         protected async Task VerifyRead(Guid id, TModel expectedReadValue)
         {
-            try
-            {
-                var actualReadValue = await ReadAutoCache.ReadAsync(id);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedReadValue, actualReadValue, "ReadAutoCache Read verification failed.");
-            }
-            catch (FulcrumNotFoundException)
-            {
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNull(expectedReadValue, $"Nothing found at read, but expected \"{expectedReadValue}\".");
-            }
+            var actualReadValue = await ReadAutoCache.ReadAsync(id);
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(expectedReadValue, actualReadValue, "ReadAutoCache Read verification failed.");
         }
 
         protected Guid ToGuid(TModel item)
@@ -142,7 +122,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Cache
 
         protected Guid ToGuid(TModel item, int maxLength)
         {
-            var itemAsString = item.ToString(); 
+            var itemAsString = item.ToString();
             if (itemAsString.Length > maxLength)
             {
                 itemAsString = itemAsString.Substring(0, maxLength);

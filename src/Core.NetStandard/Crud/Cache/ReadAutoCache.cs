@@ -79,6 +79,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
             var item = await CacheGetByIdAsync(id, token);
             if (item != null) return item;
             item = await _storage.ReadAsync(id, token);
+            if (Equals(item, default(TModel))) return default(TModel);
             await CacheSetByIdAsync(id, item, token);
             return item;
         }

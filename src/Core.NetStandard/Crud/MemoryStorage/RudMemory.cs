@@ -34,7 +34,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
 
-            var itemCopy = GetMemoryItem(id, false);
+            var itemCopy = GetMemoryItem(id, true);
             return Task.FromResult(itemCopy);
         }
 
@@ -76,7 +76,10 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
             lock (MemoryItems)
             {
                 var keys = MemoryItems.Keys.Skip(offset).Take(limit.Value);
-                var list = keys.Select(id => GetMemoryItem(id, false)).ToList();
+                var list = keys
+                    .Select(id => GetMemoryItem(id, true))
+                    .Where(item => item != null)
+                    .ToList();
                 var page = new PageEnvelope<TModel>(offset, limit.Value, MemoryItems.Count, list);
                 return Task.FromResult(page);
             }
