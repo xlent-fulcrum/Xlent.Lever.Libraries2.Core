@@ -10,11 +10,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class ManyToOneServerCompleteTranslatorTo<TModel> : ManyToOneServerCompleteTranslatorTo<TModel, TModel>, IManyToOneComplete<TModel, string>
+    public class ManyToOneCompleteToServerTranslator<TModel> : ManyToOneCompleteToServerTranslator<TModel, TModel>, IManyToOneComplete<TModel, string>
     {
 
         /// <inheritdoc />
-        public ManyToOneServerCompleteTranslatorTo(IManyToOneComplete<TModel, string> storage, string idConceptName,
+        public ManyToOneCompleteToServerTranslator(IManyToOneComplete<TModel, string> storage, string idConceptName,
             System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
@@ -24,13 +24,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class ManyToOneServerCompleteTranslatorTo<TModelCreate, TModel> : CrudServerTranslatorTo<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string>
+    public class ManyToOneCompleteToServerTranslator<TModelCreate, TModel> : CrudToServerTranslator<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
         private readonly IManyToOneComplete<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneServerCompleteTranslatorTo(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public ManyToOneCompleteToServerTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;

@@ -10,12 +10,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class ReadServerTranslatorTo<TModel> : ServerTranslatorBase, IRead<TModel, string>
+    public class ReadToServerTranslator<TModel> : ServerTranslatorBase, IRead<TModel, string>
     {
         private readonly IRead<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ReadServerTranslatorTo(IRead<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public ReadToServerTranslator(IRead<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
         :base(idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;

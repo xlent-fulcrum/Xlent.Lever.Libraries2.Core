@@ -5,25 +5,25 @@ using Xlent.Lever.Libraries2.Core.Translation;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
-    /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
-    public class CrdServerTranslatorTo<TModel> : CrdServerTranslatorTo<TModel, TModel>, ICrd<TModel, string>
+    /// <inheritdoc cref="ReadToServerTranslator{TModel}" />
+    public class CrdToServerTranslator<TModel> : CrdToServerTranslator<TModel, TModel>, ICrd<TModel, string>
     {
         /// <inheritdoc />
-        public CrdServerTranslatorTo(ICrd<TModel, string> storage, string idConceptName,
+        public CrdToServerTranslator(ICrd<TModel, string> storage, string idConceptName,
             System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
         }
     }
 
-    /// <inheritdoc cref="ReadServerTranslatorTo{TModel}" />
-    public class CrdServerTranslatorTo<TModelCreate, TModel> : ReadServerTranslatorTo<TModel>, ICrd<TModelCreate, TModel, string>
+    /// <inheritdoc cref="ReadToServerTranslator{TModel}" />
+    public class CrdToServerTranslator<TModelCreate, TModel> : ReadToServerTranslator<TModel>, ICrd<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
         private readonly ICrd<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public CrdServerTranslatorTo(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public CrdToServerTranslator(ICrd<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;

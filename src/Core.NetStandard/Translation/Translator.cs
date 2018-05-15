@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
+using Xlent.Lever.Libraries2.Core.Crud.Model;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Translation
@@ -40,6 +42,17 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         {
             if (value == null) return null;
             return IsDecorated(value) ? value : Decorate(conceptName, _clientName, value);
+        }
+
+        /// <summary>
+        /// Decorate the <paramref name="value"/> into a concept value path.
+        /// </summary>
+        public SlaveToMasterId<string> Decorate(string masterIdConceptName, string slaveIdConceptName, SlaveToMasterId<string> id)
+        {
+            if (id == null) return null;
+            id.MasterId = Decorate(masterIdConceptName, id.MasterId);
+            id.SlaveId = Decorate(masterIdConceptName, id.SlaveId);
+            return id;
         }
 
         /// <summary>

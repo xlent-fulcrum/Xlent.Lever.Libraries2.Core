@@ -10,7 +10,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Crud.ServerTranslators.From
 {
     [TestClass]
-    public class CrdServerTranslatorFromTest : ServerTranslatorBase
+    public class CrdFromServerTranslatorTest : ServerTranslatorBase
     {
         private ICrd<TestModelCreate, TestModel, string> _serviceToTest;
 
@@ -18,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Crud.ServerTranslat
         public void Initialize()
         {
             StorageMock = new Mock<ICrd<TestModelCreate, TestModel, string>>();
-            var serverTranslator = new CrdServerTranslatorFrom<TestModelCreate, TestModel>(StorageMock.Object, TestModel.IdConceptName,
+            var serverTranslator = new CrdFromServerTranslator<TestModelCreate, TestModel>(StorageMock.Object, TestModel.IdConceptName,
                 () => ServerName);
             _serviceToTest = serverTranslator;
         }

@@ -3,19 +3,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
+using Xlent.Lever.Libraries2.Core.Translation;
 
-namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
+namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
 {
     /// <summary>
-    /// Decorate values from the server into concept values.
+    /// Translate concept values to the server
     /// </summary>
-    public class ManyToOneServerTranslatorFrom<TModel> : ServerTranslatorBase, IManyToOne<TModel, string>
+    public class ManyToOneToServerTranslator<TModel> : ServerTranslatorBase, IManyToOne<TModel, string>
     {
         private readonly IManyToOne<TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneServerTranslatorFrom(IManyToOne<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
-        :base(idConceptName, getServerNameMethod)
+        public ManyToOneToServerTranslator(IManyToOne<TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        :base(idConceptName, getServerNameMethod, translatorService)
         {
             _storage = storage;
         }
@@ -24,17 +25,19 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         public async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(string parentId, int offset, int? limit = null,
             CancellationToken token = new CancellationToken())
         {
-            var result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
             var translator = CreateTranslator();
-            return translator.DecorateItem(result);
+            await translator.Add(parentId).ExecuteAsync();
+            parentId = translator.Translate(parentId);
+            return await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<TModel>> ReadChildrenAsync(string parentId, int limit = int.MaxValue, CancellationToken token = new CancellationToken())
         {
-            var result = await _storage.ReadChildrenAsync(parentId, limit, token);
             var translator = CreateTranslator();
-            return translator.DecorateItems(result);
+            await translator.Add(parentId).ExecuteAsync();
+            parentId = translator.Translate(parentId);
+            return await _storage.ReadChildrenAsync(parentId, limit, token);
         }
     }
 }

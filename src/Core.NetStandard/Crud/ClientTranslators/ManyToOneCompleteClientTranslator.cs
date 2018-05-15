@@ -14,8 +14,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
     {
         /// <inheritdoc />
         public ManyToOneCompleteClientTranslator(IManyToOneComplete<TModel, string> storage,
-            string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
-            : base(storage, idConceptName, getClientNameMethod, translatorService)
+            string parentIdConceptName, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+            : base(storage, parentIdConceptName, idConceptName, getClientNameMethod, translatorService)
         {
         }
     }
@@ -25,12 +25,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         where TModel : TModelCreate
     {
         private readonly IManyToOneComplete<TModelCreate, TModel, string> _storage;
+        private readonly string _parentIdConceptName;
 
         /// <inheritdoc />
-        public ManyToOneCompleteClientTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        public ManyToOneCompleteClientTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string parentIdConceptName, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;
+            _parentIdConceptName = parentIdConceptName;
         }
 
         /// <inheritdoc />
@@ -38,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
+            parentId = translator.Decorate(_parentIdConceptName, parentId);
             var result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
             await translator.Add(result).ExecuteAsync();
             return translator.Translate(result);
@@ -48,7 +50,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         public async Task<IEnumerable<TModel>> ReadChildrenAsync(string parentId, int limit = int.MaxValue, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            parentId = translator.Decorate(IdConceptName, parentId);
+            parentId = translator.Decorate(_parentIdConceptName, parentId);
             var result = await _storage.ReadChildrenAsync(parentId, limit, token);
             var array = result as TModel[] ?? result.ToArray();
             await translator.Add(array).ExecuteAsync();
@@ -59,7 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         public async Task DeleteChildrenAsync(string masterId, CancellationToken token = new CancellationToken())
         {
             var translator = CreateTranslator();
-            masterId = translator.Decorate(IdConceptName, masterId);
+            masterId = translator.Decorate(_parentIdConceptName, masterId);
             await _storage.DeleteChildrenAsync(masterId, token);
         }
     }

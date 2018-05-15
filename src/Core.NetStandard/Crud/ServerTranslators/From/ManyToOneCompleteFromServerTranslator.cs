@@ -9,11 +9,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class ManyToOneCompleteServerTranslatorFrom<TModel> : ManyToOneCompleteServerTranslatorFrom<TModel, TModel>,
+    public class ManyToOneCompleteFromServerTranslator<TModel> : ManyToOneCompleteFromServerTranslator<TModel, TModel>,
         IManyToOneComplete<TModel, string>
     {
         /// <inheritdoc />
-        public ManyToOneCompleteServerTranslatorFrom(IManyToOneComplete<TModel, string> storage, string idConceptName,
+        public ManyToOneCompleteFromServerTranslator(IManyToOneComplete<TModel, string> storage, string idConceptName,
             System.Func<string> getServerNameMethod)
             : base(storage, idConceptName, getServerNameMethod)
         {
@@ -23,13 +23,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class ManyToOneCompleteServerTranslatorFrom<TModelCreate, TModel> : CrudServerTranslatorFrom<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string> 
+    public class ManyToOneCompleteFromServerTranslator<TModelCreate, TModel> : CrudFromServerTranslator<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string> 
         where TModel : TModelCreate
     {
         private readonly IManyToOneComplete<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneCompleteServerTranslatorFrom(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
+        public ManyToOneCompleteFromServerTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
             : base(storage, idConceptName, getServerNameMethod)
         {
             _storage = storage;
