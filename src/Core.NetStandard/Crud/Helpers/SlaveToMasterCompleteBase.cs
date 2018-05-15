@@ -40,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         }
 
         /// <inheritdoc />
-        public abstract Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId masterId, int offset,
+        public abstract Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId parentId, int offset,
             int? limit = null,
             CancellationToken token = default(CancellationToken));
 

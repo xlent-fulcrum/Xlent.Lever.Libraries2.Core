@@ -54,16 +54,16 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         public delegate object GetParentIdDelegate(TManyModel item);
 
         /// <inheritdoc />
-        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId reference1Id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
+        public Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
             limit = limit ?? PageInfo.DefaultLimit;
-            InternalContract.RequireNotNull(reference1Id, nameof(reference1Id));
+            InternalContract.RequireNotNull(parentId, nameof(parentId));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
             InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
             lock (MemoryItems)
             {
                 var list = MemoryItems.Values
-                    .Where(i => reference1Id.Equals(_getParentIdDelegate(i)))
+                    .Where(i => parentId.Equals(_getParentIdDelegate(i)))
                     .Skip(offset)
                     .Take(limit.Value);
                 var page = new PageEnvelope<TManyModel>(offset, limit.Value, MemoryItems.Count, list);

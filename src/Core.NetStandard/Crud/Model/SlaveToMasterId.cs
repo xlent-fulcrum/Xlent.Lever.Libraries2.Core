@@ -1,4 +1,5 @@
-﻿using Xlent.Lever.Libraries2.Core.Assert;
+﻿using System.Collections.Generic;
+using Xlent.Lever.Libraries2.Core.Assert;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Model
 {
@@ -38,6 +39,28 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Model
         {
             FulcrumValidate.IsNotDefaultValue(MasterId, nameof(MasterId), errorLocation);
             FulcrumValidate.IsNotDefaultValue(SlaveId, nameof(SlaveId), errorLocation);
+        }
+
+        /// <inheritdoc />
+        public override string ToString() => $"{MasterId} {SlaveId}";
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (!(obj is SlaveToMasterId<TId> other)) return false;
+            return Equals(MasterId, other.MasterId) && Equals(SlaveId, other.SlaveId);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                return (EqualityComparer<TId>.Default.GetHashCode(SlaveId) * 397) ^ EqualityComparer<TId>.Default.GetHashCode(MasterId);
+                // ReSharper restore NonReadonlyMemberInGetHashCode
+            }
         }
     }
 }

@@ -53,15 +53,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.MemoryStorage
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId masterId, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
+        public async Task<PageEnvelope<TModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(masterId, nameof(masterId));
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(offset));
             if (limit != null)
             {
                 InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
             }
-            var groupPersistance = GetStorage(masterId);
+            var groupPersistance = GetStorage(parentId);
             return await groupPersistance.ReadAllWithPagingAsync(offset, limit, token);
         }
 

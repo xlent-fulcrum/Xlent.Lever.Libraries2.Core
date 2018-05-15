@@ -177,7 +177,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
             ThreadHelper.FireAndForget(async () => await ReadAndDelete(key, getItemsToDelete));
-            await Task.Yield();
+            await Task.CompletedTask;
         }
 
         private async Task ReadAndDelete(string key, Func<Task<TModel[]>> getItemsToDelete)

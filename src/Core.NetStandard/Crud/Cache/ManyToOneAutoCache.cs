@@ -60,16 +60,16 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         }
 
         /// <inheritdoc />
-        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId reference1Id, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
+        public async Task<PageEnvelope<TManyModel>> ReadChildrenWithPagingAsync(TId parentId, int offset, int? limit = null, CancellationToken token = default(CancellationToken))
         {
-            InternalContract.RequireNotDefaultValue(reference1Id, nameof(reference1Id));
+            InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             InternalContract.RequireGreaterThanOrEqualTo(0, offset, nameof(limit));
             if (limit == null) limit = PageInfo.DefaultLimit;
             InternalContract.RequireGreaterThan(0, limit.Value, nameof(limit));
-            var key = CacheKeyForChildrenCollection(reference1Id);
+            var key = CacheKeyForChildrenCollection(parentId);
             var result = await CacheGetAsync(offset, limit.Value, key, token);
             if (result != null) return result;
-            result = await _storage.ReadChildrenWithPagingAsync(reference1Id, offset, limit, token);
+            result = await _storage.ReadChildrenWithPagingAsync(parentId, offset, limit, token);
             if (result?.Data == null) return null;
             CacheItemsInBackground(result, limit.Value, key);
             return result;
