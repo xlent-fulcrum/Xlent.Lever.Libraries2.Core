@@ -188,7 +188,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         public async Task ExecuteAsync()
         {
             InternalContract.RequireNotNull(_service, null, $"No translation service was set up for this class ({typeof(Translator).FullName}), so this method ({nameof(ExecuteAsync)}) must not be called.");
-            _translations = await _service.TranslateAsync(_conceptValues);
+            _translations = await _service.TranslateAsync(_conceptValues, _clientName);
         }
 
         /// <summary>
