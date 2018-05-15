@@ -24,7 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         }
     }
 
-    /// <inheritdoc cref="IManyToOne{TManyModelCreate,TManyModel,TClientId}" />
+    /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TClientId}" />
     public class ManyToOneCompleteMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>, IManyToOneComplete<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
     {
         private readonly IManyToOneComplete<TServerModel, TServerId> _storage;

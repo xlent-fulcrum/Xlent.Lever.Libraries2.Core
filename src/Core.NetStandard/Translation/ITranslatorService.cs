@@ -9,11 +9,10 @@ namespace Xlent.Lever.Libraries2.Core.Translation
     public interface ITranslatorService
     {
         /// <summary>
-        /// Go through the <paramref name="conceptValues"/> and add the translated value to <paramref name="translations"/>.
+        /// Go through the <paramref name="conceptValues"/> and return a dictionary with translated values..
         /// </summary>
         /// <param name="conceptValues"></param>
-        /// <param name="translations"></param>
-        /// <returns></returns>
-        Task TranslateAsync(IEnumerable<string> conceptValues, IDictionary<string, string> translations);
+        /// <returns>A dictionary with concept values as keys and the translated values as values.</returns>
+        Task<IDictionary<string, string>> TranslateAsync(IEnumerable<string> conceptValues);
     }
 }

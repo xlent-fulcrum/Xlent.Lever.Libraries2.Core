@@ -15,11 +15,5 @@
     /// <typeparam name="TServerModel">The model that the server uses. </typeparam>
     public interface ICrudMapper<in TClientModelCreate, TClientModel, TServerModel> : ICrdMapper<TClientModelCreate, TClientModel, TServerModel>, IRudMapper<TClientModel, TServerModel>
     {
-        /// <summary>
-        /// Map fields to the server
-        /// </summary>
-        /// <param name="source">The client object that we should map to a server record.</param>
-        /// <returns>A new server record with the mapped values from <paramref name="source"/>.</returns>
-        TServerModel MapToServer(TClientModel source);
     }
 }

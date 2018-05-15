@@ -24,7 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         }
     }
 
-    /// <inheritdoc cref="IManyToOne{TManyModelCreate,TManyModel,TClientId}" />
+    /// <inheritdoc cref="IManyToOne{TManyModel,TClientId}" />
     public class ManyToOneMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : IManyToOne<TClientModel, TClientId> where TClientModel : TClientModelCreate
     {
         private readonly IManyToOne<TServerModel, TServerId> _storage;

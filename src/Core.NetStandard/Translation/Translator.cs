@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         private readonly string _clientName;
         private readonly ITranslatorService _service;
         private readonly HashSet<string> _conceptValues;
-        private readonly Dictionary<string, string> _translations;
+        private IDictionary<string, string> _translations;
         private readonly Regex _conceptValueInStringRegex;
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         }
 
         /// <summary>
-        /// Decorate the <paramref name="value"/> into a concept value path.
+        /// Decorate the <paramref name="id"/> with concept value paths.
         /// </summary>
         public SlaveToMasterId<string> Decorate(string masterIdConceptName, string slaveIdConceptName, SlaveToMasterId<string> id)
         {
@@ -188,7 +188,7 @@ namespace Xlent.Lever.Libraries2.Core.Translation
         public async Task ExecuteAsync()
         {
             InternalContract.RequireNotNull(_service, null, $"No translation service was set up for this class ({typeof(Translator).FullName}), so this method ({nameof(ExecuteAsync)}) must not be called.");
-            await _service.TranslateAsync(_conceptValues, _translations);
+            _translations = await _service.TranslateAsync(_conceptValues);
         }
 
         /// <summary>
