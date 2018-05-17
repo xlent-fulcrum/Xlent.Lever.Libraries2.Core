@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Xlent.Lever.Libraries2.Core.Crud.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
 {
@@ -16,7 +17,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
     /// Examples: A list of rows on an invoice, a list of attributes of an object, the contact details of a person.
     /// </summary>
     public interface ISlaveToMaster<in TModelCreate, TModel, TId> :
-        IManyToOne<TModel, TId>, ICreateSlave<TModelCreate, TModel, TId>, ICreateSlaveWithSpecifiedId<TModelCreate, TModel, TId>
+        IManyToOne<TModel, TId>, ICreateSlave<TModelCreate, TModel, TId>, ICreateSlaveWithSpecifiedId<TModelCreate, TModel, TId>, IDelete<SlaveToMasterId<TId>>
         where TModel : TModelCreate
     {
         /// <summary>

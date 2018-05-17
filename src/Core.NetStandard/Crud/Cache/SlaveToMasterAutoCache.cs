@@ -6,6 +6,7 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Microsoft.Extensions.Caching.Distributed;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.Model;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Cache
@@ -24,7 +25,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         public SlaveToMasterAutoCache(ISlaveToMaster<TManyModel, TId> storage,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
-            : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>) item).Id, cache,
+            : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>)item).Id, cache,
                 flushCacheDelegateAsync, options)
         {
         }
@@ -54,39 +55,39 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
     public class SlaveToMasterAutoCache<TManyModelCreate, TManyModel, TId> : AutoCacheBase<TManyModel, SlaveToMasterId<TId>>, ISlaveToMaster<TManyModelCreate, TManyModel, TId>
             where TManyModel : TManyModelCreate
+    {
+        private readonly ISlaveToMaster<TManyModelCreate, TManyModel, TId> _storage;
+        /// <summary>
+        /// Constructor for TOneModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <param name="cache"></param>
+        /// <param name="flushCacheDelegateAsync"></param>
+        /// <param name="options"></param>
+        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>)item).Id, cache, flushCacheDelegateAsync, options)
         {
-            private readonly ISlaveToMaster<TManyModelCreate, TManyModel, TId> _storage;
-            /// <summary>
-            /// Constructor for TOneModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
-            /// </summary>
-            /// <param name="storage"></param>
-            /// <param name="cache"></param>
-            /// <param name="flushCacheDelegateAsync"></param>
-            /// <param name="options"></param>
-            public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
-            : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>)item).Id, cache, flushCacheDelegateAsync, options)
-            {
-            }
+        }
 
 
-            /// <summary>
-            /// Constructor for TOneModel that does not implement <see cref="IUniquelyIdentifiable{TId}"/>, or when you want to specify your own GetKey() method.
-            /// </summary>
-            /// <param name="storage"></param>
-            /// <param name="cache"></param>
-            /// <param name="getIdDelegate"></param>
-            /// <param name="flushCacheDelegateAsync"></param>
-            /// <param name="options"></param>
-            public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, GetIdDelegate<TManyModel, SlaveToMasterId<TId>> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
-                : base(getIdDelegate, cache, flushCacheDelegateAsync, options)
-            {
-                _storage = storage;
-            }
+        /// <summary>
+        /// Constructor for TOneModel that does not implement <see cref="IUniquelyIdentifiable{TId}"/>, or when you want to specify your own GetKey() method.
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <param name="cache"></param>
+        /// <param name="getIdDelegate"></param>
+        /// <param name="flushCacheDelegateAsync"></param>
+        /// <param name="options"></param>
+        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, GetIdDelegate<TManyModel, SlaveToMasterId<TId>> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+            : base(getIdDelegate, cache, flushCacheDelegateAsync, options)
+        {
+            _storage = storage;
+        }
 
-            /// <summary>
-            /// True while a background thread is active saving results from a ReadAll() operation.
-            /// </summary>
-            public bool IsCollectionOperationActive(TId parentId)
+        /// <summary>
+        /// True while a background thread is active saving results from a ReadAll() operation.
+        /// </summary>
+        public bool IsCollectionOperationActive(TId parentId)
         {
             InternalContract.RequireNotDefaultValue(parentId, nameof(parentId));
             return IsCollectionOperationActive(CacheKeyForChildrenCollection(parentId));
@@ -151,7 +152,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         {
             return _storage.CreateWithSpecifiedIdAsync(id, item, token);
         }
-        
+
         /// <inheritdoc />
         public Task<TManyModel> CreateWithSpecifiedIdAndReturnAsync(SlaveToMasterId<TId> id, TManyModelCreate item,
             CancellationToken token = default(CancellationToken))
@@ -162,9 +163,23 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <inheritdoc />
         public Task DeleteChildrenAsync(TId masterId, CancellationToken token = default(CancellationToken))
         {
-            var task1 =  _storage.DeleteChildrenAsync(masterId, token);
+            var task1 = _storage.DeleteChildrenAsync(masterId, token);
             var task2 = RemoveCachedChildrenInBackgroundAsync(masterId, token);
             return Task.WhenAll(task1, task2);
+        }
+
+        /// <inheritdoc />
+        public Task DeleteAsync(SlaveToMasterId<TId> id, CancellationToken token = default(CancellationToken))
+        {
+            var task1 = _storage.DeleteAsync(id, token);
+            var task2 = RemoveCachedChildrenInBackgroundAsync(id.MasterId, token);
+            return Task.WhenAll(task1, task2);
+        }
+
+        /// <inheritdoc />
+        public Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            throw new FulcrumNotImplementedException("Please use DeleteChildrenAsync");
         }
     }
 }

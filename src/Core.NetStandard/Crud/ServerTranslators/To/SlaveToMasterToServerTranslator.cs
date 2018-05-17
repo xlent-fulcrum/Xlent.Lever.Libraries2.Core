@@ -104,5 +104,20 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
             item = translator.Translate(item);
             return await _storage.CreateWithSpecifiedIdAndReturnAsync(id, item, token);
         }
+
+        /// <inheritdoc />
+        public async Task DeleteAsync(SlaveToMasterId<string> id, CancellationToken token = default(CancellationToken))
+        {
+            var translator = CreateTranslator();
+            await translator.Add(id).ExecuteAsync();
+            id = translator.Translate(id);
+            await _storage.DeleteAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            return _storage.DeleteAllAsync(token);
+        }
     }
 }

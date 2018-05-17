@@ -80,5 +80,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
         {
             return _nextLevel.DeleteChildrenAsync(parentId, token);
         }
+
+        /// <inheritdoc />
+        public Task DeleteAsync(SlaveToMasterId<TId> id, CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.DeleteAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            return _nextLevel.DeleteAllAsync(token);
+        }
     }
 }

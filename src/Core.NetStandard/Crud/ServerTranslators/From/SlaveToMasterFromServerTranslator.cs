@@ -95,5 +95,17 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         {
             await _storage.DeleteChildrenAsync(masterId, token);
         }
+
+        /// <inheritdoc />
+        public Task DeleteAsync(SlaveToMasterId<string> id, CancellationToken token = default(CancellationToken))
+        {
+            return _storage.DeleteAsync(id, token);
+        }
+
+        /// <inheritdoc />
+        public Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            return _storage.DeleteAllAsync(token);
+        }
     }
 }

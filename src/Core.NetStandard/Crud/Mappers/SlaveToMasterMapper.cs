@@ -85,5 +85,18 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
             var serverId = MapperHelper.MapToType<TServerId, TClientId>(parentId);
             return _storage.DeleteChildrenAsync(serverId, token);
         }
+
+        /// <inheritdoc />
+        public virtual Task DeleteAsync(SlaveToMasterId<TClientId> id, CancellationToken token = default(CancellationToken))
+        {
+            var serverId = MapperHelper.MapToType<TServerId, TClientId>(id);
+            return _storage.DeleteAsync(serverId, token);
+        }
+
+        /// <inheritdoc />
+        public virtual Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            return _storage.DeleteAllAsync(token);
+        }
     }
 }

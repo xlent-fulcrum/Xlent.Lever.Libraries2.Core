@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Crud.Interfaces;
 using Xlent.Lever.Libraries2.Core.Crud.Model;
+using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
@@ -50,5 +51,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
 
         /// <inheritdoc />
         public abstract Task DeleteChildrenAsync(TId masterId, CancellationToken token = default(CancellationToken));
+
+        /// <inheritdoc />
+        public abstract Task DeleteAsync(SlaveToMasterId<TId> id, CancellationToken token = default(CancellationToken));
+
+        /// <inheritdoc />
+        public virtual Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
+        {
+            throw new FulcrumNotImplementedException("Please use DeleteChildrenAsync");
+        }
     }
 }
