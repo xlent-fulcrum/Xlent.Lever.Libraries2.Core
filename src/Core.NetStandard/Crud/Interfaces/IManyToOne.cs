@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Interfaces
 {
     /// <summary>
-    /// Functionality for persisting groups of objects.
+    /// Functionality for persisting objects that references a parent object in another table.
     /// </summary>
     public interface IManyToOne<TManyModel, in TId>
     {

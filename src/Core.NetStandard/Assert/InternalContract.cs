@@ -52,9 +52,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidated(object parameterValue, string parameterName, string customMessage = null)
         {
-            GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
+            if (!(parameterValue is IValidatable validatable)) return;
+            GenericContract<FulcrumContractException>.RequireValidated(validatable, parameterName, customMessage);
         }
 
         /// <summary>
@@ -107,12 +108,13 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValues"/> is not null, then call the Validate() method for each item.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
+        public static void RequireValidated(IEnumerable<object> parameterValues, string parameterName, string customMessage = null)
         {
             if (parameterValues == null) return;
             foreach (var parameterValue in parameterValues)
             {
-                GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
+                if (!(parameterValue is IValidatable validatable)) continue;
+                GenericContract<FulcrumContractException>.RequireValidated(validatable, parameterName, customMessage);
             }
         }
 

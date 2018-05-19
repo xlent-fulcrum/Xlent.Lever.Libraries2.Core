@@ -11,11 +11,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class SlaveToMasterToServerTranslator<TModel> : SlaveToMasterToServerTranslator<TModel, TModel>,
-        ISlaveToMaster<TModel, string>
+    public class SlaveToMasterToServerTranslator<TModel> :
+        SlaveToMasterToServerTranslator<TModel, TModel>,
+        ISlaveToMasterCrud<TModel, string>
     {
         /// <inheritdoc />
-        public SlaveToMasterToServerTranslator(ISlaveToMaster<TModel, string> storage,
+        public SlaveToMasterToServerTranslator(ISlaveToMasterCrud<TModel, string> storage,
             System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(null, getServerNameMethod, translatorService)
         {
@@ -25,13 +26,15 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.To
     /// <summary>
     /// Translate concept values to the server
     /// </summary>
-    public class SlaveToMasterToServerTranslator<TModelCreate, TModel> : ServerTranslatorBase, ISlaveToMaster<TModelCreate, TModel, string>
+    public class SlaveToMasterToServerTranslator<TModelCreate, TModel> : 
+        ServerTranslatorBase, 
+        ISlaveToMasterCrud<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
-        private readonly ISlaveToMaster<TModelCreate, TModel, string> _storage;
+        private readonly ISlaveToMasterCrud<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public SlaveToMasterToServerTranslator(ISlaveToMaster<TModelCreate, TModel, string> storage, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
+        public SlaveToMasterToServerTranslator(ISlaveToMasterCrud<TModelCreate, TModel, string> storage, System.Func<string> getServerNameMethod, ITranslatorService translatorService)
             : base(null, getServerNameMethod, translatorService)
         {
             _storage = storage;

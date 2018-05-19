@@ -9,31 +9,31 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
-    /// <inheritdoc cref="SlaveToMasterCompleteMapper{TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId}" />
-    public class SlaveToMasterCompleteMapper<TClientModel, TClientId, TServerModel, TServerId> :
-        SlaveToMasterCompleteMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
-        ISlaveToMasterComplete<TClientModel, TClientId>
+    /// <inheritdoc cref="SlaveToMasterCrudMapper{TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId}" />
+    public class SlaveToMasterCrudMapper<TClientModel, TClientId, TServerModel, TServerId> :
+        SlaveToMasterCrudMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
+        ISlaveToMasterCrud<TClientModel, TClientId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public SlaveToMasterCompleteMapper(ISlaveToMasterComplete<TServerModel, TServerId> storage,
+        public SlaveToMasterCrudMapper(ISlaveToMasterCrud<TServerModel, TServerId> storage,
             ICrudMapper<TClientModel, TServerModel> mapper)
             : base(storage, mapper)
         {
         }
     }
 
-    /// <inheritdoc cref="ISlaveToMasterComplete{TManyModelCreate,TManyModel,TId}" />
-    public class SlaveToMasterCompleteMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : RudMapper<TClientModel, SlaveToMasterId<TClientId>, TServerModel, SlaveToMasterId<TServerId>>, ISlaveToMasterComplete<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
+    /// <inheritdoc cref="ISlaveToMasterCrud{TManyModelCreate,TManyModel,TId}" />
+    public class SlaveToMasterCrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : RudMapper<TClientModel, SlaveToMasterId<TClientId>, TServerModel, SlaveToMasterId<TServerId>>, ISlaveToMasterCrud<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
     {
-        private readonly ISlaveToMasterComplete<TServerModel, TServerId> _storage;
+        private readonly ISlaveToMasterCrud<TServerModel, TServerId> _storage;
         private readonly ICrudMapper<TClientModelCreate, TClientModel, TServerModel> _mapper;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public SlaveToMasterCompleteMapper(ISlaveToMasterComplete<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
+        public SlaveToMasterCrudMapper(ISlaveToMasterCrud<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
         :base(storage, mapper)
         {
             _storage = storage;

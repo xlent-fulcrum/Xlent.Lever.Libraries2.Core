@@ -7,31 +7,34 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
-    /// <inheritdoc cref="SlaveToMasterCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
-    public class SlaveToMasterCompletePassThrough<TModel, TId> :
-        SlaveToMasterCompletePassThrough<TModel, TModel, TId>,
+    /// <inheritdoc cref="SlaveToMasterCrudPassThrough{TManyModelCreate,TManyModel,TId}" />
+    public class SlaveToMasterCrudPassThrough<TModel, TId> :
+        SlaveToMasterCrudPassThrough<TModel, TModel, TId>,
         ISlaveToMaster<TModel, TId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public SlaveToMasterCompletePassThrough(ISlaveToMasterComplete<TModel, TId> nextLevel)
+        public SlaveToMasterCrudPassThrough(ISlaveToMasterCrud<TModel, TId> nextLevel)
             : base(nextLevel)
         {
         }
     }
 
-    /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TId}" />
-    public class SlaveToMasterCompletePassThrough<TModelCreate, TModel, TId> : RudPassThrough<TModel, SlaveToMasterId<TId>>, ISlaveToMasterComplete<TModelCreate, TModel, TId> where TModel : TModelCreate
+    /// <inheritdoc cref="IManyToOneCrud{TManyModelCreate,TManyModel,TId}" />
+    public class SlaveToMasterCrudPassThrough<TModelCreate, TModel, TId> :
+        RudPassThrough<TModel, SlaveToMasterId<TId>>,
+        ISlaveToMasterCrud<TModelCreate, TModel, TId>
+         where TModel : TModelCreate
     {
-        private readonly ISlaveToMasterComplete<TModelCreate, TModel, TId> _nextLevel;
+        private readonly ISlaveToMasterCrud<TModelCreate, TModel, TId> _nextLevel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public SlaveToMasterCompletePassThrough(ISlaveToMasterComplete<TModelCreate, TModel, TId> nextLevel)
+        public SlaveToMasterCrudPassThrough(ISlaveToMasterCrud<TModelCreate, TModel, TId> nextLevel)
         :base(nextLevel)
         {
             _nextLevel = nextLevel;

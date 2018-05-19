@@ -7,31 +7,31 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.PassThrough
 {
-    /// <inheritdoc cref="ManyToOneCompletePassThrough{TManyModelCreate,TManyModel,TId}" />
-    public class ManyToOneCompletePassThrough<TModel, TId> : 
-        ManyToOneCompletePassThrough<TModel, TModel, TId>,
-        IManyToOneComplete<TModel, TId>
+    /// <inheritdoc cref="ManyToOneCrudPassThrough{TManyModelCreate,TManyModel,TId}" />
+    public class ManyToOneCrudPassThrough<TModel, TId> : 
+        ManyToOneCrudPassThrough<TModel, TModel, TId>,
+        IManyToOneCrud<TModel, TId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public ManyToOneCompletePassThrough(IManyToOneComplete<TModel, TId> nextLevel)
+        public ManyToOneCrudPassThrough(IManyToOneCrud<TModel, TId> nextLevel)
             : base(nextLevel)
         {
         }
     }
 
-    /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TId}" />
-    public class ManyToOneCompletePassThrough<TModelCreate, TModel, TId> : CrudPassThrough<TModelCreate, TModel, TId>, IManyToOneComplete<TModelCreate, TModel, TId> where TModel : TModelCreate
+    /// <inheritdoc cref="IManyToOneCrud{TManyModelCreate,TManyModel,TId}" />
+    public class ManyToOneCrudPassThrough<TModelCreate, TModel, TId> : CrudPassThrough<TModelCreate, TModel, TId>, IManyToOneCrud<TModelCreate, TModel, TId> where TModel : TModelCreate
     {
-        private readonly IManyToOneComplete<TModelCreate, TModel, TId> _nextLevel;
+        private readonly IManyToOneCrud<TModelCreate, TModel, TId> _nextLevel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="nextLevel">The crud class to pass things down to.</param>
-        public ManyToOneCompletePassThrough(IManyToOneComplete<TModelCreate, TModel, TId> nextLevel)
+        public ManyToOneCrudPassThrough(IManyToOneCrud<TModelCreate, TModel, TId> nextLevel)
             : base(nextLevel)
         {
             _nextLevel = nextLevel;

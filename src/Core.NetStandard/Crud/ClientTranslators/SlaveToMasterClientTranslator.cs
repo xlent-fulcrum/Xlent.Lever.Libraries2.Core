@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
         ISlaveToMaster<TModel, string>
     {
         /// <inheritdoc />
-        public SlaveToMasterClientTranslator(ISlaveToMaster<TModel, string> storage,
+        public SlaveToMasterClientTranslator(ISlaveToMasterCrud<TModel, string> storage,
             string masterIdConceptName, string slaveIdConceptName, System.Func<string> getClientNameMethod,
             ITranslatorService translatorService)
             : base(storage, masterIdConceptName, slaveIdConceptName, getClientNameMethod, translatorService)
@@ -23,14 +23,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
     }
 
     /// <inheritdoc cref="ISlaveToMaster{TManyModel,TId}" />
-    public class SlaveToMasterClientTranslator<TModelCreate, TModel> : ClientTranslatorBase, ISlaveToMaster<TModelCreate, TModel, string>
+    public class SlaveToMasterClientTranslator<TModelCreate, TModel> : ClientTranslatorBase, ISlaveToMasterCrud<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
-        private readonly ISlaveToMaster<TModelCreate, TModel, string> _storage;
+        private readonly ISlaveToMasterCrud<TModelCreate, TModel, string> _storage;
         private readonly string _masterIdConceptName;
 
         /// <inheritdoc />
-        public SlaveToMasterClientTranslator(ISlaveToMaster<TModelCreate, TModel, string> storage, string masterIdConceptName, string slaveIdConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        public SlaveToMasterClientTranslator(ISlaveToMasterCrud<TModelCreate, TModel, string> storage, string masterIdConceptName, string slaveIdConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
             : base(slaveIdConceptName, getClientNameMethod, translatorService)
         {
             _masterIdConceptName = masterIdConceptName;

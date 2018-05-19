@@ -17,23 +17,26 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
         /// <summary>
         /// Constructor
         /// </summary>
-        public SlaveToMasterMapper(ISlaveToMaster<TServerModel, TServerId> storage,
+        public SlaveToMasterMapper(ISlaveToMasterCrud<TServerModel, TServerId> storage,
             ICrudMapper<TClientModel, TServerModel> mapper)
             : base(storage, mapper)
         {
         }
     }
 
-    /// <inheritdoc cref="ISlaveToMaster{TModelCreate, TModel,TId}" />
-    public class SlaveToMasterMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : ManyToOneMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>, ISlaveToMaster<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
+    /// <inheritdoc cref="ISlaveToMasterCrud{TModelCreate, TModel,TId}" />
+    public class SlaveToMasterMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> :
+        ManyToOneMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>,
+        ISlaveToMasterCrud<TClientModelCreate, TClientModel, TClientId> 
+        where TClientModel : TClientModelCreate
     {
-        private readonly ISlaveToMaster<TServerModel, TServerId> _storage;
+        private readonly ISlaveToMasterCrud<TServerModel, TServerId> _storage;
         private readonly ICrudMapper<TClientModelCreate, TClientModel, TServerModel> _mapper;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public SlaveToMasterMapper(ISlaveToMaster<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
+        public SlaveToMasterMapper(ISlaveToMasterCrud<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
             : base(storage, mapper)
         {
             _storage = storage;

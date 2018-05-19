@@ -9,11 +9,11 @@ using Xlent.Lever.Libraries2.Core.Translation;
 namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
 {
     /// <inheritdoc cref="CrudClientTranslator{TModel}" />
-    public class ManyToOneCompleteClientTranslator<TModel> : ManyToOneCompleteClientTranslator<TModel, TModel>,
-        IManyToOneComplete<TModel, string>
+    public class ManyToOneCrudClientTranslator<TModel> : ManyToOneCrudClientTranslator<TModel, TModel>,
+        IManyToOneCrud<TModel, string>
     {
         /// <inheritdoc />
-        public ManyToOneCompleteClientTranslator(IManyToOneComplete<TModel, string> storage,
+        public ManyToOneCrudClientTranslator(IManyToOneCrud<TModel, string> storage,
             string parentIdConceptName, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
             : base(storage, parentIdConceptName, idConceptName, getClientNameMethod, translatorService)
         {
@@ -21,14 +21,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ClientTranslators
     }
 
     /// <inheritdoc cref="CrudClientTranslator{TModel}" />
-    public class ManyToOneCompleteClientTranslator<TModelCreate, TModel> : CrudClientTranslator<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string>
+    public class ManyToOneCrudClientTranslator<TModelCreate, TModel> : CrudClientTranslator<TModelCreate, TModel>, IManyToOneCrud<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
-        private readonly IManyToOneComplete<TModelCreate, TModel, string> _storage;
+        private readonly IManyToOneCrud<TModelCreate, TModel, string> _storage;
         private readonly string _parentIdConceptName;
 
         /// <inheritdoc />
-        public ManyToOneCompleteClientTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string parentIdConceptName, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
+        public ManyToOneCrudClientTranslator(IManyToOneCrud<TModelCreate, TModel, string> storage, string parentIdConceptName, string idConceptName, System.Func<string> getClientNameMethod, ITranslatorService translatorService)
             : base(storage, idConceptName, getClientNameMethod, translatorService)
         {
             _storage = storage;

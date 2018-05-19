@@ -9,11 +9,11 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class ManyToOneCompleteFromServerTranslator<TModel> : ManyToOneCompleteFromServerTranslator<TModel, TModel>,
-        IManyToOneComplete<TModel, string>
+    public class ManyToOneCrudFromServerTranslator<TModel> : ManyToOneCrudFromServerTranslator<TModel, TModel>,
+        IManyToOneCrud<TModel, string>
     {
         /// <inheritdoc />
-        public ManyToOneCompleteFromServerTranslator(IManyToOneComplete<TModel, string> storage, string idConceptName,
+        public ManyToOneCrudFromServerTranslator(IManyToOneCrud<TModel, string> storage, string idConceptName,
             System.Func<string> getServerNameMethod)
             : base(storage, idConceptName, getServerNameMethod)
         {
@@ -23,13 +23,13 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class ManyToOneCompleteFromServerTranslator<TModelCreate, TModel> : CrudFromServerTranslator<TModelCreate, TModel>, IManyToOneComplete<TModelCreate, TModel, string> 
+    public class ManyToOneCrudFromServerTranslator<TModelCreate, TModel> : CrudFromServerTranslator<TModelCreate, TModel>, IManyToOneCrud<TModelCreate, TModel, string> 
         where TModel : TModelCreate
     {
-        private readonly IManyToOneComplete<TModelCreate, TModel, string> _storage;
+        private readonly IManyToOneCrud<TModelCreate, TModel, string> _storage;
 
         /// <inheritdoc />
-        public ManyToOneCompleteFromServerTranslator(IManyToOneComplete<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
+        public ManyToOneCrudFromServerTranslator(IManyToOneCrud<TModelCreate, TModel, string> storage, string idConceptName, System.Func<string> getServerNameMethod)
             : base(storage, idConceptName, getServerNameMethod)
         {
             _storage = storage;

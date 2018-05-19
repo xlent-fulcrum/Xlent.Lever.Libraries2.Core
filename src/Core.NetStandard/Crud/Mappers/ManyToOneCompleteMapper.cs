@@ -10,30 +10,30 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Crud.Mappers
 {
-    /// <inheritdoc cref="ManyToOneCompleteMapper{TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId}" />
-    public class ManyToOneCompleteMapper<TClientModel, TClientId, TServerModel, TServerId> :
-        ManyToOneCompleteMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
-        IManyToOneComplete<TClientModel, TClientId>
+    /// <inheritdoc cref="ManyToOneCrudMapper{TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId}" />
+    public class ManyToOneCrudMapper<TClientModel, TClientId, TServerModel, TServerId> :
+        ManyToOneCrudMapper<TClientModel, TClientModel, TClientId, TServerModel, TServerId>,
+        IManyToOneCrud<TClientModel, TClientId>
     {
         /// <summary>
         /// Constructor
         /// </summary>
-        public ManyToOneCompleteMapper(IManyToOneComplete<TServerModel, TServerId> storage, ICrudMapper<TClientModel, TServerModel> mapper)
+        public ManyToOneCrudMapper(IManyToOneCrud<TServerModel, TServerId> storage, ICrudMapper<TClientModel, TServerModel> mapper)
             : base(storage, mapper)
         {
         }
     }
 
-    /// <inheritdoc cref="IManyToOneComplete{TManyModelCreate,TManyModel,TClientId}" />
-    public class ManyToOneCompleteMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>, IManyToOneComplete<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
+    /// <inheritdoc cref="IManyToOneCrud{TManyModelCreate,TManyModel,TClientId}" />
+    public class ManyToOneCrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId> : CrudMapper<TClientModelCreate, TClientModel, TClientId, TServerModel, TServerId>, IManyToOneCrud<TClientModelCreate, TClientModel, TClientId> where TClientModel : TClientModelCreate
     {
-        private readonly IManyToOneComplete<TServerModel, TServerId> _storage;
+        private readonly IManyToOneCrud<TServerModel, TServerId> _storage;
         private readonly ICrudMapper<TClientModelCreate, TClientModel, TServerModel> _mapper;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ManyToOneCompleteMapper(IManyToOneComplete<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
+        public ManyToOneCrudMapper(IManyToOneCrud<TServerModel, TServerId> storage, ICrudMapper<TClientModelCreate, TClientModel, TServerModel> mapper)
             : base(storage, mapper)
         {
             _storage = storage;

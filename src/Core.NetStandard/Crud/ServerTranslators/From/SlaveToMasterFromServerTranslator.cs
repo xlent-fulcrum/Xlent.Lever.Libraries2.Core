@@ -15,7 +15,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
         ISlaveToMaster<TModel, string>
     {
         /// <inheritdoc />
-        public SlaveToMasterFromServerTranslator(ISlaveToMaster<TModel, string> storage,
+        public SlaveToMasterFromServerTranslator(ISlaveToMasterCrud<TModel, string> storage,
             string masterIdConceptName, string slaveIdConceptName, System.Func<string> getServerNameMethod)
             : base(storage, masterIdConceptName, slaveIdConceptName, getServerNameMethod)
         {
@@ -25,14 +25,14 @@ namespace Xlent.Lever.Libraries2.Core.Crud.ServerTranslators.From
     /// <summary>
     /// Decorate values from the server into concept values.
     /// </summary>
-    public class SlaveToMasterFromServerTranslator<TModelCreate, TModel> : ServerTranslatorBase, ISlaveToMaster<TModelCreate, TModel, string>
+    public class SlaveToMasterFromServerTranslator<TModelCreate, TModel> : ServerTranslatorBase, ISlaveToMasterCrud<TModelCreate, TModel, string>
         where TModel : TModelCreate
     {
-        private readonly ISlaveToMaster<TModelCreate, TModel, string> _storage;
+        private readonly ISlaveToMasterCrud<TModelCreate, TModel, string> _storage;
         private readonly string _masterIdConceptName;
 
         /// <inheritdoc />
-        public SlaveToMasterFromServerTranslator(ISlaveToMaster<TModelCreate, TModel, string> storage, string masterIdConceptName, string slaveIdConceptName, System.Func<string> getServerNameMethod)
+        public SlaveToMasterFromServerTranslator(ISlaveToMasterCrud<TModelCreate, TModel, string> storage, string masterIdConceptName, string slaveIdConceptName, System.Func<string> getServerNameMethod)
             : base(slaveIdConceptName, getServerNameMethod)
         {
             _storage = storage;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -9,35 +10,31 @@ using Xlent.Lever.Libraries2.Core.Storage.Model;
 namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
 {
     /// <summary>
-    /// Abstract base class that has a default implementation for 
-    /// <see cref="CrdBase{TModelCreate,TModel,TId}.CreateAsync"/>, <see cref="CrdBase{TModelCreate,TModel,TId}.CreateAndReturnAsync"/>,
-    /// and <see cref="CrdBase{TModelCreate,TModel,TId}.DeleteAllAsync"/>.
+    /// Abstract base class that has a default implementation for <see cref="ReadAllAsync"/>.
     /// </summary>
-    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
-    /// <typeparam name="TId"></typeparam>
-    public abstract class CrdBase<TModel, TId> : CrdBase<TModel, TModel, TId>, ICrd<TModel, TId>
+    public abstract class ManyToOneCrdBase<TModel, TId> :
+        ManyToOneCrdBase<TModel, TModel, TId>,
+        IManyToOneCrd<TModel, TId>
     {
     }
 
     /// <summary>
-    /// Abstract base class that has a default implementation for 
-    /// <see cref="CreateAsync"/>, <see cref="CreateAndReturnAsync"/>,
-    /// and <see cref="DeleteAllAsync"/>.
+    /// Abstract base class that has a default implementation for <see cref="ReadAllAsync"/>.
     /// </summary>
-    /// <typeparam name="TModelCreate">The type for creating objects in persistant storage.</typeparam>
-    /// <typeparam name="TModel">The type of objects that are returned from persistant storage.</typeparam>
-    /// <typeparam name="TId"></typeparam>
-    public abstract class CrdBase<TModelCreate, TModel, TId> : ReadBase<TModel, TId>, ICrd<TModelCreate, TModel, TId> where TModel : TModelCreate
+    public abstract class ManyToOneCrdBase<TModelCreate, TModel, TId> :
+        ManyToOneReadBase<TModel, TId>,
+        IManyToOneCrd<TModelCreate, TModel, TId>
+        where TModel : TModelCreate
     {
         /// <inheritdoc />
         public abstract Task<TId> CreateAsync(TModelCreate item,
-            CancellationToken token = default(CancellationToken));
+        CancellationToken token = default(CancellationToken));
 
         /// <inheritdoc />
         public virtual async Task<TModel> CreateAndReturnAsync(TModelCreate item, CancellationToken token = default(CancellationToken))
         {
             InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
+            InternalContract.RequireValidated(item, nameof(item));
             var id = await CreateAsync(item, token);
             return await ReadAsync(id, token);
         }
@@ -52,7 +49,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         {
             InternalContract.RequireNotDefaultValue(id, nameof(id));
             InternalContract.RequireNotNull(item, nameof(item));
-            MaybeValidate(item);
+            InternalContract.RequireValidated(item, nameof(item));
             await CreateWithSpecifiedIdAsync(id, item, token);
             return await ReadAsync(id, token);
         }
@@ -63,7 +60,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Helpers
         /// <inheritdoc />
         public virtual async Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
         {
-            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(CrdBase<TModelCreate, TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
+            var errorMessage = $"The method {nameof(DeleteAllAsync)} of the abstract base class {nameof(RudBase<TModel, TId>)} must be overridden when it stores items that are not implementing the interface {nameof(IUniquelyIdentifiable<TId>)}";
             FulcrumAssert.IsTrue(typeof(IUniquelyIdentifiable<TId>).IsAssignableFrom(typeof(TModel)), null,
                 errorMessage);
             var items = new PageEnvelopeEnumerableAsync<TModel>((offset, t) => ReadAllWithPagingAsync(offset, null, t), token);

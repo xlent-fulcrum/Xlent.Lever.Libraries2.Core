@@ -13,7 +13,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
 {
     /// <inheritdoc cref="SlaveToMasterAutoCache{TManyModelCreate,TManyModel,TId}" />
     public class SlaveToMasterAutoCache<TManyModel, TId> :
-        SlaveToMasterAutoCache<TManyModel, TManyModel, TId>, ISlaveToMaster<TManyModel, TId>
+        SlaveToMasterAutoCache<TManyModel, TManyModel, TId>, 
+        ISlaveToMasterCrud<TManyModel, TId>
     {
         /// <summary>
         /// Constructor for TOneModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
@@ -22,7 +23,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModel, TId> storage,
+        public SlaveToMasterAutoCache(ISlaveToMasterCrud<TManyModel, TId> storage,
             IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null,
             AutoCacheOptions options = null)
             : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>)item).Id, cache,
@@ -39,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModel, TId> storage,
+        public SlaveToMasterAutoCache(ISlaveToMasterCrud<TManyModel, TId> storage,
             GetIdDelegate<TManyModel, SlaveToMasterId<TId>> getIdDelegate, IDistributedCache cache,
             FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
             : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
@@ -53,10 +54,12 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
     /// <typeparam name="TManyModelCreate">The model to use when creating objects.</typeparam>
     /// <typeparam name="TManyModel">The model for the children that each points out a parent.</typeparam>
     /// <typeparam name="TId">The type for the id field of the models.</typeparam>
-    public class SlaveToMasterAutoCache<TManyModelCreate, TManyModel, TId> : AutoCacheBase<TManyModel, SlaveToMasterId<TId>>, ISlaveToMaster<TManyModelCreate, TManyModel, TId>
+    public class SlaveToMasterAutoCache<TManyModelCreate, TManyModel, TId> : 
+        RudAutoCache<TManyModel, SlaveToMasterId<TId>>, 
+        ISlaveToMasterCrud<TManyModelCreate, TManyModel, TId>
             where TManyModel : TManyModelCreate
     {
-        private readonly ISlaveToMaster<TManyModelCreate, TManyModel, TId> _storage;
+        private readonly ISlaveToMasterCrud<TManyModelCreate, TManyModel, TId> _storage;
         /// <summary>
         /// Constructor for TOneModel that implements <see cref="IUniquelyIdentifiable{TId}"/>.
         /// </summary>
@@ -64,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="cache"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+        public SlaveToMasterAutoCache(ISlaveToMasterCrud<TManyModelCreate, TManyModel, TId> storage, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
         : this(storage, item => ((IUniquelyIdentifiable<SlaveToMasterId<TId>>)item).Id, cache, flushCacheDelegateAsync, options)
         {
         }
@@ -78,8 +81,8 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         /// <param name="getIdDelegate"></param>
         /// <param name="flushCacheDelegateAsync"></param>
         /// <param name="options"></param>
-        public SlaveToMasterAutoCache(ISlaveToMaster<TManyModelCreate, TManyModel, TId> storage, GetIdDelegate<TManyModel, SlaveToMasterId<TId>> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
-            : base(getIdDelegate, cache, flushCacheDelegateAsync, options)
+        public SlaveToMasterAutoCache(ISlaveToMasterCrud<TManyModelCreate, TManyModel, TId> storage, GetIdDelegate<TManyModel, SlaveToMasterId<TId>> getIdDelegate, IDistributedCache cache, FlushCacheDelegateAsync flushCacheDelegateAsync = null, AutoCacheOptions options = null)
+            : base(storage, getIdDelegate, cache, flushCacheDelegateAsync, options)
         {
             _storage = storage;
         }
@@ -166,20 +169,6 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
             var task1 = _storage.DeleteChildrenAsync(masterId, token);
             var task2 = RemoveCachedChildrenInBackgroundAsync(masterId, token);
             return Task.WhenAll(task1, task2);
-        }
-
-        /// <inheritdoc />
-        public Task DeleteAsync(SlaveToMasterId<TId> id, CancellationToken token = default(CancellationToken))
-        {
-            var task1 = _storage.DeleteAsync(id, token);
-            var task2 = RemoveCachedChildrenInBackgroundAsync(id.MasterId, token);
-            return Task.WhenAll(task1, task2);
-        }
-
-        /// <inheritdoc />
-        public Task DeleteAllAsync(CancellationToken token = default(CancellationToken))
-        {
-            throw new FulcrumNotImplementedException("Please use DeleteChildrenAsync");
         }
     }
 }
