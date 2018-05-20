@@ -12,6 +12,6 @@ namespace Xlent.Lever.Libraries2.Core.Cache
         /// Create or get a distributed cache.
         /// </summary>
         /// <param name="key">The key to find the cache if it already exists.</param>
-        Task<IDistributedCache> CreateOrGetDistributedCacheAsync(string key);
+        Task<IDistributedCache> GetOrCreateDistributedCacheAsync(string key);
     }
 }

@@ -65,26 +65,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Cache\ItemWithParentId.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheCrud.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheCrd.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheBase.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheManyToOneRecursive.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
-    <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestParameters.cs" />
-    <Compile Include="Core\Storage\MemoryManyToOne.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsTimeStamped.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsValidated.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsEtag.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsBare.cs" />
-    <Compile Include="Core\Storage\MemoryQueueTest.cs" />
-    <Compile Include="Core\Storage\PageEnvelopeTest.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsId.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
     <Compile Include="Core\Support\Validatable.cs" />
     <Compile Include="Core\TestAssert\TestFulcrumAssert.cs" />
