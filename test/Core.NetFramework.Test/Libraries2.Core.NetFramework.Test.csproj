@@ -73,10 +73,6 @@
     <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
     <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\ServerTranslatorBase.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\Support\TestModelCreate.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\Support\TestModel.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFromTest.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
@@ -102,10 +98,6 @@
     <ProjectReference Include="..\..\src\Core.NetFramework\Libraries2.Core.NetFramework.csproj">
       <Project>{923faa8d-0a18-41a7-99e3-663b61cda069}</Project>
       <Name>Libraries2.Core.NetFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Libraries2.Core.Test.NuGet\Libraries2.Core.Test.NuGet.csproj">
-      <Project>{3eada6f9-0e11-4688-8b0b-f7db0b9ebba7}</Project>
-      <Name>Libraries2.Core.Test.NuGet</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
