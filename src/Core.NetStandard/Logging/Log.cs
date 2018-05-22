@@ -131,7 +131,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
             else
             {
-                ThreadHelper.CallAsyncFromSync(async () => await LogQueue.AddMessageAsync(logInstanceInformation));
+                LogQueue.AddMessage(logInstanceInformation);
             }
         }
 
@@ -172,8 +172,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     Exception = e
                 };
             }
-            // TODO: Use a safer way to check this (what if the numbers change?)
-            if (logInstanceInformation.SeverityLevel >= LogSeverityLevel.Error)
+
+            if (logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
             {
                 logInstanceInformation.StackTrace = Environment.StackTrace;
             }
