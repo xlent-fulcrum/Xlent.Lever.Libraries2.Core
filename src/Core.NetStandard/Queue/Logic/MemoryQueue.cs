@@ -132,7 +132,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
                 {
                     if (_queue.IsEmpty || _hasBackgroundWorker) return;
                     _hasBackgroundWorker = true;
-                    ThreadHelper.FireAndForget(async () => await BackgroundWorker().ConfigureAwait(false));
+                    ThreadHelper.FireAndForgetIgnoreContext(async () => await BackgroundWorker().ConfigureAwait(false));
                 }
             }
             catch (Exception e)

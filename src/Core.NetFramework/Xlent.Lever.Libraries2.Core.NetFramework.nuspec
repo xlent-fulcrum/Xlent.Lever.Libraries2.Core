@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>1.32.2</version>
+    <version>1.32.3</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,6 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
+      1.32.3 Performance: Introduced cheaper variant of FireAndForget.
       1.32.2 BUG: LogOnLevel caused long BLOCK and AWAIT times in. Remedy: Synchronous call to AddMessage, StackTrace only for errors.
       1.32.1 Changed ITranslatorService.
       1.31.1 Added SlaveToMasterAutoCache.

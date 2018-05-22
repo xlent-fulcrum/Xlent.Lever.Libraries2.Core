@@ -147,7 +147,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         protected internal void CacheItemsInBackground(TModel[] itemsArray, int limit, string key)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
-            ThreadHelper.FireAndForget(async () =>
+            ThreadHelper.FireAndForgetWithExpensiveContextPreservation(async () =>
                 await CacheItemCollectionOperationAsync(itemsArray, limit, key, true, CancellationToken.None).ConfigureAwait(false));
         }
 
@@ -164,7 +164,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
             // Give up if a save of the same page is already active
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
-            ThreadHelper.FireAndForget(async () =>
+            ThreadHelper.FireAndForgetWithExpensiveContextPreservation(async () =>
                 await CacheItemPageOperationAsync(pageEnvelope, limit, keyPrefix, true, CancellationToken.None).ConfigureAwait(false));
         }
 
@@ -176,7 +176,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         protected async Task RemoveCacheItemsInBackgroundAsync(string key, Func<Task<TModel[]>> getItemsToDelete)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
-            ThreadHelper.FireAndForget(async () => await ReadAndDelete(key, getItemsToDelete));
+            ThreadHelper.FireAndForgetWithExpensiveContextPreservation(async () => await ReadAndDelete(key, getItemsToDelete));
             await Task.CompletedTask;
         }
 
@@ -195,7 +195,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
         protected void RemoveCacheItemsInBackground(TModel[] itemsArray, string key)
         {
             if (!_collectionOperations.TryAdd(key, true)) return;
-            ThreadHelper.FireAndForget(async () =>
+            ThreadHelper.FireAndForgetWithExpensiveContextPreservation(async () =>
                 await CacheItemCollectionOperationAsync(itemsArray, int.MaxValue, key, false, CancellationToken.None).ConfigureAwait(false));
         }
 
@@ -215,7 +215,7 @@ namespace Xlent.Lever.Libraries2.Core.Crud.Cache
             // Give up if a save of the same page is already active
             if (!_activeCachingOfPages.TryAdd(key, pageEnvelope)) return;
 
-            ThreadHelper.FireAndForget(async () =>
+            ThreadHelper.FireAndForgetWithExpensiveContextPreservation(async () =>
                 await CacheItemPageOperationAsync(pageEnvelope, int.MaxValue, keyPrefix, false, CancellationToken.None).ConfigureAwait(false));
         }
 
