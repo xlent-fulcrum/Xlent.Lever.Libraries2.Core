@@ -172,7 +172,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     Exception = e
                 };
             }
-            logInstanceInformation.StackTrace = Environment.StackTrace;
+            // TODO: Use a safer way to check this (what if the numbers change?)
+            if (logInstanceInformation.SeverityLevel >= LogSeverityLevel.Error)
+            {
+                logInstanceInformation.StackTrace = Environment.StackTrace;
+            }
+
             return logInstanceInformation;
         }
 
