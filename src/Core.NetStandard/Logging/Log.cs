@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
@@ -17,7 +18,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     {
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
-        private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> {Value = false};
+        private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> { Value = false };
         private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
         private static bool _applicationValidated;
 
@@ -127,7 +128,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
 
                 var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
-                FallbackToSimpleLoggingFailSafe(abortMessage, logInstanceInformation);
+                FallbackToSimpleLoggingFailSafe(abortMessage, new[] { logInstanceInformation });
             }
             else
             {
@@ -182,49 +183,88 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// Safe logging of messages. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
-        /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static async Task LogFailSafeAsync(LogInstanceInformation logInstanceInformation)
+        /// <param name="logs">Information about the logging.</param>
+        private static async Task LogFailSafeAsync(params LogInstanceInformation[] logs)
         {
+
             try
             {
+                if (logs == null || logs.Length == 0) return;
+                if (logs.Length > 1 && !SameContext(logs))
+                {
+                    foreach (var log in logs)
+                    {
+                        await LogFailSafeAsync(log);
+                    }
+                    return;
+                }
+
+                var firstLog = logs[0];
                 //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
-                    Tenant = logInstanceInformation.ClientTenant ?? logInstanceInformation.ApplicationTenant,
-                    CallingClientName = logInstanceInformation.ClientName
+                    Tenant = firstLog.ClientTenant ?? firstLog.ApplicationTenant,
+                    CallingClientName = firstLog.ClientName
                 };
                 // ReSharper disable once ObjectCreationAsStatement
                 new CorrelationIdValueProvider
                 {
-                    CorrelationId = logInstanceInformation.CorrelationId
+                    CorrelationId = firstLog.CorrelationId
                 };
-                var formattedMessage = FormatMessageFailSafe(logInstanceInformation);
-                AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
-                await LogWithConfiguredLoggerFailSafeAsync(logInstanceInformation, formattedMessage);
+                await LogWithConfiguredLoggerFailSafeAsync(logs);
+                foreach (var log in logs)
+                {
+                    var formattedMessage = FormatMessageFailSafe(log);
+                    AlsoLogWithTraceSourceInDevelopment(log.SeverityLevel, formattedMessage);
+                }
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logs, e);
             }
         }
 
-        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogInstanceInformation logInstanceInformation,
-            string formattedMessage)
+        private static bool SameContext(LogInstanceInformation[] logs)
+        {
+            if (logs == null || logs.Length < 2) return true;
+            var firstLog = logs[0];
+            for (var i = 1; i < logs.Length; i++)
+            {
+                if (!SameContext(logs[0], logs[i])) return false;
+            }
+            return true;
+        }
+
+        private static bool SameContext(LogInstanceInformation log1, LogInstanceInformation log2)
+        {
+            return Equals(log1.ClientTenant, log2.ClientTenant)
+                   && log1.ClientName == log2.ClientName
+                   && Equals(log1.ApplicationTenant, log2.ApplicationTenant)
+                   && log1.ApplicationName == log2.ApplicationName
+                   && log1.CorrelationId == log2.CorrelationId
+                   && log1.RunTimeLevel == log2.RunTimeLevel;
+
+        }
+
+        private static async Task LogWithConfiguredLoggerFailSafeAsync(params LogInstanceInformation[] logs)
         {
             try
             {
                 if (FulcrumApplication.Setup.FullLogger != null)
                 {
                     LoggingInProgress.Value = true;
-                    await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
+                    await FulcrumApplication.Setup.FullLogger.LogAsync(logs);
                 }
                 else
                 {
-                    // TODO: Set _loggingInProgress.Value to false
 #pragma warning disable CS0618 // Type or member is obsolete
-                    FulcrumApplication.Setup.Logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
+                    foreach (var log in logs)
+                    {
+                        var formattedMessage = FormatMessageFailSafe(log);
+                        FulcrumApplication.Setup.Logger.Log(log.SeverityLevel, formattedMessage);
+                    }
 #pragma warning restore CS0618 // Type or member is obsolete
                 }
             }
@@ -235,7 +275,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 #pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
                     $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {logger.GetType().FullName}.",
-                    logInstanceInformation, e);
+                    logs, e);
             }
             finally
             {
@@ -283,45 +323,64 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 return $"Formatting message failed ({e.Message}): {logInstanceInformation.Message}";
             }
         }
-        
+
 
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
         /// <param name="message">What went wrong with logging</param>
-        /// <param name="logInstanceInformation">The message to log.</param>
+        /// <param name="logs">The message to log.</param>
         /// <param name="exception">If what went wrong had an exception</param>
-        private static void FallbackToSimpleLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
+        private static void FallbackToSimpleLoggingFailSafe(string message, LogInstanceInformation[] logs, Exception exception = null)
         {
-            
+            if (logs == null || logs.Length == 0) return;
             try
             {
-
+                var logWithHighestSeverity = GetLogWithHighestSeverityLevel(logs);
                 var totalMessage = message == null ? "" : $"{message}\r";
-                if (logInstanceInformation != null)
-                {
-                    totalMessage += logInstanceInformation.ToLogString();
-                }
                 if (exception != null)
                 {
-                    totalMessage += $"\r\rException when logging\r{exception.ToLogString()}";
+                    totalMessage += $"\r\rUnexpected excpeption when logging:\r{exception.ToLogString()}";
                 }
-                if (exception != null || (logInstanceInformation != null && logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
+                else
                 {
-                    totalMessage += $"\rStack trace up to when logging exception occured\r{Environment.StackTrace}";
+                    totalMessage += "\r\rThe logging mechanism itself failed and is using a fallback method for one or more logs.";
                 }
+                if (exception != null || logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
+                {
+                    totalMessage += $"\rStack trace up to this point:\r{Environment.StackTrace}";
+                }
+                // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
+                var severityLevel = logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : LogSeverityLevel.Warning;
+                FallbackToSimpleLoggingFailSafe(severityLevel, totalMessage);
+                foreach (var log in logs)
+                {
+                    FallbackToSimpleLoggingFailSafe(log.SeverityLevel, log.Message);
+                }
+            }
+            catch (Exception)
+            {
+                // We give up
+            }
+        }
+
+
+        /// <summary>
+        /// Use this method to log when the original logging method fails.
+        /// </summary>
+        private static void FallbackToSimpleLoggingFailSafe(LogSeverityLevel severityLevel, string message)
+        {
+
+            try
+            {
                 try
                 {
-                    // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
-                    var severityLevel = logInstanceInformation == null 
-                        ? LogSeverityLevel.Error 
-                        : logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
-                    if (FulcrumApplication.IsInDevelopment && FulcrumApplication.Setup.FullLogger != RecommendedForNetFramework) RecommendedForUnitTest.Log(severityLevel, totalMessage);
-                    else RecommendedForNetFramework.Log(severityLevel, totalMessage); 
+                    if (FulcrumApplication.IsInDevelopment && FulcrumApplication.Setup.FullLogger != RecommendedForNetFramework) RecommendedForUnitTest.Log(severityLevel, message);
+                    else RecommendedForNetFramework.Log(severityLevel, message);
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r{e.ToLogString()}";
+                    var totalMessage = $"{message}\r{e.ToLogString()}";
                     Console.WriteLine($"{totalMessage}");
                 }
             }
@@ -329,6 +388,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 // We give up
             }
+        }
+
+        private static LogInstanceInformation GetLogWithHighestSeverityLevel(LogInstanceInformation[] logs)
+        {
+            if (logs == null || logs.Length == 0) return null;
+            return logs.Aggregate((currentHighestLog, log) => log.IsGreateThanOrEqualTo(currentHighestLog.SeverityLevel) ? log : currentHighestLog);
         }
     }
 }

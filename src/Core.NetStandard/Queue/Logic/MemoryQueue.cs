@@ -43,7 +43,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// The delegate must never fail.
         /// </summary>
         /// <param name="item">A queue item.</param>
-        public delegate Task FailSafeQueueItemActionDelegate(T item);
+        public delegate Task FailSafeQueueItemActionDelegate(params T[] item);
 
         /// <summary>
         /// Constructor
