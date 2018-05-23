@@ -51,10 +51,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <inheritdoc />
-        public async Task LogAsync(LogInstanceInformation logInformation)
+        public Task LogAsync(params LogInstanceInformation[] logs)
         {
-            Log(logInformation.SeverityLevel, Logging.Log.FormatMessageFailSafe(logInformation));
-            await Task.Yield();
+            if (logs == null) return Task.CompletedTask;
+            foreach (var log in logs)
+            {
+                Log(log.SeverityLevel, Logging.Log.FormatMessageFailSafe(log));
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

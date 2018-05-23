@@ -91,10 +91,14 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             throw new NotImplementedException();
         }
 
-        public async Task LogAsync(LogInstanceInformation message)
+        public async Task LogAsync(params LogInstanceInformation[] logs)
         {
-            await Task.Delay(_delay);
-            Console.Write($"{message.Message} ");
+            if (logs == null) return;
+            foreach (var log in logs)
+            {
+                await Task.Delay(_delay);
+                Console.Write($"{log.Message} ");
+            }
         }
     }
 
@@ -113,43 +117,52 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
         }
 
         /// <inheritdoc />
-        public async Task LogAsync(LogInstanceInformation message)
+        public async Task LogAsync(params LogInstanceInformation[] logs)
         {
-            lock (ClassLock)
+            if (logs == null) return;
+            foreach (var log in logs)
             {
-                InstanceCount++;
-                IsRunning = true;
-            }
-            var recursiveLogMessage = "Recursive log message";
-            var recursive = message.Message == recursiveLogMessage;
-            if (recursive)
-            {
-                if (!HasFailed)
+
+                lock (ClassLock)
                 {
-                    HasFailed = true;
-                    Message =
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress}";
+                    InstanceCount++;
+                    IsRunning = true;
                 }
-            }
-            Console.WriteLine(message.Message);
-            // Try to provoke a recursive log call of this method
-            if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
-            await Task.Yield();
-            lock (ClassLock)
-            {
-                InstanceCount--;
-                if (InstanceCount < 0)
+
+                var recursiveLogMessage = "Recursive log message";
+                var recursive = log.Message == recursiveLogMessage;
+                if (recursive)
                 {
                     if (!HasFailed)
                     {
                         HasFailed = true;
                         Message =
-                            $"Unexpectedly had an {nameof(InstanceCount)} with value {InstanceCount} < 0";
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress}";
                     }
-                    InstanceCount = 0;
                 }
-                if (InstanceCount == 0) IsRunning = false;
+
+                Console.WriteLine(log.Message);
+                // Try to provoke a recursive log call of this method
+                if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
+                await Task.Yield();
+                lock (ClassLock)
+                {
+                    InstanceCount--;
+                    if (InstanceCount < 0)
+                    {
+                        if (!HasFailed)
+                        {
+                            HasFailed = true;
+                            Message =
+                                $"Unexpectedly had an {nameof(InstanceCount)} with value {InstanceCount} < 0";
+                        }
+
+                        InstanceCount = 0;
+                    }
+
+                    if (InstanceCount == 0) IsRunning = false;
+                }
             }
         }
     }

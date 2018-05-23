@@ -10,8 +10,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 #pragma warning restore 618
     {
         /// <summary>
-        /// Log <paramref name="message"/>.
+        /// Log <paramref name="logs"/>.
         /// </summary>
-        Task LogAsync(LogInstanceInformation message);
+        Task LogAsync(params LogInstanceInformation[] logs);
     }
 }
