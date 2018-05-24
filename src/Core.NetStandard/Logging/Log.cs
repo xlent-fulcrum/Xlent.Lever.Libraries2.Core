@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
@@ -10,6 +11,7 @@ using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Queue.Logic;
 using Xlent.Lever.Libraries2.Core.Threads;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -68,9 +70,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogVerbose(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogVerbose(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName ="",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Verbose, message, exception);
+            LogOnLevel(LogSeverityLevel.Verbose, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -78,9 +88,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogInformation(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogInformation(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Information, message, exception);
+            LogOnLevel(LogSeverityLevel.Information, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -88,9 +106,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogWarning(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogWarning(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Warning, message, exception);
+            LogOnLevel(LogSeverityLevel.Warning, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -98,9 +124,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogError(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogError(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Error, message, exception);
+            LogOnLevel(LogSeverityLevel.Error, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -108,25 +142,42 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogCritical(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogCritical(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Critical, message, exception);
+            LogOnLevel(LogSeverityLevel.Critical, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogOnLevel(
+            LogSeverityLevel severityLevel,
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
             if (!_applicationValidated)
             {
                 FulcrumApplication.Validate();
                 _applicationValidated = true;
             }
-            var log = CreateLogInstanceInformation(severityLevel, message, exception);
+            var log = CreateLogInstanceInformation(severityLevel, message, exception, memberName, filePath, lineNumber);
             if (LoggingInProgress.Value)
             {
 
@@ -210,8 +261,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                            consequence);
         }
 
-        private static LogInstanceInformation CreateLogInstanceInformation(LogSeverityLevel severityLevel, string message,
-            Exception exception)
+        private static LogInstanceInformation CreateLogInstanceInformation(
+            LogSeverityLevel severityLevel, 
+            string message,
+            Exception exception,
+            string memberName,
+            string filePath,
+            int lineNumber)
         {
             LogInstanceInformation logInstanceInformation;
             try
@@ -229,6 +285,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     TimeStamp = DateTimeOffset.Now,
                     SeverityLevel = severityLevel,
                     Message = message,
+                    Location = $"{memberName} in {filePath} line {lineNumber}",
                     Exception = exception
                 };
             }
@@ -244,6 +301,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     TimeStamp = DateTimeOffset.Now,
                     SeverityLevel = LogSeverityLevel.Critical,
                     Message = $"Logging failed when logging this:\r{newMessage}",
+                    Location = $"{memberName} in {filePath} line {lineNumber}",
                     Exception = e
                 };
             }
@@ -428,14 +486,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             {
                 // We give up
             }
-        }
-
-        /// <summary>
-        /// Returns the log with the highest severity level.
-        /// </summary>
-        public static LogInstanceInformation GetLogWithHighestSeverityLevel(IReadOnlyCollection<LogInstanceInformation> logs)
-        {
-            return logs?.Aggregate((currentHighestLog, log) => log.IsGreateThanOrEqualTo(currentHighestLog.SeverityLevel) ? log : currentHighestLog);
         }
     }
 }
