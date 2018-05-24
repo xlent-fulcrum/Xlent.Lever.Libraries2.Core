@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Logging;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -60,6 +61,25 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             stopWatch.Stop();
             Console.WriteLine();
             Console.WriteLine($"Total time: {stopWatch.Elapsed.TotalSeconds} seconds");
+        }
+
+        [TestMethod]
+        public void Batch()
+        {
+
+            var mockLogger = new Mock<IFulcrumFullLogger>();
+            mockLogger.Setup(logger =>
+                logger.LogAsync(It.Is<LogInstanceInformation[]>(logs => logs != null && logs.Length == 5))).Returns(Task.CompletedTask);
+            FulcrumApplication.Setup.FullLogger = mockLogger.Object;
+            Log.StartBatch();
+            Log.LogVerbose("Verbose");
+            Log.LogInformation("Information");
+            Log.LogWarning("Warning");
+            Log.LogError("Error");
+            Log.LogCritical("Critical");
+            Log.ExecuteBatch();
+            while (Log.OnlyForUnitTest_HasBackgroundWorkerForLogging) Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            mockLogger.Verify();
         }
 
         private static void LogSpecifiedNumberOfLogs(int numberOfLogs)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,8 +20,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> { Value = false };
-        private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
+        private static readonly MemoryQueue<LogInstanceInformation[]> LogQueue = new MemoryQueue<LogInstanceInformation[]>("LogQueue", LogFailSafeAsync);
         private static bool _applicationValidated;
+        private static readonly AsyncLocal<ConcurrentQueue<LogInstanceInformation>> LogBatch = new AsyncLocal<ConcurrentQueue<LogInstanceInformation>> { Value = null };
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -123,17 +125,74 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 FulcrumApplication.Validate();
                 _applicationValidated = true;
             }
-            var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
+            var log = CreateLogInstanceInformation(severityLevel, message, exception);
             if (LoggingInProgress.Value)
             {
 
                 var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
-                FallbackToSimpleLoggingFailSafe(abortMessage, new[] { logInstanceInformation });
+                FallbackToSimpleLoggingFailSafe(abortMessage, new[] { log });
             }
             else
             {
-                LogQueue.AddMessage(logInstanceInformation);
+                LogToBatchOrImmediately(log);
             }
+        }
+
+        private static void LogToBatchOrImmediately(LogInstanceInformation log)
+        {
+            if (LogBatch.Value != null)
+            {
+                var firstLog = LogBatch.Value.FirstOrDefault();
+                if (firstLog == null || HasSameContext(firstLog, log))
+                {
+                    LogBatch.Value.Enqueue(log);
+                    return;
+                }
+                ForceExecuteBatch(
+                    "A log was added to that batch that didn't have the same context as the other logs in the batch.",
+                    $"All the following logs (up to the next {nameof(StartBatch)}) will be logged individually, i.e. not in a batch.");
+                FulcrumAssert.IsNull(LogBatch.Value);
+            }
+            LogQueue.AddMessage(new[] { log });
+        }
+
+        /// <summary>
+        /// Start a new batch of logs. All the following logs will be saved internally and will not be activated until you call <see cref="ExecuteBatch"/>.
+        /// </summary>
+        /// <remarks>
+        /// There are some cases where ExecuteBatch() will be called automatically:
+        /// - If StartBatch() is called again
+        /// - If <see cref="HasSameContext(LogInstanceInformation, LogInstanceInformation)"/> is false for a new log compared with the logs currently in the batch..
+        /// </remarks>
+        public static void StartBatch()
+        {
+            if (LogBatch.Value != null)
+            {
+                ForceExecuteBatch(
+                    $"Calling {nameof(StartBatch)} a second time, without a call to {nameof(ExecuteBatch)} in between.",
+                    "None. We have activated the current batch and started a new one.");
+            }
+            FulcrumAssert.IsNull(LogBatch.Value);
+            LogBatch.Value = new ConcurrentQueue<LogInstanceInformation>();
+        }
+
+        /// <summary>
+        /// Activate the logs that have been saved internally since the latest <see cref="StartBatch"/>.
+        /// </summary>
+        public static void ExecuteBatch()
+        {
+            if (LogBatch.Value == null) return;
+            var logs = LogBatch.Value.ToArray();
+            LogBatch.Value = null;
+            LogQueue.AddMessage(logs);
+        }
+        private static void ForceExecuteBatch(string reason, string consequence)
+        {
+            ExecuteBatch();
+            Log.LogWarning("Logging was internally forced to execute a batch of logs.Reason:\r" +
+                           $"{reason}\r" +
+                           "Probably worth investigating, because it was not expected to happen. Consequence:\r" +
+                           consequence);
         }
 
         private static LogInstanceInformation CreateLogInstanceInformation(LogSeverityLevel severityLevel, string message,
@@ -192,7 +251,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 if (logs == null || logs.Length == 0) return;
-                if (logs.Length > 1 && !SameContext(logs))
+                if (logs.Length > 1 && !HasSameContext(logs))
                 {
                     foreach (var log in logs)
                     {
@@ -226,18 +285,18 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
         }
 
-        private static bool SameContext(LogInstanceInformation[] logs)
+        private static bool HasSameContext(LogInstanceInformation[] logs)
         {
             if (logs == null || logs.Length < 2) return true;
             var firstLog = logs[0];
             for (var i = 1; i < logs.Length; i++)
             {
-                if (!SameContext(logs[0], logs[i])) return false;
+                if (!HasSameContext(logs[0], logs[i])) return false;
             }
             return true;
         }
 
-        private static bool SameContext(LogInstanceInformation log1, LogInstanceInformation log2)
+        public static bool HasSameContext(LogInstanceInformation log1, LogInstanceInformation log2)
         {
             return Equals(log1.ClientTenant, log2.ClientTenant)
                    && log1.ClientName == log2.ClientName
@@ -245,7 +304,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                    && log1.ApplicationName == log2.ApplicationName
                    && log1.CorrelationId == log2.CorrelationId
                    && log1.RunTimeLevel == log2.RunTimeLevel;
-
         }
 
         private static async Task LogWithConfiguredLoggerFailSafeAsync(params LogInstanceInformation[] logs)
