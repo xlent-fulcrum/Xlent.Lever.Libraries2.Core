@@ -61,6 +61,17 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// </summary>
         public IValueProvider ContextValueProvider { get; set; }
 
+        /// <summary>
+        /// If any log in a batch of logs has a severitylevel that is equal to or higher than this level,
+        /// then <see cref="LogSeverityLevelThreshold"/> is overriden and all logs will be used.
+        /// </summary>
+        public LogSeverityLevel BatchLogAllSeverityLevelThreshold { get; set; }
+
+        /// <summary>
+        /// A log must have at least this level to be sent for logging. Can be overridden in batches by <see cref="BatchLogAllSeverityLevelThreshold"/>.
+        /// </summary>
+        public LogSeverityLevel LogSeverityLevelThreshold{ get; set; }
+
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {
@@ -72,6 +83,8 @@ namespace Xlent.Lever.Libraries2.Core.Application
             if (FullLogger == null) FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
 #pragma warning restore 618
             FulcrumValidate.IsNotNull(ContextValueProvider, nameof(ContextValueProvider), errorLocation);
+            FulcrumValidate.IsGreaterThanOrEqualTo((int)LogSeverityLevel.Verbose, (int)LogSeverityLevelThreshold, nameof(LogSeverityLevelThreshold), errorLocation);
+            FulcrumValidate.IsGreaterThanOrEqualTo((int)LogSeverityLevel.Verbose, (int)LogSeverityLevelThreshold, nameof(LogSeverityLevelThreshold), errorLocation);
         }
 
         /// <inheritdoc />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -153,6 +154,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     $"All the following logs (up to the next {nameof(StartBatch)}) will be logged individually, i.e. not in a batch.");
                 FulcrumAssert.IsNull(LogBatch.Value);
             }
+
+            if (!log.IsGreateThanOrEqualTo(FulcrumApplication.Setup.LogSeverityLevelThreshold)) return;
             LogQueue.AddMessage(new[] { log });
         }
 
@@ -182,10 +185,22 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void ExecuteBatch()
         {
             if (LogBatch.Value == null) return;
-            var logs = LogBatch.Value.ToArray();
+            var logs = FilterByThreshold(LogBatch.Value);
             LogBatch.Value = null;
             LogQueue.AddMessage(logs);
         }
+
+        private static LogInstanceInformation[] FilterByThreshold(IReadOnlyCollection<LogInstanceInformation> logs)
+        {
+            var threshold = FulcrumApplication.Setup.LogSeverityLevelThreshold;
+            var logWithHighestSeverityLevel = GetLogWithHighestSeverityLevel(logs);
+            if (logWithHighestSeverityLevel.IsGreateThanOrEqualTo(FulcrumApplication.Setup.BatchLogAllSeverityLevelThreshold))
+            {
+                threshold = LogSeverityLevel.Verbose;
+            }
+            return logs.Where(log => log.IsGreateThanOrEqualTo(threshold)).ToArray();
+        }
+
         private static void ForceExecuteBatch(string reason, string consequence)
         {
             ExecuteBatch();
@@ -448,10 +463,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
         }
 
-        private static LogInstanceInformation GetLogWithHighestSeverityLevel(LogInstanceInformation[] logs)
+        /// <summary>
+        /// Returns the log with the highest severity level.
+        /// </summary>
+        public static LogInstanceInformation GetLogWithHighestSeverityLevel(IReadOnlyCollection<LogInstanceInformation> logs)
         {
-            if (logs == null || logs.Length == 0) return null;
-            return logs.Aggregate((currentHighestLog, log) => log.IsGreateThanOrEqualTo(currentHighestLog.SeverityLevel) ? log : currentHighestLog);
+            return logs?.Aggregate((currentHighestLog, log) => log.IsGreateThanOrEqualTo(currentHighestLog.SeverityLevel) ? log : currentHighestLog);
         }
     }
 }
