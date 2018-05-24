@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support;
@@ -9,6 +10,13 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
     [TestClass]
     public class TestInternalContract
     {
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            FulcrumApplicationHelper.UnitTestSetup(nameof(TestFulcrumAssert));
+        }
+
         [TestMethod]
         public void NullObject()
         {

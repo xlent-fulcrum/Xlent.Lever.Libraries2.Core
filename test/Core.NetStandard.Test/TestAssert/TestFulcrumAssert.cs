@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support;
@@ -10,6 +11,12 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
     public class TestFulcrumAssert
     {
         private static readonly string Namespace = typeof(TestFulcrumAssert).Namespace;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            FulcrumApplicationHelper.UnitTestSetup(nameof(TestFulcrumAssert));
+        }
 
         [TestMethod]
         public void Fail()

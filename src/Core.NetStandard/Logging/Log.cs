@@ -325,29 +325,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
-                if (FulcrumApplication.Setup.FullLogger != null)
-                {
-                    LoggingInProgress.Value = true;
-                    await FulcrumApplication.Setup.FullLogger.LogAsync(logs);
-                }
-                else
-                {
-#pragma warning disable CS0618 // Type or member is obsolete
-                    foreach (var log in logs)
-                    {
-                        var formattedMessage = FormatMessageFailSafe(log);
-                        FulcrumApplication.Setup.Logger.Log(log.SeverityLevel, formattedMessage);
-                    }
-#pragma warning restore CS0618 // Type or member is obsolete
-                }
+                LoggingInProgress.Value = true;
+                await FulcrumApplication.Setup.FullLogger.LogAsync(logs);
             }
             catch (Exception e)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
-#pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
-                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {logger.GetType().FullName}.",
+                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {FulcrumApplication.Setup.FullLogger?.GetType().FullName}.",
                     logs, e);
             }
             finally
@@ -358,25 +342,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
-            if (!FulcrumApplication.IsInDevelopment) return;
-#pragma warning disable CS0618 // Type or member is obsolete
-            IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
-#pragma warning restore CS0618 // Type or member is obsolete
-            if (logger.GetType() == typeof(TraceSourceLogger)) return;
+            if (FulcrumApplication.Setup.FullLogger?.GetType() == typeof(TraceSourceLogger)) return;
             TraceSourceLogger.Log(severityLevel, formattedMessage);
-        }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="exception"/>
-        /// </summary>
-        /// <param name="exception">The exception that we will create a log message for.</param>
-        /// <returns>A formatted message, never null or empty.</returns>
-        /// <remarks>This method should never throw an exception. If </remarks>
-        [Obsolete("Use extension method ToLogString() for Exception")]
-        public static string FormatMessageFailSafe(Exception exception)
-        {
-            if (exception == null) return "";
-            return exception.ToLogString();
         }
 
         /// <summary>

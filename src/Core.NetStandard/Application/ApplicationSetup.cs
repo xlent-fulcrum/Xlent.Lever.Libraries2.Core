@@ -12,10 +12,6 @@ namespace Xlent.Lever.Libraries2.Core.Application
     /// </summary>
     public class ApplicationSetup : IValidatable
     {
-#pragma warning disable 618
-        private IFulcrumLogger _logger;
-#pragma warning restore 618
-
         /// <summary>
         /// The name of the application.
         /// </summary>
@@ -36,20 +32,6 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// How to deal with background threads.
         /// </summary>
         public IThreadHandler ThreadHandler { get; set; }
-
-        /// <summary>
-        /// The logger to use for logging for the entire application.
-        /// </summary>
-        [Obsolete("Use FullLogger")]
-        public IFulcrumLogger Logger
-        {
-            get => _logger ?? FullLogger;
-            set
-            {
-                _logger = value;
-                if (value is IFulcrumFullLogger fullLogger) FullLogger = fullLogger;
-            }
-        }
 
         /// <summary>
         /// The logger to use for logging for the entire application.
@@ -79,9 +61,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumValidate.AreNotEqual(RunTimeLevelEnum.None, RunTimeLevel, nameof(RunTimeLevel), errorLocation);
             FulcrumValidate.IsValidated(Tenant, propertyPath, nameof(Tenant), errorLocation);
             FulcrumValidate.IsNotNull(ThreadHandler, nameof(ThreadHandler), errorLocation);
-#pragma warning disable 618
-            if (FullLogger == null) FulcrumValidate.IsNotNull(Logger, nameof(Logger), errorLocation);
-#pragma warning restore 618
+            FulcrumValidate.IsNotNull(FullLogger, nameof(FullLogger), errorLocation);
             FulcrumValidate.IsNotNull(ContextValueProvider, nameof(ContextValueProvider), errorLocation);
             FulcrumValidate.IsGreaterThanOrEqualTo((int)LogSeverityLevel.Verbose, (int)LogSeverityLevelThreshold, nameof(LogSeverityLevelThreshold), errorLocation);
             FulcrumValidate.IsGreaterThanOrEqualTo((int)LogSeverityLevel.Verbose, (int)LogSeverityLevelThreshold, nameof(LogSeverityLevelThreshold), errorLocation);

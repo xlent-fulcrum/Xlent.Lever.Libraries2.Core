@@ -216,7 +216,6 @@
     <Compile Include="Core\Health\Model\HealthResponse.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth.cs" />
     <Compile Include="Core\Logging\Log.cs" />
-    <Compile Include="Core\Logging\IFulcrumLogger.cs" />
     <Compile Include="Core\Logging\LogSeverityLevel.cs" />
     <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Context\TenantConfigurationValueProvider.cs" />
