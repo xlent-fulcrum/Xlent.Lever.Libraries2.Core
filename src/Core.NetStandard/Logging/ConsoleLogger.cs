@@ -9,8 +9,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public class ConsoleLogger : IFulcrumFullLogger
     {
-        private static readonly TraceSource TraceSource = new TraceSource("FulcrumTraceSource");
-
         /// <inheritdoc />
         public void Log(LogSeverityLevel logSeverityLevel, string message)
         {
@@ -26,10 +24,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <inheritdoc />
-        public async Task LogAsync(LogInstanceInformation logInformation)
+        public Task LogAsync(LogBatch logBatch)
         {
-            Log(logInformation.SeverityLevel, Logging.Log.FormatMessageFailSafe(logInformation));
-            await Task.Yield();
+            if (logBatch?.Records == null) return Task.CompletedTask;
+            foreach (var log in logBatch.Records)
+            {
+                Log(log.SeverityLevel, Logging.Log.FormatMessageFailSafe(logBatch, log));
+            }
+            return Task.CompletedTask;
         }
     }
 }

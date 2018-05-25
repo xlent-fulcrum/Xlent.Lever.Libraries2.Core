@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
@@ -6,7 +9,8 @@ using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Queue.Logic;
-using Xlent.Lever.Libraries2.Core.Threads;
+
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Xlent.Lever.Libraries2.Core.Logging
 {
@@ -17,9 +21,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     {
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
-        private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> {Value = false};
-        private static readonly MemoryQueue<LogInstanceInformation> LogQueue = new MemoryQueue<LogInstanceInformation>("LogQueue", LogFailSafeAsync);
+        private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> { Value = false };
+        private static readonly MemoryQueue<LogBatch> LogQueue = new MemoryQueue<LogBatch>("LogQueue", LogFailSafeAsync);
         private static bool _applicationValidated;
+        private static readonly AsyncLocal<LogBatch> LogBatch = new AsyncLocal<LogBatch> { Value = null };
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -64,9 +69,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogVerbose(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogVerbose(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Verbose, message, exception);
+            LogOnLevel(LogSeverityLevel.Verbose, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -74,9 +87,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogInformation(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogInformation(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Information, message, exception);
+            LogOnLevel(LogSeverityLevel.Information, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -84,9 +105,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogWarning(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogWarning(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Warning, message, exception);
+            LogOnLevel(LogSeverityLevel.Warning, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -94,9 +123,17 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogError(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogError(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Error, message, exception);
+            LogOnLevel(LogSeverityLevel.Error, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
@@ -104,74 +141,132 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         /// <param name="message">The message to print.</param>
         /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
-        public static void LogCritical(string message, Exception exception = null)
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogCritical(
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
-            LogOnLevel(LogSeverityLevel.Critical, message, exception);
+            LogOnLevel(LogSeverityLevel.Critical, message, exception, memberName, filePath, lineNumber);
         }
 
         /// <summary>
         /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
         /// <param name="severityLevel">The severity level for this log.</param>
-        /// <param name="message">The message to log (will be concatenated with any <paramref name="exception"/> information).</param>
-        /// <param name="exception">Optional exception</param>
-        public static void LogOnLevel(LogSeverityLevel severityLevel, string message, Exception exception = null)
+        /// <param name="message">The message to print.</param>
+        /// <param name="exception">An optional exception that will have it's information incorporated in the message.</param>
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        public static void LogOnLevel(
+            LogSeverityLevel severityLevel,
+            string message,
+            Exception exception = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
         {
             if (!_applicationValidated)
             {
                 FulcrumApplication.Validate();
                 _applicationValidated = true;
             }
-            var logInstanceInformation = CreateLogInstanceInformation(severityLevel, message, exception);
+            var log = CreateLogInstanceInformation(severityLevel, message, exception, memberName, filePath, lineNumber);
             if (LoggingInProgress.Value)
             {
-
-                var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
-                FallbackToSimpleLoggingFailSafe(abortMessage, logInstanceInformation);
+                var logBatch = new LogBatch(log);
+                const string abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
+                FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
             }
             else
             {
-                LogQueue.AddMessage(logInstanceInformation);
+                LogToBatchOrImmediately(log);
             }
         }
 
-        private static LogInstanceInformation CreateLogInstanceInformation(LogSeverityLevel severityLevel, string message,
-            Exception exception)
+        private static void LogToBatchOrImmediately(LogRecord log)
         {
-            LogInstanceInformation logInstanceInformation;
-            try
+            var logBatch = new LogBatch(log);
+            if (LogBatch.Value != null)
             {
-                var tenantValueProvider = new TenantConfigurationValueProvider();
-                var correlationValueProvider = new CorrelationIdValueProvider();
-                logInstanceInformation = new LogInstanceInformation
+                if (LogBatch.Value.Context.Equals(logBatch.Context))
                 {
-                    ApplicationName = FulcrumApplication.Setup.Name,
-                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
-                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
-                    ClientName = tenantValueProvider.CallingClientName,
-                    ClientTenant = tenantValueProvider.Tenant,
-                    CorrelationId = correlationValueProvider.CorrelationId,
-                    TimeStamp = DateTimeOffset.Now,
-                    SeverityLevel = severityLevel,
-                    Message = message,
-                    Exception = exception
-                };
+                    LogBatch.Value.Records.Add(log);
+                    return;
+                }
+                ForceExecuteBatch(
+                    "A log was added to the batch that didn't have the same context as the other logs in the batch.",
+                    $"All the following logs (up to the next {nameof(StartBatch)}) will be logged individually, i.e. not in a batch.");
+                FulcrumAssert.IsNull(LogBatch.Value);
             }
-            catch (Exception e)
+
+            if (!log.IsGreateThanOrEqualTo(FulcrumApplication.Setup.LogSeverityLevelThreshold)) return;
+            LogQueue.AddMessage(logBatch);
+        }
+
+        /// <summary>
+        /// Start a new batch of logs. All the following logs will be saved internally and will not be activated until you call <see cref="ExecuteBatch"/>.
+        /// </summary>
+        /// <remarks>
+        /// There are some cases where ExecuteBatch() will be called automatically:
+        /// - If StartBatch() is called again
+        /// - If the context for a new log compared with the current batch.
+        /// </remarks>
+        public static void StartBatch()
+        {
+            if (LogBatch.Value != null)
             {
-                var newMessage = message;
-                if (exception != null) newMessage += $"\r{exception.Message}";
-                logInstanceInformation = new LogInstanceInformation
-                {
-                    ApplicationName = FulcrumApplication.Setup.Name,
-                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
-                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
-                    TimeStamp = DateTimeOffset.Now,
-                    SeverityLevel = LogSeverityLevel.Critical,
-                    Message = $"Logging failed when logging this:\r{newMessage}",
-                    Exception = e
-                };
+                ForceExecuteBatch(
+                    $"Calling {nameof(StartBatch)} a second time, without a call to {nameof(ExecuteBatch)} in between.",
+                    "None. We have activated the current batch and started a new one.");
             }
+            FulcrumAssert.IsNull(LogBatch.Value);
+            LogBatch.Value = new LogBatch();
+        }
+
+        /// <summary>
+        /// Activate the logs that have been saved internally since the latest <see cref="StartBatch"/>.
+        /// </summary>
+        public static void ExecuteBatch()
+        {
+            if (LogBatch.Value == null) return;
+            LogBatch.Value.FilterByThreshold();
+            LogQueue.AddMessage(LogBatch.Value);
+            LogBatch.Value = null;
+        }
+
+        private static void ForceExecuteBatch(string reason, string consequence)
+        {
+            ExecuteBatch();
+            Log.LogWarning("Logging was internally forced to execute a batch of logs.Reason:\r" +
+                           $"{reason}\r" +
+                           "Probably worth investigating, because it was not expected to happen. Consequence:\r" +
+                           consequence);
+        }
+
+        internal static LogRecord CreateLogInstanceInformation(
+            LogSeverityLevel severityLevel,
+            string message,
+            Exception exception,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
+        {
+            var correlationValueProvider = new CorrelationIdValueProvider();
+            var logInstanceInformation = new LogRecord
+            {
+                CorrelationId = correlationValueProvider.CorrelationId,
+                TimeStamp = DateTimeOffset.Now,
+                SeverityLevel = severityLevel,
+                Message = message,
+                Location = $"{memberName} in {filePath} line {lineNumber}",
+                Exception = exception
+            };
 
             if (logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
             {
@@ -182,60 +277,50 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <summary>
-        /// Safe logging of a message. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
+        /// Safe logging of messages. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
-        /// <param name="logInstanceInformation">Information about the logging.</param>
-        private static async Task LogFailSafeAsync(LogInstanceInformation logInstanceInformation)
+        /// <param name="logBatch">Information about the logging.</param>
+        private static async Task LogFailSafeAsync(LogBatch logBatch)
         {
+            if (logBatch?.Records == null || logBatch.Records.Count == 0) return;
             try
             {
                 //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
-                    Tenant = logInstanceInformation.ClientTenant ?? logInstanceInformation.ApplicationTenant,
-                    CallingClientName = logInstanceInformation.ClientName
+                    Tenant = logBatch.Context.ClientTenant ?? logBatch.Context.ApplicationTenant,
+                    CallingClientName = logBatch.Context.ClientName
                 };
                 // ReSharper disable once ObjectCreationAsStatement
                 new CorrelationIdValueProvider
                 {
-                    CorrelationId = logInstanceInformation.CorrelationId
+                    CorrelationId = logBatch.Context.CorrelationId
                 };
-                var formattedMessage = FormatMessageFailSafe(logInstanceInformation);
-                AlsoLogWithTraceSourceInDevelopment(logInstanceInformation.SeverityLevel, formattedMessage);
-                await LogWithConfiguredLoggerFailSafeAsync(logInstanceInformation, formattedMessage);
+                await LogWithConfiguredLoggerFailSafeAsync(logBatch);
+                foreach (var log in logBatch.Records)
+                {
+                    var formattedMessage = FormatMessageFailSafe(logBatch, log);
+                    AlsoLogWithTraceSourceInDevelopment(log.SeverityLevel, formattedMessage);
+                }
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logInstanceInformation, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logBatch, e);
             }
         }
 
-        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogInstanceInformation logInstanceInformation,
-            string formattedMessage)
+        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogBatch logBatch)
         {
             try
             {
-                if (FulcrumApplication.Setup.FullLogger != null)
-                {
-                    LoggingInProgress.Value = true;
-                    await FulcrumApplication.Setup.FullLogger.LogAsync(logInstanceInformation);
-                }
-                else
-                {
-                    // TODO: Set _loggingInProgress.Value to false
-#pragma warning disable CS0618 // Type or member is obsolete
-                    FulcrumApplication.Setup.Logger.Log(logInstanceInformation.SeverityLevel, formattedMessage);
-#pragma warning restore CS0618 // Type or member is obsolete
-                }
+                LoggingInProgress.Value = true;
+                await FulcrumApplication.Setup.FullLogger.LogAsync(logBatch);
             }
             catch (Exception e)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
-#pragma warning restore CS0618 // Type or member is obsolete
                 FallbackToSimpleLoggingFailSafe(
-                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {logger.GetType().FullName}.",
-                    logInstanceInformation, e);
+                    $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {FulcrumApplication.Setup.FullLogger?.GetType().FullName}.",
+                    logBatch, e);
             }
             finally
             {
@@ -245,83 +330,86 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
-            if (!FulcrumApplication.IsInDevelopment) return;
-#pragma warning disable CS0618 // Type or member is obsolete
-            IFulcrumLogger logger = FulcrumApplication.Setup.FullLogger ?? FulcrumApplication.Setup.Logger;
-#pragma warning restore CS0618 // Type or member is obsolete
-            if (logger.GetType() == typeof(TraceSourceLogger)) return;
+            if (FulcrumApplication.Setup.FullLogger?.GetType() == typeof(TraceSourceLogger)) return;
             TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
         /// <summary>
-        /// Create a formatted message based on <paramref name="exception"/>
+        /// Create a formatted message based on <paramref name="log"/>.
         /// </summary>
-        /// <param name="exception">The exception that we will create a log message for.</param>
-        /// <returns>A formatted message, never null or empty.</returns>
-        /// <remarks>This method should never throw an exception. If </remarks>
-        [Obsolete("Use extension method ToLogString() for Exception")]
-        public static string FormatMessageFailSafe(Exception exception)
-        {
-            if (exception == null) return "";
-            return exception.ToLogString();
-        }
-
-        /// <summary>
-        /// Create a formatted message based on <paramref name="logInstanceInformation"/>.
-        /// </summary>
-        /// <param name="logInstanceInformation">Information about the logging.</param>
+        /// <param name="logBatch">Information about the context for the log</param>
+        /// <param name="log">Information about the log.</param>
         /// <returns>A formatted message, never null or empty</returns>
-        public static string FormatMessageFailSafe(LogInstanceInformation logInstanceInformation)
+        public static string FormatMessageFailSafe(LogBatch logBatch, LogRecord log)
         {
-            if (logInstanceInformation == null) return null;
+            if (log == null) return null;
             try
             {
-                return logInstanceInformation.ToLogString();
+                return log.ToLogString(false, logBatch.Context);
             }
             catch (Exception e)
             {
-                return $"Formatting message failed ({e.Message}): {logInstanceInformation.Message}";
+                return $"Formatting message failed ({e.Message}): {log.Message}";
             }
         }
-        
+
 
         /// <summary>
         /// Use this method to log when the original logging method fails.
         /// </summary>
         /// <param name="message">What went wrong with logging</param>
-        /// <param name="logInstanceInformation">The message to log.</param>
+        /// <param name="logBatch">The message to log.</param>
         /// <param name="exception">If what went wrong had an exception</param>
-        private static void FallbackToSimpleLoggingFailSafe(string message, LogInstanceInformation logInstanceInformation, Exception exception = null)
+        private static void FallbackToSimpleLoggingFailSafe(string message, LogBatch logBatch, Exception exception = null)
         {
-            
+            if (logBatch?.Records == null || logBatch?.Records.Count == 0) return;
             try
             {
-
+                var logWithHighestSeverity = logBatch.GetLogWithHighestSeverityLevel();
                 var totalMessage = message == null ? "" : $"{message}\r";
-                if (logInstanceInformation != null)
-                {
-                    totalMessage += logInstanceInformation.ToLogString();
-                }
                 if (exception != null)
                 {
-                    totalMessage += $"\r\rException when logging\r{exception.ToLogString()}";
+                    totalMessage += $"\r\rUnexpected excpeption when logging:\r{exception.ToLogString()}";
                 }
-                if (exception != null || (logInstanceInformation != null && logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Error)))
+                else
                 {
-                    totalMessage += $"\rStack trace up to when logging exception occured\r{Environment.StackTrace}";
+                    totalMessage += "\r\rThe logging mechanism itself failed and is using a fallback method for one or more logs.";
                 }
+                if (exception != null || logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
+                {
+                    totalMessage += $"\rStack trace up to this point:\r{Environment.StackTrace}";
+                }
+                // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
+                var severityLevel = logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : LogSeverityLevel.Warning;
+                FallbackToSimpleLoggingFailSafe(severityLevel, totalMessage);
+                foreach (var log in logBatch.Records)
+                {
+                    FallbackToSimpleLoggingFailSafe(log.SeverityLevel, log.Message);
+                }
+            }
+            catch (Exception)
+            {
+                // We give up
+            }
+        }
+
+
+        /// <summary>
+        /// Use this method to log when the original logging method fails.
+        /// </summary>
+        private static void FallbackToSimpleLoggingFailSafe(LogSeverityLevel severityLevel, string message)
+        {
+
+            try
+            {
                 try
                 {
-                    // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
-                    var severityLevel = logInstanceInformation == null 
-                        ? LogSeverityLevel.Error 
-                        : logInstanceInformation.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : logInstanceInformation.SeverityLevel;
-                    if (FulcrumApplication.IsInDevelopment && FulcrumApplication.Setup.FullLogger != RecommendedForNetFramework) RecommendedForUnitTest.Log(severityLevel, totalMessage);
-                    else RecommendedForNetFramework.Log(severityLevel, totalMessage); 
+                    if (FulcrumApplication.IsInDevelopment && FulcrumApplication.Setup.FullLogger != RecommendedForNetFramework) RecommendedForUnitTest.Log(severityLevel, message);
+                    else RecommendedForNetFramework.Log(severityLevel, message);
                 }
                 catch (Exception e)
                 {
-                    totalMessage += $"\r{e.ToLogString()}";
+                    var totalMessage = $"{message}\r{e.ToLogString()}";
                     Console.WriteLine($"{totalMessage}");
                 }
             }
