@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 #pragma warning disable 659
 
@@ -15,6 +17,21 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public class LogContext : IValidatable, ILoggable
     {
+        /// <summary>
+        /// Constructor that initializes all fields, no further initialization is neccessary.
+        /// </summary>
+        public LogContext()
+        {
+
+            ApplicationName = FulcrumApplication.Setup.Name;
+            ApplicationTenant = FulcrumApplication.Setup.Tenant;
+            RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel;
+            var tenantValueProvider = new TenantConfigurationValueProvider();
+            var correlationValueProvider = new CorrelationIdValueProvider();
+            ClientName = tenantValueProvider.CallingClientName;
+            ClientTenant = tenantValueProvider.Tenant;
+            CorrelationId = correlationValueProvider.CorrelationId;
+        }
         /// <summary>
         /// The name of the application that was executing when the log message was created.
         /// Mandatory.
@@ -50,11 +67,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// </summary>
         public RunTimeLevelEnum RunTimeLevel { get; set; }
 
-        /// <summary>
-        /// The information about the individual log records.
-        /// </summary>
-        public List<LogRecord> IndividualLogs { get; set; }
-
         /// <inheritdoc />
         public void Validate(string errorLocation, string propertyPath = "")
         {
@@ -66,7 +78,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             if (ClientTenant != null) FulcrumValidate.IsValidated(ClientTenant, propertyPath, nameof(ClientTenant), errorLocation);
             //FulcrumValidate.IsLessThanOrEqualTo(DateTimeOffset.Now, TimeStamp, nameof(TimeStamp), errorLocation);
             FulcrumValidate.IsNotDefaultValue(RunTimeLevel, nameof(RunTimeLevel), errorLocation);
-            FulcrumValidate.IsValidated(IndividualLogs, propertyPath, nameof(IndividualLogs), errorLocation);
         }
 
         /// <inheritdoc />
@@ -87,14 +98,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             return contextInfo;
         }
 
-        /// <summary>
-        /// Returns the log with the highest severity level.
-        /// </summary>
-        public LogRecord GetLogWithHighestSeverityLevel()
-        {
-            return IndividualLogs?.Aggregate((currentHighestLog, log) => log.IsGreateThanOrEqualTo(currentHighestLog.SeverityLevel) ? log : currentHighestLog);
-        }
-
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
@@ -106,17 +109,6 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                    && ApplicationName == other.ApplicationName
                    && CorrelationId == other.CorrelationId
                    && RunTimeLevel == other.RunTimeLevel;
-        }
-
-        internal void FilterByThreshold()
-        {
-            var threshold = FulcrumApplication.Setup.LogSeverityLevelThreshold;
-            var logWithHighestSeverityLevel = GetLogWithHighestSeverityLevel();
-            if (logWithHighestSeverityLevel.IsGreateThanOrEqualTo(FulcrumApplication.Setup.BatchLogAllSeverityLevelThreshold))
-            {
-                threshold = LogSeverityLevel.Verbose;
-            }
-            IndividualLogs = IndividualLogs.Where(log => log.IsGreateThanOrEqualTo(threshold)).ToList();
         }
     }
 }

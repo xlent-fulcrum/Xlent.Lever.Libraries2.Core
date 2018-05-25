@@ -69,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
 
             var mockLogger = new Mock<IFulcrumFullLogger>();
             mockLogger.Setup(logger =>
-                logger.LogAsync(It.Is<LogContext>(logInfo => logInfo.IndividualLogs != null && logInfo.IndividualLogs.Count == 5))).Returns(Task.CompletedTask);
+                logger.LogAsync(It.Is<LogBatch>(logBatch => logBatch.Records != null && logBatch.Records.Count == 5))).Returns(Task.CompletedTask);
             FulcrumApplication.Setup.FullLogger = mockLogger.Object;
             Log.StartBatch();
             Log.LogVerbose("Verbose");
@@ -111,10 +111,10 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             throw new NotImplementedException();
         }
 
-        public async Task LogAsync(LogContext logContext)
+        public async Task LogAsync(LogBatch logBatch)
         {
-            if (logContext?.IndividualLogs == null) return;
-            foreach (var log in logContext.IndividualLogs)
+            if (logBatch?.Records == null) return;
+            foreach (var log in logBatch.Records)
             {
                 await Task.Delay(_delay);
                 Console.Write($"{log.Message} ");
@@ -137,10 +137,10 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
         }
 
         /// <inheritdoc />
-        public Task LogAsync(LogContext logContext)
+        public Task LogAsync(LogBatch logBatch)
         {
-            if (logContext?.IndividualLogs == null) return Task.CompletedTask;
-            foreach (var log in logContext.IndividualLogs)
+            if (logBatch?.Records == null) return Task.CompletedTask;
+            foreach (var log in logBatch.Records)
             {
 
                 lock (ClassLock)

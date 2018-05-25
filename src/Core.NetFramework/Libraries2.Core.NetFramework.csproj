@@ -186,6 +186,7 @@
     <Compile Include="Core\Health\Model\Health.cs" />
     <Compile Include="Core\Health\Model\HealthInfo.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth2.cs" />
+    <Compile Include="Core\Logging\LogBatch.cs" />
     <Compile Include="Core\Logging\LoggableExtensions.cs" />
     <Compile Include="Core\Logging\IFulcrumFullLogger.cs" />
     <Compile Include="Core\Logging\ILoggable.cs" />

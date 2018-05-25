@@ -8,9 +8,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     public interface IFulcrumFullLogger
     {
         /// <summary>
-        /// Log <paramref name="logContext"/>.
+        /// Log <paramref name="logBatch"/>.
         /// </summary>
-        Task LogAsync(LogContext logContext);
+        Task LogAsync(LogBatch logBatch);
 
         /// <summary>
         /// Log <paramref name="message"/> with level <paramref name="logSeverityLevel"/>.

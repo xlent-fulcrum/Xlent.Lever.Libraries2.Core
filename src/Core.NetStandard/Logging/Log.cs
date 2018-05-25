@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -21,9 +22,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static readonly TraceSourceLogger TraceSourceLogger = new TraceSourceLogger();
         private static readonly ConsoleLogger ConsoleLogger = new ConsoleLogger();
         private static readonly AsyncLocal<bool> LoggingInProgress = new AsyncLocal<bool> { Value = false };
-        private static readonly MemoryQueue<LogContext> LogQueue = new MemoryQueue<LogContext>("LogQueue", LogFailSafeAsync);
+        private static readonly MemoryQueue<LogBatch> LogQueue = new MemoryQueue<LogBatch>("LogQueue", LogFailSafeAsync);
         private static bool _applicationValidated;
-        private static readonly AsyncLocal<LogContext> LogBatch = new AsyncLocal<LogContext> { Value = null };
+        private static readonly AsyncLocal<LogBatch> LogBatch = new AsyncLocal<LogBatch> { Value = null };
 
         /// <summary>
         /// This is a property specifically for unit testing.
@@ -178,9 +179,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var log = CreateLogInstanceInformation(severityLevel, message, exception, memberName, filePath, lineNumber);
             if (LoggingInProgress.Value)
             {
-                var logInfo = CreateLogInformation(log);
-                var abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
-                FallbackToSimpleLoggingFailSafe(abortMessage, logInfo);
+                var logBatch = new LogBatch(log);
+                const string abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
+                FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
             }
             else
             {
@@ -190,12 +191,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
 
         private static void LogToBatchOrImmediately(LogRecord log)
         {
-            var logInfo = CreateLogInformation(log);
+            var logBatch = new LogBatch(log);
             if (LogBatch.Value != null)
             {
-                if (LogBatch.Value.Equals(logInfo))
+                if (LogBatch.Value.Context.Equals(logBatch.Context))
                 {
-                    LogBatch.Value.IndividualLogs.Add(log);
+                    LogBatch.Value.Records.Add(log);
                     return;
                 }
                 ForceExecuteBatch(
@@ -205,7 +206,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             }
 
             if (!log.IsGreateThanOrEqualTo(FulcrumApplication.Setup.LogSeverityLevelThreshold)) return;
-            LogQueue.AddMessage(logInfo);
+            LogQueue.AddMessage(logBatch);
         }
 
         /// <summary>
@@ -225,7 +226,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                     "None. We have activated the current batch and started a new one.");
             }
             FulcrumAssert.IsNull(LogBatch.Value);
-            LogBatch.Value = CreateLogInformation();
+            LogBatch.Value = new LogBatch();
         }
 
         /// <summary>
@@ -248,43 +249,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                            consequence);
         }
 
-        private static LogContext CreateLogInformation(LogRecord firstLog = null)
-        {
-            LogContext logContext;
-            try
-            {
-                var tenantValueProvider = new TenantConfigurationValueProvider();
-                var correlationValueProvider = new CorrelationIdValueProvider();
-                logContext = new LogContext
-                {
-                    ApplicationName = FulcrumApplication.Setup.Name,
-                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
-                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
-                    ClientName = tenantValueProvider.CallingClientName,
-                    ClientTenant = tenantValueProvider.Tenant,
-                    CorrelationId = correlationValueProvider.CorrelationId,
-                    IndividualLogs = new List<LogRecord>()
-                };
-            }
-            catch (Exception e)
-            {
-                var log = CreateLogInstanceInformation(LogSeverityLevel.Error,
-                    $"Failed to create {nameof(LogInformation)}.", e);
-                logContext = new LogContext
-                {
-                    ApplicationName = FulcrumApplication.Setup.Name,
-                    ApplicationTenant = FulcrumApplication.Setup.Tenant,
-                    RunTimeLevel = FulcrumApplication.Setup.RunTimeLevel,
-                    IndividualLogs = new List<LogRecord>()
-                };
-                logContext.IndividualLogs.Add(log);
-            }
-            if (firstLog != null) logContext.IndividualLogs.Add(firstLog);
-
-            return logContext;
-        }
-
-        private static LogRecord CreateLogInstanceInformation(
+        internal static LogRecord CreateLogInstanceInformation(
             LogSeverityLevel severityLevel,
             string message,
             Exception exception,
@@ -314,48 +279,48 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Safe logging of messages. Will check for errors, but never throw an exception. If the log can't be made with the chosen logger, a fallback log will be created.
         /// </summary>
-        /// <param name="logContext">Information about the logging.</param>
-        private static async Task LogFailSafeAsync(LogContext logContext)
+        /// <param name="logBatch">Information about the logging.</param>
+        private static async Task LogFailSafeAsync(LogBatch logBatch)
         {
-            if (logContext?.IndividualLogs == null || logContext.IndividualLogs.Count == 0) return;
+            if (logBatch?.Records == null || logBatch.Records.Count == 0) return;
             try
             {
                 //ReSharper disable once ObjectCreationAsStatement
                 new TenantConfigurationValueProvider
                 {
-                    Tenant = logContext.ClientTenant ?? logContext.ApplicationTenant,
-                    CallingClientName = logContext.ClientName
+                    Tenant = logBatch.Context.ClientTenant ?? logBatch.Context.ApplicationTenant,
+                    CallingClientName = logBatch.Context.ClientName
                 };
                 // ReSharper disable once ObjectCreationAsStatement
                 new CorrelationIdValueProvider
                 {
-                    CorrelationId = logContext.CorrelationId
+                    CorrelationId = logBatch.Context.CorrelationId
                 };
-                await LogWithConfiguredLoggerFailSafeAsync(logContext);
-                foreach (var log in logContext.IndividualLogs)
+                await LogWithConfiguredLoggerFailSafeAsync(logBatch);
+                foreach (var log in logBatch.Records)
                 {
-                    var formattedMessage = FormatMessageFailSafe(logContext, log);
+                    var formattedMessage = FormatMessageFailSafe(logBatch, log);
                     AlsoLogWithTraceSourceInDevelopment(log.SeverityLevel, formattedMessage);
                 }
             }
             catch (Exception e)
             {
-                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logContext, e);
+                FallbackToSimpleLoggingFailSafe($"{nameof(LogFailSafeAsync)} caught an exception.", logBatch, e);
             }
         }
 
-        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogContext logContext)
+        private static async Task LogWithConfiguredLoggerFailSafeAsync(LogBatch logBatch)
         {
             try
             {
                 LoggingInProgress.Value = true;
-                await FulcrumApplication.Setup.FullLogger.LogAsync(logContext);
+                await FulcrumApplication.Setup.FullLogger.LogAsync(logBatch);
             }
             catch (Exception e)
             {
                 FallbackToSimpleLoggingFailSafe(
                     $"{nameof(LogWithConfiguredLoggerFailSafeAsync)} caught an exception from logger {FulcrumApplication.Setup.FullLogger?.GetType().FullName}.",
-                    logContext, e);
+                    logBatch, e);
             }
             finally
             {
@@ -372,15 +337,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// <summary>
         /// Create a formatted message based on <paramref name="log"/>.
         /// </summary>
-        /// <param name="logContext">Information about the context for the log</param>
+        /// <param name="logBatch">Information about the context for the log</param>
         /// <param name="log">Information about the log.</param>
         /// <returns>A formatted message, never null or empty</returns>
-        public static string FormatMessageFailSafe(LogContext logContext, LogRecord log)
+        public static string FormatMessageFailSafe(LogBatch logBatch, LogRecord log)
         {
             if (log == null) return null;
             try
             {
-                return log.ToLogString(false, logContext);
+                return log.ToLogString(false, logBatch.Context);
             }
             catch (Exception e)
             {
@@ -393,14 +358,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// Use this method to log when the original logging method fails.
         /// </summary>
         /// <param name="message">What went wrong with logging</param>
-        /// <param name="logContext">The message to log.</param>
+        /// <param name="logBatch">The message to log.</param>
         /// <param name="exception">If what went wrong had an exception</param>
-        private static void FallbackToSimpleLoggingFailSafe(string message, LogContext logContext, Exception exception = null)
+        private static void FallbackToSimpleLoggingFailSafe(string message, LogBatch logBatch, Exception exception = null)
         {
-            if (logContext?.IndividualLogs == null || logContext.IndividualLogs.Count == 0) return;
+            if (logBatch?.Records == null || logBatch?.Records.Count == 0) return;
             try
             {
-                var logWithHighestSeverity = logContext.GetLogWithHighestSeverityLevel();
+                var logWithHighestSeverity = logBatch.GetLogWithHighestSeverityLevel();
                 var totalMessage = message == null ? "" : $"{message}\r";
                 if (exception != null)
                 {
@@ -417,7 +382,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
                 var severityLevel = logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : LogSeverityLevel.Warning;
                 FallbackToSimpleLoggingFailSafe(severityLevel, totalMessage);
-                foreach (var log in logContext.IndividualLogs)
+                foreach (var log in logBatch.Records)
                 {
                     FallbackToSimpleLoggingFailSafe(log.SeverityLevel, log.Message);
                 }
