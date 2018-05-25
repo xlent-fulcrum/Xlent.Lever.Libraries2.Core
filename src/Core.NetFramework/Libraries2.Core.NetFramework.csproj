@@ -189,7 +189,8 @@
     <Compile Include="Core\Logging\LoggableExtensions.cs" />
     <Compile Include="Core\Logging\IFulcrumFullLogger.cs" />
     <Compile Include="Core\Logging\ILoggable.cs" />
-    <Compile Include="Core\Logging\LogInstanceInformation.cs" />
+    <Compile Include="Core\Logging\LogContext.cs" />
+    <Compile Include="Core\Logging\LogRecord.cs" />
     <Compile Include="Core\Logging\ConsoleLogger.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />

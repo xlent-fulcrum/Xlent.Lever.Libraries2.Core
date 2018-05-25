@@ -8,32 +8,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// <summary>
     /// Represents a log message with properties such as correlation id, calling client, severity and the text message.
     /// </summary>
-    public class LogInstanceInformation : IValidatable, ILoggable
+    public class LogRecord : IValidatable, ILoggable
     {
-        /// <summary>
-        /// The name of the application that was executing when the log message was created.
-        /// Mandatory.
-        /// </summary>
-        public string ApplicationName { get; set; }
-
-        /// <summary>
-        /// The tenant that the application belongs to.
-        /// Mandatory.
-        /// </summary>
-        public Tenant ApplicationTenant { get; set; }
-
-        /// <summary>
-        /// The name of the calling client.
-        /// Optional.
-        /// </summary>
-        public string ClientName { get; set; }
-
-        /// <summary>
-        /// The tenant that the client belongs to. This is for multi tenant applications. For single tenant applications, this property should be null.
-        /// Optional.
-        /// </summary>
-        public Tenant ClientTenant { get; set; }
-        
         /// <summary>
         /// The time that the log message was created
         /// Mandatory, i.e. must not be the default value.
@@ -63,9 +39,9 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// The <see cref="RunTimeLevelEnum"/>, e.g. Develop, Test, etc.
+        /// Where the log was issued (typically file name and line number)
         /// </summary>
-        public RunTimeLevelEnum RunTimeLevel { get; set; }
+        public string Location { get; set; }
 
         /// <summary>
         /// The call stack for the moment when the logging was turned into it's own thread.
@@ -76,16 +52,10 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public void Validate(string errorLocation, string propertyPath = "")
         {
             // Note! Don't check Org/Env here, since they can be null for yet-to-be-discovered reasons
-            FulcrumValidate.IsNotNullOrWhiteSpace(ApplicationName, nameof(ApplicationName), errorLocation);
-            FulcrumValidate.IsNotNull(ApplicationTenant, nameof(ApplicationTenant), errorLocation);
-            FulcrumValidate.IsValidated(ApplicationTenant, propertyPath, nameof(ApplicationTenant), errorLocation);
-            if (ClientName != null) FulcrumValidate.IsNotNullOrWhiteSpace(ClientName, nameof(ClientName), errorLocation);
-            if (ClientTenant != null) FulcrumValidate.IsValidated(ClientTenant, propertyPath, nameof(ClientTenant), errorLocation);
             FulcrumValidate.IsNotDefaultValue(TimeStamp, nameof(TimeStamp), errorLocation);
             //FulcrumValidate.IsLessThanOrEqualTo(DateTimeOffset.Now, TimeStamp, nameof(TimeStamp), errorLocation);
             FulcrumValidate.IsNotDefaultValue(SeverityLevel, nameof(SeverityLevel), errorLocation);
             FulcrumValidate.IsNotNullOrWhiteSpace(Message, nameof(Message), errorLocation);
-            FulcrumValidate.IsNotDefaultValue(RunTimeLevel, nameof(RunTimeLevel), errorLocation);
         }
 
         /// <inheritdoc />
@@ -101,26 +71,16 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         /// Summarize the information suitable for logging purposes.
         /// </summary>
         /// <param name="hideStackTrace">When this is true, any stack trace will be hidden.</param>
-        /// <returns></returns>
-        public string ToLogString(bool hideStackTrace)
+        /// <param name="logContext">Information from <see cref="LogContext"/>.</param>
+        public string ToLogString(bool hideStackTrace, LogContext logContext = null)
         {
             var correlation = string.IsNullOrWhiteSpace(CorrelationId)
                 ? ""
                 : $" {CorrelationId}";
             var detailsLine =
-                $"{TimeStamp.ToLogString()}{correlation} {SeverityLevel} {ApplicationTenant} {ApplicationName} ({RunTimeLevel}) ";
-            if (!string.IsNullOrWhiteSpace(ClientName) || ApplicationTenant != null)
-            {
-                detailsLine += " client:";
-            }
-            if (!string.IsNullOrWhiteSpace(ClientName))
-            {
-                detailsLine += $" {ClientName}";
-            }
-            if (ClientTenant != null)
-            {
-                detailsLine += $" {ClientTenant.ToLogString()}";
-            }
+                $"{TimeStamp.ToLogString()}{correlation} {SeverityLevel}";
+            var context = logContext?.ToLogString();
+            if (!string.IsNullOrWhiteSpace(context)) detailsLine += $" {context}";
             var exceptionLine = "";
             var stackTraceLine = "";
             if (Exception != null) exceptionLine = $"\r{Exception.ToLogString(hideStackTrace)}";

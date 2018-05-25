@@ -69,7 +69,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
 
             var mockLogger = new Mock<IFulcrumFullLogger>();
             mockLogger.Setup(logger =>
-                logger.LogAsync(It.Is<LogInstanceInformation[]>(logs => logs != null && logs.Length == 5))).Returns(Task.CompletedTask);
+                logger.LogAsync(It.Is<LogContext>(logInfo => logInfo.IndividualLogs != null && logInfo.IndividualLogs.Count == 5))).Returns(Task.CompletedTask);
             FulcrumApplication.Setup.FullLogger = mockLogger.Object;
             Log.StartBatch();
             Log.LogVerbose("Verbose");
@@ -111,10 +111,10 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             throw new NotImplementedException();
         }
 
-        public async Task LogAsync(params LogInstanceInformation[] logs)
+        public async Task LogAsync(LogContext logContext)
         {
-            if (logs == null) return;
-            foreach (var log in logs)
+            if (logContext?.IndividualLogs == null) return;
+            foreach (var log in logContext.IndividualLogs)
             {
                 await Task.Delay(_delay);
                 Console.Write($"{log.Message} ");
@@ -137,10 +137,10 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
         }
 
         /// <inheritdoc />
-        public async Task LogAsync(params LogInstanceInformation[] logs)
+        public Task LogAsync(LogContext logContext)
         {
-            if (logs == null) return;
-            foreach (var log in logs)
+            if (logContext?.IndividualLogs == null) return Task.CompletedTask;
+            foreach (var log in logContext.IndividualLogs)
             {
 
                 lock (ClassLock)
@@ -165,7 +165,6 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
                 Console.WriteLine(log.Message);
                 // Try to provoke a recursive log call of this method
                 if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
-                await Task.Yield();
                 lock (ClassLock)
                 {
                     InstanceCount--;
@@ -184,6 +183,8 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
                     if (InstanceCount == 0) IsRunning = false;
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

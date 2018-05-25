@@ -24,12 +24,12 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         }
 
         /// <inheritdoc />
-        public Task LogAsync(params LogInstanceInformation[] logs)
+        public Task LogAsync(LogContext logContext)
         {
-            if (logs == null) return Task.CompletedTask;
-            foreach (var log in logs)
+            if (logContext?.IndividualLogs == null) return Task.CompletedTask;
+            foreach (var log in logContext.IndividualLogs)
             {
-                Log(log.SeverityLevel, Logging.Log.FormatMessageFailSafe(log));
+                Log(log.SeverityLevel, Logging.Log.FormatMessageFailSafe(logContext, log));
             }
             return Task.CompletedTask;
         }
