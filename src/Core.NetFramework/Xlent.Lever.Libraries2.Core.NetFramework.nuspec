@@ -12,7 +12,7 @@
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
       2.1.0-rc Moved all Crud code to its own repository.
-      2.0.1-rc Logging can now be done as batches of many logs. Not backward compatible change in IFulcrumFullLogger.
+      2.0.1 Logging can now be done as batches of many logs. Not backward compatible change in IFulcrumFullLogger.
       1.32.3 Performance: Introduced cheaper variant of FireAndForget.
       1.32.2 BUG: LogOnLevel caused long BLOCK and AWAIT times in. Remedy: Synchronous call to AddMessage, StackTrace only for errors.      1.32.1 Changed ITranslatorService.
       1.31.1 Added SlaveToMasterAutoCache.
