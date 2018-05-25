@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Logging;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -62,6 +63,25 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             Console.WriteLine($"Total time: {stopWatch.Elapsed.TotalSeconds} seconds");
         }
 
+        [TestMethod]
+        public void Batch()
+        {
+
+            var mockLogger = new Mock<IFulcrumFullLogger>();
+            mockLogger.Setup(logger =>
+                logger.LogAsync(It.Is<LogBatch>(logBatch => logBatch.Records != null && logBatch.Records.Count == 5))).Returns(Task.CompletedTask);
+            FulcrumApplication.Setup.FullLogger = mockLogger.Object;
+            Log.StartBatch();
+            Log.LogVerbose("Verbose");
+            Log.LogInformation("Information");
+            Log.LogWarning("Warning");
+            Log.LogError("Error");
+            Log.LogCritical("Critical");
+            Log.ExecuteBatch();
+            while (Log.OnlyForUnitTest_HasBackgroundWorkerForLogging) Thread.Sleep(TimeSpan.FromMilliseconds(100));
+            mockLogger.Verify();
+        }
+
         private static void LogSpecifiedNumberOfLogs(int numberOfLogs)
         {
             FulcrumApplication.Setup.FullLogger = new SlowLogger(TimeSpan.FromSeconds(1.0));
@@ -91,10 +111,14 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
             throw new NotImplementedException();
         }
 
-        public async Task LogAsync(LogInstanceInformation message)
+        public async Task LogAsync(LogBatch logBatch)
         {
-            await Task.Delay(_delay);
-            Console.Write($"{message.Message} ");
+            if (logBatch?.Records == null) return;
+            foreach (var log in logBatch.Records)
+            {
+                await Task.Delay(_delay);
+                Console.Write($"{log.Message} ");
+            }
         }
     }
 
@@ -113,44 +137,54 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Logging
         }
 
         /// <inheritdoc />
-        public async Task LogAsync(LogInstanceInformation message)
+        public Task LogAsync(LogBatch logBatch)
         {
-            lock (ClassLock)
+            if (logBatch?.Records == null) return Task.CompletedTask;
+            foreach (var log in logBatch.Records)
             {
-                InstanceCount++;
-                IsRunning = true;
-            }
-            var recursiveLogMessage = "Recursive log message";
-            var recursive = message.Message == recursiveLogMessage;
-            if (recursive)
-            {
-                if (!HasFailed)
+
+                lock (ClassLock)
                 {
-                    HasFailed = true;
-                    Message =
-                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                        $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress}";
+                    InstanceCount++;
+                    IsRunning = true;
                 }
-            }
-            Console.WriteLine(message.Message);
-            // Try to provoke a recursive log call of this method
-            if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
-            await Task.Yield();
-            lock (ClassLock)
-            {
-                InstanceCount--;
-                if (InstanceCount < 0)
+
+                var recursiveLogMessage = "Recursive log message";
+                var recursive = log.Message == recursiveLogMessage;
+                if (recursive)
                 {
                     if (!HasFailed)
                     {
                         HasFailed = true;
                         Message =
-                            $"Unexpectedly had an {nameof(InstanceCount)} with value {InstanceCount} < 0";
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            $"The {nameof(LogAsync)}() method should never be called recursively. {nameof(recursive)} = {recursive}, {nameof(Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress)} = {Libraries2.Core.Logging.Log.OnlyForUnitTest_LoggingInProgress}";
                     }
-                    InstanceCount = 0;
                 }
-                if (InstanceCount == 0) IsRunning = false;
+
+                Console.WriteLine(log.Message);
+                // Try to provoke a recursive log call of this method
+                if (!HasFailed) Libraries2.Core.Logging.Log.LogError(recursiveLogMessage);
+                lock (ClassLock)
+                {
+                    InstanceCount--;
+                    if (InstanceCount < 0)
+                    {
+                        if (!HasFailed)
+                        {
+                            HasFailed = true;
+                            Message =
+                                $"Unexpectedly had an {nameof(InstanceCount)} with value {InstanceCount} < 0";
+                        }
+
+                        InstanceCount = 0;
+                    }
+
+                    if (InstanceCount == 0) IsRunning = false;
+                }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

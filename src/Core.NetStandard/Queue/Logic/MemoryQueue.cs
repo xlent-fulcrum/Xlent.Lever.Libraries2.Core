@@ -95,13 +95,19 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
     public partial class MemoryQueue<T> : IWritableQueue<T>
     {
         /// <inheritdoc />
-        public async Task AddMessageAsync(T message, TimeSpan? timeSpanToWait = null)
+        public Task AddMessageAsync(T message, TimeSpan? timeSpanToWait = null)
+        {
+            AddMessage(message, timeSpanToWait);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="AddMessageAsync" />
+        public void AddMessage(T message, TimeSpan? timeSpanToWait = null)
         {
             FulcrumAssert.IsNotNull(_queue, null, $"Expected the queue ({Name}) to exist.");
             var messageWithExpiration = new MessageWithActivationTime<T>(message, timeSpanToWait);
             _queue.Enqueue(messageWithExpiration);
             StartBackgroundWorkerIfNeeded();
-            await Task.Yield();
         }
 
         /// <inheritdoc />
@@ -126,7 +132,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
                 {
                     if (_queue.IsEmpty || _hasBackgroundWorker) return;
                     _hasBackgroundWorker = true;
-                    ThreadHelper.FireAndForget(async () => await BackgroundWorker().ConfigureAwait(false));
+                    ThreadHelper.FireAndForgetIgnoreContext(async () => await BackgroundWorker().ConfigureAwait(false));
                 }
             }
             catch (Exception e)

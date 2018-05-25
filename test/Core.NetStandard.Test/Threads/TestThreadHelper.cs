@@ -56,7 +56,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Threads
             var actionCalled = new ManualResetEvent(false);
             for (var i = 0; i <= tries; i++)
             {
-                ThreadHelper.FireAndForget(can =>
+                ThreadHelper.FireAndForgetWithExpensiveContextPreservation(() =>
                 {
                     lock (correlationId)
                     {

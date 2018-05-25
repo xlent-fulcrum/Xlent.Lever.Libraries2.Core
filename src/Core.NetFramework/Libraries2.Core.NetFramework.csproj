@@ -89,10 +89,12 @@
     <Compile Include="Core\Health\Model\Health.cs" />
     <Compile Include="Core\Health\Model\HealthInfo.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth2.cs" />
+    <Compile Include="Core\Logging\LogBatch.cs" />
     <Compile Include="Core\Logging\LoggableExtensions.cs" />
     <Compile Include="Core\Logging\IFulcrumFullLogger.cs" />
     <Compile Include="Core\Logging\ILoggable.cs" />
-    <Compile Include="Core\Logging\LogInstanceInformation.cs" />
+    <Compile Include="Core\Logging\LogContext.cs" />
+    <Compile Include="Core\Logging\LogRecord.cs" />
     <Compile Include="Core\Logging\ConsoleLogger.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
@@ -119,7 +121,6 @@
     <Compile Include="Core\Health\Model\HealthResponse.cs" />
     <Compile Include="Core\Health\Model\IResourceHealth.cs" />
     <Compile Include="Core\Logging\Log.cs" />
-    <Compile Include="Core\Logging\IFulcrumLogger.cs" />
     <Compile Include="Core\Logging\LogSeverityLevel.cs" />
     <Compile Include="Core\MultiTenant\Context\ITenantConfigurationValueProvider.cs" />
     <Compile Include="Core\MultiTenant\Context\TenantConfigurationValueProvider.cs" />

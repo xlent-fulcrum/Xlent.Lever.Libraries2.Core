@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.Logging;
 
 namespace Xlent.Lever.Libraries2.Core.Threads
 {
@@ -45,6 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// </summary>
         /// <param name="action">The action to run in the background.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
+        [Obsolete("Use either FireAndForgetWithExpensiveContextPreservation or FireAndForgetIgnoreContext.")]
         public static void FireAndForget(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
             FulcrumApplication.ValidateButNotInProduction();
@@ -57,6 +59,7 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// </summary>
         /// <param name="asyncMethod">The action to run in the background.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
+        [Obsolete("Use either FireAndForgetWithExpensiveContextPreservation or FireAndForgetIgnoreContext.")]
         public static void FireAndForget(Func<CancellationToken, Task> asyncMethod, CancellationToken token = default(CancellationToken))
         {
             FulcrumApplication.ValidateButNotInProduction();
@@ -69,11 +72,100 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// </summary>
         /// <param name="asyncMethod">The action to run in the background.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
+        [Obsolete("Use either FireAndForgetWithExpensiveContextPreservation or FireAndForgetIgnoreContext.")]
         public static void FireAndForget(Func<Task> asyncMethod, CancellationToken token = default(CancellationToken))
         {
             FulcrumApplication.ValidateButNotInProduction();
             var context = new ContextPreservation();
             FulcrumApplication.Setup.ThreadHandler.FireAndForget(async t => await context.ExecuteActionFailSafeAsync(asyncMethod), token);
+        }
+
+        /// <summary>
+        /// Execute an <paramref name="action"/> in the background.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        public static void FireAndForgetWithExpensiveContextPreservation(Action action)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(t1 => context.ExecuteActionFailSafe(t2 => action(), CancellationToken.None));
+        }
+
+        /// <summary>
+        /// Execute an <paramref name="asyncMethod"/> in the background.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        public static void FireAndForgetWithExpensiveContextPreservation(Func<Task> asyncMethod)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            var context = new ContextPreservation();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(async t => await context.ExecuteActionFailSafeAsync(asyncMethod));
+        }
+
+        /// <summary>
+        /// Execute an <paramref name="action"/> in the background.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        public static void FireAndForgetIgnoreContext(Action action)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(ct => ExecuteActionFailSafe(action));
+        }
+
+        /// <summary>
+        /// Execute an <paramref name="asyncMethod"/> in the background.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        public static void FireAndForgetIgnoreContext(Func<Task> asyncMethod)
+        {
+            FulcrumApplication.ValidateButNotInProduction();
+            FulcrumApplication.Setup.ThreadHandler.FireAndForget(async ct => await ExecuteActionFailSafeAsync(asyncMethod));
+        }
+
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        private static void ExecuteActionFailSafe(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        private static async Task ExecuteActionFailSafeAsync(Func<Task> asyncMethod)
+        {
+            try
+            {
+                await asyncMethod();
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
+        private static void SafeLog(Exception e)
+        {
+            try
+            {
+                var message = $"Background thread failed:\r{e.ToLogString()}." +
+                              $"\rApplication information: {FulcrumApplication.ToLogString()}";
+                Log.RecommendedForNetFramework.Log(LogSeverityLevel.Critical, message);
+            }
+            catch (Exception)
+            {
+                // Give up
+            }
         }
 
         /// <summary>

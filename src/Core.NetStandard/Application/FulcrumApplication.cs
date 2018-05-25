@@ -43,6 +43,13 @@ namespace Xlent.Lever.Libraries2.Core.Application
             Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             Setup.FullLogger = Log.RecommendedForNetFramework;
             Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
+            Setup.LogSeverityLevelThreshold =
+                IsInProductionOrProductionSimulation
+                ? LogSeverityLevel.Warning
+                : IsInDevelopment
+                    ? LogSeverityLevel.Verbose
+                    : LogSeverityLevel.Information;
+            Setup.BatchLogAllSeverityLevelThreshold = LogSeverityLevel.Warning;
         }
 
         /// <summary>
@@ -91,7 +98,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// </summary>
         public static void ValidateButNotInProduction()
         {
-            if (Setup.RunTimeLevel == RunTimeLevelEnum.Production) return;
+            if (IsInProductionOrProductionSimulation) return;
             Validate();
         }
 
