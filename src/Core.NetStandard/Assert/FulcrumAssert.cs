@@ -170,9 +170,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
         [StackTraceHidden]
-        public static void IsValidatedOrNull(IValidatable value, string errorLocation = null)
+        public static void IsValidatedOrNull(object value, string errorLocation = null)
         {
-            value?.Validate(errorLocation);
+            if (!(value is IValidatable validatable)) return;
+            validatable.Validate(errorLocation);
         }
 
         /// <summary>
@@ -180,12 +181,12 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
         [StackTraceHidden]
-        public static void IsValidatedOrNull(IEnumerable<IValidatable> values, string errorLocation = null)
+        public static void IsValidatedOrNull(IEnumerable<object> values, string errorLocation = null)
         {
             if (values == null) return;
             foreach (var value in values)
             {
-                value?.Validate(errorLocation);
+                IsValidated(value, errorLocation);
             }
         }
 
@@ -194,7 +195,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
         [StackTraceHidden]
-        public static void IsValidatedAndNotNull(IValidatable value, string errorLocation = null)
+        public static void IsValidatedAndNotNull(object value, string errorLocation = null)
         {
             IsNotNull(value, errorLocation);
             IsValidatedOrNull(value, errorLocation);
@@ -205,7 +206,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the IsValidated() method.")]
         [StackTraceHidden]
-        public static void IsValidatedAndNotNull(IEnumerable<IValidatable> values, string errorLocation = null)
+        public static void IsValidatedAndNotNull(IEnumerable<object> values, string errorLocation = null)
         {
             IsNotNull(values, errorLocation);
             IsValidatedOrNull(values, errorLocation);
@@ -215,16 +216,17 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Call the Validate() method for <paramref name="value"/>
         /// </summary>
         [StackTraceHidden]
-        public static void IsValidated(IValidatable value, string errorLocation = null)
+        public static void IsValidated(object value, string errorLocation = null)
         {
-            value?.Validate(errorLocation);
+            if (!(value is IValidatable validatable)) return;
+            validatable.Validate(errorLocation);
         }
 
         /// <summary>
         /// Call the Validate() method for each item in <paramref name="values"/>
         /// </summary>
         [StackTraceHidden]
-        public static void IsValidated(IEnumerable<IValidatable> values, string errorLocation = null)
+        public static void IsValidated(IEnumerable<object> values, string errorLocation = null)
         {
             if (values == null) return;
             foreach (var value in values)
