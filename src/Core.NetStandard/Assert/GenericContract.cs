@@ -172,12 +172,13 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValue"/> is not null, then call the Validate() method of that type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidated(object parameterValue, string parameterName, string customMessage = null)
         {
             if (parameterValue == null) return;
+            if (!(parameterValue is IValidatable validatable)) return;
             try
             {
-                parameterValue.Validate(null);
+                validatable.Validate(null);
             }
             catch (ValidationException e)
             {

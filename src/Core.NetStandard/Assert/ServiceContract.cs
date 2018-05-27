@@ -52,7 +52,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IValidatable parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidated(object parameterValue, string parameterName, string customMessage = null)
         {
             GenericContract<FulcrumServiceContractException>.RequireValidated(parameterValue, parameterName, customMessage);
         }
@@ -62,7 +62,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
         [StackTraceHidden]
-        public static void RequireValidatedOrNull(IValidatable parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidatedOrNull(object parameterValue, string parameterName, string customMessage = null)
         {
             GenericContract<FulcrumServiceContractException>.RequireValidated(parameterValue, parameterName, customMessage);
         }
@@ -72,7 +72,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
         [StackTraceHidden]
-        public static void RequireValidatedOrNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
+        public static void RequireValidatedOrNull(IEnumerable<object> parameterValues, string parameterName, string customMessage = null)
         {
             if (parameterValues == null) return;
             foreach (var parameterValue in parameterValues)
@@ -86,7 +86,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
         [StackTraceHidden]
-        public static void RequireValidatedAndNotNull(IValidatable parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidatedAndNotNull(object parameterValue, string parameterName, string customMessage = null)
         {
             RequireNotNull(parameterValue, parameterName);
             GenericContract<FulcrumServiceContractException>.RequireValidated(parameterValue, parameterName, customMessage);
@@ -97,7 +97,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// </summary>
         [Obsolete("Use the RequireValidated() method.")]
         [StackTraceHidden]
-        public static void RequireValidatedAndNotNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
+        public static void RequireValidatedAndNotNull(IEnumerable<object> parameterValues, string parameterName, string customMessage = null)
         {
             RequireNotNull(parameterValues, parameterName);
             foreach (var parameterValue in parameterValues)
@@ -110,7 +110,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// If <paramref name="parameterValues"/> is not null, then call the Validate() method of that type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
+        public static void RequireValidated(IEnumerable<object> parameterValues, string parameterName, string customMessage = null)
         {
             if (parameterValues == null) return;
             foreach (var parameterValue in parameterValues)

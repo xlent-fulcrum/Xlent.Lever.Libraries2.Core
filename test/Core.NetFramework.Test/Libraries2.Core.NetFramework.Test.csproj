@@ -65,30 +65,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Cache\ItemWithParentId.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheCrud.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheCrd.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheBase.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheManyToOneRecursive.cs" />
-    <Compile Include="Core\Cache\TestAutoCacheRead.cs" />
-    <Compile Include="Core\Cache\TestMemoryDistributedCache.cs" />
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\ServerTranslatorBase.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\Support\TestModelCreate.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\Support\TestModel.cs" />
-    <Compile Include="Core\Crud\ServerTranslators\From\CrdServerTranslatorFromTest.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestParameters.cs" />
-    <Compile Include="Core\Storage\MemoryManyToOne.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsTimeStamped.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsValidated.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsEtag.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsBare.cs" />
-    <Compile Include="Core\Storage\MemoryQueueTest.cs" />
-    <Compile Include="Core\Storage\PageEnvelopeTest.cs" />
-    <Compile Include="Core\Storage\MemoryCrudTestsId.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
     <Compile Include="Core\Support\Validatable.cs" />
     <Compile Include="Core\TestAssert\TestFulcrumAssert.cs" />
@@ -102,10 +82,6 @@
     <ProjectReference Include="..\..\src\Core.NetFramework\Libraries2.Core.NetFramework.csproj">
       <Project>{923faa8d-0a18-41a7-99e3-663b61cda069}</Project>
       <Name>Libraries2.Core.NetFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Libraries2.Core.Test.NuGet\Libraries2.Core.Test.NuGet.csproj">
-      <Project>{3eada6f9-0e11-4688-8b0b-f7db0b9ebba7}</Project>
-      <Name>Libraries2.Core.Test.NuGet</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
