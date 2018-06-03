@@ -69,6 +69,7 @@
     <Compile Include="Core\Error\ErrorTest.cs" />
     <Compile Include="Core\Guards\TestException.cs" />
     <Compile Include="Core\Guards\GuardTests.cs" />
+    <Compile Include="Core\Guards\Validatable.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />

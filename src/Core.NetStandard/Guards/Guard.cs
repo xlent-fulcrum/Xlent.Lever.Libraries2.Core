@@ -363,9 +363,17 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             [CallerMemberName] string memberName = "")
         {
             if (value == null) return;
-            if (!(value is IValidatable validatable)) return;
             // TODO: Refactor Validate to accept string customMessage = null, int lineNumber = 0, string filePath = "", string memberName = ""
-            validatable.Validate($"{memberName} in {filePath} at line {lineNumber}");
+            if (!(value is IValidatable validatable)) return;
+            try
+            {
+                validatable.Validate($"{memberName} in {filePath} at line {lineNumber}");
+            }
+            catch (ValidationException e)
+            {
+                customMessage = customMessage ?? e.Message;
+                Fail(customMessage, lineNumber, filePath, memberName);
+            }
         }
 
         /// <inheritdoc />
@@ -380,6 +388,29 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             foreach (var value in values)
             {
                 IsValid(value, customMessage, lineNumber, filePath, memberName);
+            }
+        }
+
+        /// <inheritdoc />
+        [StackTraceHidden]
+        public void IsNotValid(object value,
+            string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
+        {
+            if (value == null) return;
+            // TODO: Refactor Validate to accept string customMessage = null, int lineNumber = 0, string filePath = "", string memberName = ""
+            if (!(value is IValidatable validatable)) return;
+            try
+            {
+                validatable.Validate($"{memberName} in {filePath} at line {lineNumber}");
+                customMessage = customMessage ?? $"The value ({value}) should not pass validation.";
+                Fail(customMessage, lineNumber, filePath, memberName);
+            }
+            catch (ValidationException e)
+            {
+                // As expected.
             }
         }
 

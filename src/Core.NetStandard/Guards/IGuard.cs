@@ -199,5 +199,13 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "");
+
+        /// <summary>
+        /// Verify that <paramref name="value"/> is null or that the validation rules are obeyed to.
+        /// </summary>
+        void IsNotValid(object value, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "");
     }
 }
