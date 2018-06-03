@@ -50,6 +50,8 @@
     <Compile Include="Core\Application\IAppSettingGetter.cs" />
     <Compile Include="Core\Application\RunTimeLevelEnum.cs" />
     <Compile Include="Core\Application\ApplicationSetup.cs" />
+    <Compile Include="Core\Guards\IGuard.cs" />
+    <Compile Include="Core\Guards\Guard.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />
     <Compile Include="Core\Assert\ValidationException.cs" />
     <Compile Include="Core\Assert\FulcrumValidate.cs" />
@@ -61,6 +63,9 @@
     <Compile Include="Core\Assert\ServiceContract.cs" />
     <Compile Include="Core\Cache\IDistributedCacheFactory.cs" />
     <Compile Include="Core\Crud\Model\SlaveToMasterId.cs" />
+    <Compile Include="Core\Logging\New\ILogger.cs" />
+    <Compile Include="Core\Logging\New\Logger.cs" />
+    <Compile Include="Core\Logging\New\LogQueReader.cs" />
     <Compile Include="Core\Microsoft.Extensions.Caching.Distributed\DistributedCacheEntryOptions.cs" />
     <Compile Include="Core\Microsoft.Extensions.Caching.Distributed\IDistributedCache.cs" />
     <Compile Include="Core\Context\AsyncLocalValueProvider.cs" />
@@ -97,6 +102,7 @@
     <Compile Include="Core\Logging\LogRecord.cs" />
     <Compile Include="Core\Logging\ConsoleLogger.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
+    <Compile Include="Core\NexusLink\Nexus.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
@@ -171,6 +177,7 @@
   <ItemGroup>
     <Content Include="NuGet.exe" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rd /s /q $(ProjectDir)lib\

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
+using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
 
 namespace Xlent.Lever.Libraries2.Core.Logging
@@ -10,6 +12,32 @@ namespace Xlent.Lever.Libraries2.Core.Logging
     /// </summary>
     public class LogRecord : IValidatable, ILoggable
     {
+        public LogRecord()
+        {
+
+        }
+        internal LogRecord(
+            LogSeverityLevel severityLevel,
+            string message,
+            Exception exception,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
+        {
+            var correlationValueProvider = new CorrelationIdValueProvider();
+
+            CorrelationId = correlationValueProvider.CorrelationId;
+            TimeStamp = DateTimeOffset.Now;
+            SeverityLevel = severityLevel;
+            Message = message;
+            Location = $"{memberName} in {filePath} line {lineNumber}";
+            Exception = exception;
+
+            if (IsGreateThanOrEqualTo(LogSeverityLevel.Error))
+            {
+                StackTrace = Environment.StackTrace;
+            }
+        }
         /// <summary>
         /// The time that the log message was created
         /// Mandatory, i.e. must not be the default value.

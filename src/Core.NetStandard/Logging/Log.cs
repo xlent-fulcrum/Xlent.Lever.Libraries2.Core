@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
+using Xlent.Lever.Libraries2.Core.Misc;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Context;
 using Xlent.Lever.Libraries2.Core.Queue.Logic;
 
@@ -75,11 +76,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogVerbose(
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
-            LogOnLevel(LogSeverityLevel.Verbose, message, exception, memberName, filePath, lineNumber);
+            LogOnLevel(LogSeverityLevel.Verbose, message, exception, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -93,11 +94,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogInformation(
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
-            LogOnLevel(LogSeverityLevel.Information, message, exception, memberName, filePath, lineNumber);
+            LogOnLevel(LogSeverityLevel.Information, message, exception, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -111,11 +112,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogWarning(
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
-            LogOnLevel(LogSeverityLevel.Warning, message, exception, memberName, filePath, lineNumber);
+            LogOnLevel(LogSeverityLevel.Warning, message, exception, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -129,11 +130,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogError(
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
-            LogOnLevel(LogSeverityLevel.Error, message, exception, memberName, filePath, lineNumber);
+            LogOnLevel(LogSeverityLevel.Error, message, exception, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -147,11 +148,11 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         public static void LogCritical(
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
-            LogOnLevel(LogSeverityLevel.Critical, message, exception, memberName, filePath, lineNumber);
+            LogOnLevel(LogSeverityLevel.Critical, message, exception, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -167,16 +168,16 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             LogSeverityLevel severityLevel,
             string message,
             Exception exception = null,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
             if (!_applicationValidated)
             {
                 FulcrumApplication.Validate();
                 _applicationValidated = true;
             }
-            var log = CreateLogInstanceInformation(severityLevel, message, exception, memberName, filePath, lineNumber);
+            var log = CreateLogInstanceInformation(severityLevel, message, exception, lineNumber, filePath, memberName);
             if (LoggingInProgress.Value)
             {
                 var logBatch = new LogBatch(log);
@@ -249,13 +250,14 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                            consequence);
         }
 
+        [StackTraceHidden]
         internal static LogRecord CreateLogInstanceInformation(
             LogSeverityLevel severityLevel,
             string message,
             Exception exception,
-            [CallerMemberName] string memberName = "",
+            [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
-            [CallerLineNumber] int lineNumber = 0)
+            [CallerMemberName] string memberName = "")
         {
             var correlationValueProvider = new CorrelationIdValueProvider();
             var logInstanceInformation = new LogRecord
