@@ -4,6 +4,7 @@ using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
 using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
+using Xlent.Lever.Libraries2.Core.NexusLink;
 using Xlent.Lever.Libraries2.Core.Threads;
 
 namespace Xlent.Lever.Libraries2.Core.Application
@@ -22,6 +23,15 @@ namespace Xlent.Lever.Libraries2.Core.Application
         /// Use this to get application settings.
         /// </summary>
         public static AppSettings AppSettings { get; set; }
+
+        static FulcrumApplication()
+        {
+            // Force the Nexus static constructor to be called
+            if (Nexus.Logger == null)
+            {
+                throw new ApplicationException("Nexus hasn't been initialized. This should have happened automatically.");
+            }
+        }
 
         /// <summary>
         /// Initialize <see cref="Setup"/>.

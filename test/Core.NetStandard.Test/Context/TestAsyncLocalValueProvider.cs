@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Context;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,6 +16,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Context
         [TestInitialize]
         public void Initialize()
         {
+            FulcrumApplicationHelper.UnitTestSetup(nameof(TestAsyncLocalValueProvider));
             _provider = new AsyncLocalValueProvider();
         }
         [TestMethod]

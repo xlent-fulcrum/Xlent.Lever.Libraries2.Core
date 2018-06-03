@@ -175,7 +175,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
                 FulcrumAssert.IsValidated(validatable, $"{Namespace}: ng");
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
-            catch (ValidationException fulcrumException)
+            catch (FulcrumAssertionFailedException fulcrumException)
             {
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Property Name"));

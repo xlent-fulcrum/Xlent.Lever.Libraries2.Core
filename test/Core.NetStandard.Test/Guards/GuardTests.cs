@@ -8,6 +8,7 @@ using Xlent.Lever.Libraries2.Core.Guards;
 using Xlent.Lever.Libraries2.Core.Logging;
 using Xlent.Lever.Libraries2.Core.Logging.New;
 using Xlent.Lever.Libraries2.Core.MultiTenant.Model;
+using Xlent.Lever.Libraries2.Core.NexusLink;
 using UT = Microsoft.VisualStudio.TestTools.UnitTesting;
 // ReSharper disable ExplicitCallerInfoArgument
 
@@ -378,17 +379,6 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Guards
             SetupExpectWarningLog(loggerMock);
             guard.IsNotAssignableTo(typeof(ArgumentException), typeof(Exception));
             loggerMock.Verify();
-        }
-
-        private static void SetupExpectWarningLog(Mock<ILogger> loggerMock)
-        {
-            NexusLink.Nexus.Logger = loggerMock.Object;
-            loggerMock.Setup(logger => logger.LogOnLevel(
-                    It.Is<LogSeverityLevel>(level => level == LogSeverityLevel.Warning),
-                    It.IsAny<string>(),
-                    It.Is<Exception>(e => e == null),
-                    It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Verifiable();
         }
 
         [TestMethod]
@@ -777,11 +767,20 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Guards
             loggerMock.Verify();
         }
 
-
+        private static void SetupExpectWarningLog(Mock<ILogger> loggerMock)
+        {
+            Nexus.Logger = loggerMock.Object;
+            loggerMock.Setup(logger => logger.LogOnLevel(
+                    It.Is<LogSeverityLevel>(level => level == LogSeverityLevel.Warning),
+                    It.IsAny<string>(),
+                    It.Is<Exception>(e => e == null),
+                    It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Verifiable();
+        }
 
         private static void SetupExpectNoLog(Mock<ILogger> loggerMock)
         {
-            NexusLink.Nexus.Logger = loggerMock.Object;
+            Nexus.Logger = loggerMock.Object;
             loggerMock.Setup(logger => logger.LogOnLevel(
                     It.Is<LogSeverityLevel>(level => level == LogSeverityLevel.Warning),
                     It.IsAny<string>(),

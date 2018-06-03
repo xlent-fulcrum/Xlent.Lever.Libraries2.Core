@@ -72,6 +72,7 @@
     <Compile Include="Core\Guards\Validatable.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
+    <Compile Include="Core\NexusLink\NexusTests.cs" />
     <Compile Include="Core\Support\PersonStorableItem.cs" />
     <Compile Include="Core\Support\Validatable.cs" />
     <Compile Include="Core\TestAssert\TestFulcrumAssert.cs" />
