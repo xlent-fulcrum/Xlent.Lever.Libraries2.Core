@@ -397,7 +397,7 @@ namespace Xlent.Lever.Libraries2.Core.Guards
                 case null:
                     return;
                 case FulcrumException fulcrumException:
-                    fulcrumException.ErrorLocation = $"{memberName} at line {lineNumber} in {filePath}";
+                    fulcrumException.ErrorLocation = $"{memberName}() (in {filePath}, line {lineNumber}";
                     break;
             }
 

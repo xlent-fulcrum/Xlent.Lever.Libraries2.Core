@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Core\Context\TestAsyncLocalValueProvider.cs" />
     <Compile Include="Core\Error\ErrorTest.cs" />
+    <Compile Include="Core\Guards\TestException.cs" />
     <Compile Include="Core\Guards\GuardTests.cs" />
     <Compile Include="Core\Health\HealthTest.cs" />
     <Compile Include="Core\Logging\TestLogging.cs" />
