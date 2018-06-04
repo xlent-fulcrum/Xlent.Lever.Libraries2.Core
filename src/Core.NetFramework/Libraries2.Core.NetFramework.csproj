@@ -50,6 +50,8 @@
     <Compile Include="Core\Application\IAppSettingGetter.cs" />
     <Compile Include="Core\Application\RunTimeLevelEnum.cs" />
     <Compile Include="Core\Application\ApplicationSetup.cs" />
+    <Compile Include="Core\Guards\ContractGuard.cs" />
+    <Compile Include="Core\Guards\IContractGuard.cs" />
     <Compile Include="Core\Guards\IGuard.cs" />
     <Compile Include="Core\Guards\Guard.cs" />
     <Compile Include="Core\Assert\FulcrumAssert.cs" />

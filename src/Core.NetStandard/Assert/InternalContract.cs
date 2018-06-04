@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Guards;
 using Xlent.Lever.Libraries2.Core.Misc;
+using Xlent.Lever.Libraries2.Core.NexusLink;
+// ReSharper disable ExplicitCallerInfoArgument
 
 namespace Xlent.Lever.Libraries2.Core.Assert
 {
@@ -11,130 +16,106 @@ namespace Xlent.Lever.Libraries2.Core.Assert
     /// </summary>
     public static class InternalContract
     {
+        private static readonly IGuard Guard;
+
+        static InternalContract()
+        {
+            Guard = Nexus.Require.Internal;  //new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
+        }
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
         /// </summary>
         [StackTraceHidden]
         public static void Require<TParameter>(TParameter parameterValue,
-            Expression<Func<TParameter, bool>> expression, string parameterName)
+            Expression<Func<TParameter, bool>> expression, string parameterName,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
-            GenericContract<FulcrumContractException>.Require(parameterValue, expression, parameterName);
+            var isTrue = expression.Compile()(parameterValue);
+            var condition = expression.Body.ToString();
+            condition = condition.Replace(expression.Parameters.First().Name, parameterName);
+            var message = $"Contract violation: {parameterName} ({parameterValue}) is required to fulfil {condition}.";
+            Guard.IsTrue(isTrue, message, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireNotNull(object parameterValue, string parameterName, string customMessage = null)
+        public static void RequireNotNull(object parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
-            GenericContract<FulcrumContractException>.RequireNotNull(parameterValue, parameterName, customMessage);
+            customMessage = customMessage ?? $"Contract violation: {parameterName} must not be null.";
+            Guard.IsNotNull(parameterValue, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not the default parameterValue for this type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireNotDefaultValue<TParameter>(TParameter parameterValue, string parameterName, string customMessage = null)
+        public static void RequireNotDefaultValue<TParameter>(TParameter parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
-            GenericContract<FulcrumContractException>.RequireNotDefaultValue(parameterValue, parameterName, customMessage);
+            customMessage = customMessage ?? $"Contract violation: {parameterName} must not be null.";
+            Guard.IsNotDefaultValue(parameterValue, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null)
+        public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
-            GenericContract<FulcrumContractException>.RequireNotNullOrWhitespace(parameterValue, parameterName, customMessage);
+            customMessage = customMessage ?? $"Contract violation: {parameterName} ({parameterValue}) must not be null, empty or whitespace.";
+            Guard.IsNotNullOrWhiteSpace(parameterValue, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(object parameterValue, string parameterName, string customMessage = null)
+        public static void RequireValidated(object parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
-            if (!(parameterValue is IValidatable validatable)) return;
-            GenericContract<FulcrumContractException>.RequireValidated(validatable, parameterName, customMessage);
-        }
-
-        /// <summary>
-        /// If <paramref name="parameterValue"/> is not null, then call the FulcrumValidate() method of that type.
-        /// </summary>
-        [Obsolete("Use the RequireValidated() method.")]
-        [StackTraceHidden]
-        public static void RequireValidatedOrNull(IValidatable parameterValue, string parameterName, string customMessage = null)
-        {
-            GenericContract<FulcrumContractException>.RequireValidated(parameterValue, parameterName, customMessage);
-        }
-
-        /// <summary>
-        /// If <paramref name="parameterValues"/> is not null, then call the FulcrumValidate() method of that type.
-        /// </summary>
-        [Obsolete("Use the RequireValidated() method.")]
-        [StackTraceHidden]
-        public static void RequireValidatedOrNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
-        {
-            if (parameterValues == null) return;
-            foreach (var parameterValue in parameterValues)
-            {
-                RequireValidatedOrNull(parameterValue, parameterName, customMessage);
-            }
-        }
-
-        /// <summary>
-        /// Verify that <paramref name="parameterValue"/> is not null and also call the FulcrumValidate() method of that type.
-        /// </summary>
-        [Obsolete("Use the RequireValidated() method.")]
-        [StackTraceHidden]
-        public static void RequireValidatedAndNotNull(IValidatable parameterValue, string parameterName, string customMessage = null)
-        {
-            RequireNotNull(parameterValue, parameterName);
-            RequireValidatedOrNull(parameterValue, parameterName, customMessage);
-        }
-
-        /// <summary>
-        /// Verify that <paramref name="parameterValues"/> is not null and also call the FulcrumValidate() method of that type.
-        /// </summary>
-        [Obsolete("Use the RequireValidated() method.")]
-        [StackTraceHidden]
-        public static void RequireValidatedAndNotNull(IEnumerable<IValidatable> parameterValues, string parameterName, string customMessage = null)
-        {
-            RequireNotNull(parameterValues, parameterName);
-            RequireValidatedOrNull(parameterValues, parameterName, customMessage);
+            customMessage = customMessage ?? $"ContractViolation: Validation failed for {parameterName}.";
+            Guard.IsValid(parameterValue, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// If <paramref name="parameterValues"/> is not null, then call the Validate() method for each item.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireValidated(IEnumerable<object> parameterValues, string parameterName, string customMessage = null)
+        public static void RequireValidated(IEnumerable<object> parameterValues, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
             if (parameterValues == null) return;
-            foreach (var parameterValue in parameterValues)
-            {
-                if (!(parameterValue is IValidatable validatable)) continue;
-                GenericContract<FulcrumContractException>.RequireValidated(validatable, parameterName, customMessage);
-            }
-        }
 
-        /// <summary>
-        /// Verify that <paramref name="expression"/> returns a true parameterValue.
-        /// </summary>
-        [Obsolete("Please notify the Fulcrum team if you use this assertion method. We intend to remove it.")]
-        [StackTraceHidden]
-        public static void Require(Expression<Func<bool>> expression, string message)
-        {
-            RequireNotNullOrWhitespace(message, nameof(message));
-            GenericContract<FulcrumContractException>.Require(expression, message);
+            customMessage = customMessage ?? $"ContractViolation: Validation failed for {parameterName}.";
+            Guard.IsValid(parameterValues, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
         /// Verify that <paramref name="mustBeTrue"/> really is true.
         /// </summary>
         [StackTraceHidden]
-        public static void Require(bool mustBeTrue, string message)
+        public static void Require(bool mustBeTrue, string message,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
+            Guard.IsTrue(mustBeTrue, message, lineNumber, filePath, memberName);
             RequireNotNullOrWhitespace(message, nameof(message));
             GenericContract<FulcrumContractException>.Require(mustBeTrue, message);
         }
@@ -143,7 +124,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is less than to <paramref name="greaterValue"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireLessThan<T>(T greaterValue, T parameterValue, string parameterName, string customMessage = null)
+        public static void RequireLessThan<T>(T greaterValue, T parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
             where T : IComparable<T>
         {
             RequireNotNull(greaterValue, nameof(greaterValue));
@@ -156,7 +140,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is less than or equal to <paramref name="greaterOrEqualValue"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireLessThanOrEqualTo<T>(T greaterOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
+        public static void RequireLessThanOrEqualTo<T>(T greaterOrEqualValue, T parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
             where T : IComparable<T>
         {
             RequireNotNull(greaterOrEqualValue, nameof(greaterOrEqualValue));
@@ -169,7 +156,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is greater than <paramref name="lesserValue"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireGreaterThan<T>(T lesserValue, T parameterValue, string parameterName, string customMessage = null)
+        public static void RequireGreaterThan<T>(T lesserValue, T parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
             where T : IComparable<T>
         {
             RequireNotNull(lesserValue, nameof(lesserValue));
@@ -182,7 +172,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is greater than or equal to <paramref name="lesserOrEqualValue"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T parameterValue, string parameterName, string customMessage = null)
+        public static void RequireGreaterThanOrEqualTo<T>(T lesserOrEqualValue, T parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
             where T : IComparable<T>
         {
             RequireNotNull(lesserOrEqualValue, nameof(lesserOrEqualValue));
@@ -195,7 +188,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is null or matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void MatchesRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null)
+        public static void MatchesRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
             RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
             RequireNotNull(parameterName, nameof(parameterName));
@@ -206,7 +202,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="value"/> is null or not matches the regular expression <paramref name="regularExpression"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
+        public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
             RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
             GenericContract<FulcrumContractException>.RequireMatchesNotRegExp(regularExpression, value, errorLocation, customMessage);
@@ -216,7 +215,10 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Always fail, with the given <paramref name="message"/>.
         /// </summary>
         [StackTraceHidden]
-        public static void Fail(string message)
+        public static void Fail(string message,
+            [CallerLineNumber] int lineNumber = 0,
+            [CallerFilePath] string filePath = "",
+            [CallerMemberName] string memberName = "")
         {
             RequireNotNull(message, nameof(message));
             GenericContract<FulcrumContractException>.Fail(message);
