@@ -56,12 +56,58 @@ namespace Xlent.Lever.Libraries2.Core.Threads
         /// </summary>
         /// <param name="action">The action to run in the background.</param>
         /// <param name="token">Propagates notification that operations should be canceled</param>
+        [Obsolete("Use either ExecuteActionFailsafe(Action) or ExecuteActionFailSafeAsync(Func<CancellationToken, Task>, CancellationToken).")]
         public void ExecuteActionFailSafe(Action<CancellationToken> action, CancellationToken token = default(CancellationToken))
         {
             try
             {
                 RestoreContext();
                 action(token);
+                lock (ClassLock)
+                {
+                    if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
+                    ThreadCallDepth.Value--;
+                }
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="action">The action to run in the background.</param>
+        public void ExecuteActionFailSafe(Action action)
+        {
+            try
+            {
+                RestoreContext();
+                action();
+                lock (ClassLock)
+                {
+                    if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
+                    ThreadCallDepth.Value--;
+                }
+            }
+            catch (Exception e)
+            {
+                SafeLog(e);
+            }
+        }
+
+        /// <summary>
+        /// Restore the context, execute the action. Never throws an exception.
+        /// </summary>
+        /// <param name="asyncMethod">The action to run in the background.</param>
+        /// <param name="token">Propagates notification that operations should be canceled</param>
+        public void ExecuteActionFailSafe(Func<CancellationToken, Task> asyncMethod, CancellationToken token = default(CancellationToken))
+        {
+            try
+            {
+                RestoreContext();
+                asyncMethod(token).Wait(token);
                 lock (ClassLock)
                 {
                     if (ThreadStackTraces.Value.Count != 0) ThreadStackTraces.Value.RemoveAt(ThreadStackTraces.Value.Count - 1);
