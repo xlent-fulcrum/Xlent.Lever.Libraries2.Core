@@ -44,7 +44,6 @@ namespace Xlent.Lever.Libraries2.Core.Application
             Setup.FullLogger = Log.RecommendedForNetFramework;
             Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
             
-            //TODO: Get appsetting for logseveritylevel.
             var logSeverityLevelAppSetting = AppSettings.GetString("LogSeverityLevel", false);
             var logLevelExists = Enum.TryParse(logSeverityLevelAppSetting, out LogSeverityLevel severityLevel);
 
