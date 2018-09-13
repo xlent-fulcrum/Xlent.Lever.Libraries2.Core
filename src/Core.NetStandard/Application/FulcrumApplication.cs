@@ -43,12 +43,14 @@ namespace Xlent.Lever.Libraries2.Core.Application
             Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             Setup.FullLogger = Log.RecommendedForNetFramework;
             Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
-            Setup.LogSeverityLevelThreshold =
-                IsInProductionOrProductionSimulation
-                ? LogSeverityLevel.Warning
-                : IsInDevelopment
-                    ? LogSeverityLevel.Verbose
-                    : LogSeverityLevel.Information;
+            
+            var logSeverityLevelAppSetting = AppSettings.GetString("LogSeverityLevel", false);
+            var logLevelExists = Enum.TryParse(logSeverityLevelAppSetting, out LogSeverityLevel severityLevel);
+
+            Setup.LogSeverityLevelThreshold = logLevelExists ? severityLevel : 
+                IsInProductionOrProductionSimulation ? LogSeverityLevel.Warning : 
+                    IsInDevelopment ? LogSeverityLevel.Verbose : LogSeverityLevel.Information;
+
             Setup.BatchLogAllSeverityLevelThreshold = LogSeverityLevel.Warning;
         }
 
