@@ -179,9 +179,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var log = CreateLogInstanceInformation(severityLevel, message, exception, memberName, filePath, lineNumber);
             if (LoggingInProgress.Value)
             {
-                var logBatch = new LogBatch(log);
-                const string abortMessage = "Log recursion! Will not send the following inner log to the configured logger.";
-                FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
+                if (log.IsGreateThanOrEqualTo(FulcrumApplication.Setup.LogSeverityLevelThreshold))
+                {
+                    var logBatch = new LogBatch(log);
+                    const string abortMessage =
+                        "Log recursion! Will not send the following inner log to the configured logger.";
+                    FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
+                }
             }
             else
             {
