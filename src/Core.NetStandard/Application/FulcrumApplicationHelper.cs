@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Context;
 using Xlent.Lever.Libraries2.Core.Logging;
@@ -25,6 +26,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumApplication.Setup.FullLogger = Log.RecommendedForNetFramework;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForNetFramework;
             FulcrumApplication.AppSettings = new AppSettings(new ConfigurationManagerAppSettings());
+            TrySetLogSeverityLevelFromAppSettings();
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
             var runTimeLevel = appSettings.GetEnum<RunTimeLevelEnum>("RunTimeLevel", true);
             NetFrameworkSetup(name, tenant, runTimeLevel);
             FulcrumApplication.AppSettings = new AppSettings(appSettingGetter);
+            TrySetLogSeverityLevelFromAppSettings();
         }
 
         /// <summary>
@@ -56,6 +59,18 @@ namespace Xlent.Lever.Libraries2.Core.Application
             FulcrumApplication.Setup.ThreadHandler = ThreadHelper.RecommendedForNetFramework;
             FulcrumApplication.Setup.FullLogger = Log.RecommendedForUnitTest;
             FulcrumApplication.Setup.ContextValueProvider = ContextValueProvider.RecommendedForUnitTests;
+        }
+
+        private static void TrySetLogSeverityLevelFromAppSettings()
+        {
+            var logSeverityLevelAppSetting = FulcrumApplication.AppSettings.GetString("LogSeverityLevel", false);
+            var logLevelExists = Enum.TryParse(logSeverityLevelAppSetting, out LogSeverityLevel severityLevel);
+
+            if (logLevelExists)
+            {
+                FulcrumApplication.Setup.LogSeverityLevelThreshold = severityLevel;
+                FulcrumApplication.Setup.BatchLogAllSeverityLevelThreshold = severityLevel;
+            }
         }
 
     }
