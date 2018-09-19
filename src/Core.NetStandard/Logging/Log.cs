@@ -180,7 +180,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             if (LoggingInProgress.Value)
             {
                 var logBatch = new LogBatch(log);
-                const string abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
+                const string abortMessage = "Log recursion! Will not send the following inner log to the configured logger.";
                 FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
             }
             else
@@ -340,6 +340,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
             if (FulcrumApplication.Setup.FullLogger?.GetType() == typeof(TraceSourceLogger)) return;
+            if (!FulcrumApplication.IsInDevelopment) return;
             TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
