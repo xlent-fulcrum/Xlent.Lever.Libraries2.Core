@@ -17,6 +17,8 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             try
             {
                 if (logSeverityLevel == LogSeverityLevel.None) return;
+
+                message = $"[{DateTimeOffset.Now}] {message}";
                 TraceEventType eventType;
                 switch (logSeverityLevel)
                 {
