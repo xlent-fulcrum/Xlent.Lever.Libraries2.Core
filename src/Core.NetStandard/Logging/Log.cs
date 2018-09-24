@@ -382,7 +382,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 var failSafeId = Guid.NewGuid().ToString();
 
                 var logWithHighestSeverity = logBatch.GetLogWithHighestSeverityLevel();
-                var totalMessage = $"Begin: {failSafeId}\r";
+                var totalMessage = $"Begin: {failSafeId}. Timestamp: {DateTimeOffset.Now}\r";
                 totalMessage += string.IsNullOrEmpty(logBatch.Context.CorrelationId) ? "" : $"CorrelationId: {logBatch.Context.CorrelationId}\r";
                 totalMessage += message == null ? "" : $"{message}\r";
                 if (exception != null)
