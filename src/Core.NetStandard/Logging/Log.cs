@@ -180,9 +180,13 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             var log = CreateLogInstanceInformation(severityLevel, message, exception, lineNumber, filePath, memberName);
             if (LoggingInProgress.Value)
             {
-                var logBatch = new LogBatch(log);
-                const string abortMessage = "Log recursion! Detected a log within a log. The inner log could not be processed as intended, so it is logged here. ";
-                FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
+                if (log.IsGreateThanOrEqualTo(FulcrumApplication.Setup.LogSeverityLevelThreshold))
+                {
+                    var logBatch = new LogBatch(log);
+                    const string abortMessage =
+                        "Log recursion! Will not send the following inner log to the configured logger.";
+                    FallbackToSimpleLoggingFailSafe(abortMessage, logBatch);
+                }
             }
             else
             {
@@ -315,6 +319,15 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         {
             try
             {
+                try
+                {
+                    FulcrumAssert.AreEqual(false, LoggingInProgress.Value);
+                }
+                catch (Exception e)
+                {
+                    FallbackToSimpleLoggingFailSafe(LogSeverityLevel.Error, e.Message);
+                }
+                
                 LoggingInProgress.Value = true;
                 await FulcrumApplication.Setup.FullLogger.LogAsync(logBatch);
             }
@@ -333,6 +346,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
         private static void AlsoLogWithTraceSourceInDevelopment(LogSeverityLevel severityLevel, string formattedMessage)
         {
             if (FulcrumApplication.Setup.FullLogger?.GetType() == typeof(TraceSourceLogger)) return;
+            if (!FulcrumApplication.IsInDevelopment) return;
             TraceSourceLogger.Log(severityLevel, formattedMessage);
         }
 
@@ -367,20 +381,26 @@ namespace Xlent.Lever.Libraries2.Core.Logging
             if (logBatch?.Records == null || logBatch?.Records.Count == 0) return;
             try
             {
+                var failSafeId = Guid.NewGuid().ToString();
+
                 var logWithHighestSeverity = logBatch.GetLogWithHighestSeverityLevel();
-                var totalMessage = message == null ? "" : $"{message}\r";
+                var totalMessage = $"Begin: {failSafeId}. Timestamp: {DateTimeOffset.Now}\r";
+                totalMessage += string.IsNullOrEmpty(logBatch.Context.CorrelationId) ? "" : $"CorrelationId: {logBatch.Context.CorrelationId}\r";
+                totalMessage += message == null ? "" : $"{message}\r";
                 if (exception != null)
                 {
-                    totalMessage += $"\r\rUnexpected excpeption when logging:\r{exception.ToLogString()}";
+                    totalMessage += $"Unexpected exception when logging:\r{exception.ToLogString()}";
                 }
                 else
                 {
-                    totalMessage += "\r\rThe logging mechanism itself failed and is using a fallback method for one or more logs.";
+                    totalMessage += "The logging mechanism itself failed and is using a fallback method.";
                 }
+
                 if (exception != null || logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Error))
                 {
                     totalMessage += $"\rStack trace up to this point:\r{Environment.StackTrace}";
                 }
+
                 // If a message of warning or higher ends up here means it is critical, since this log will not end up in the normal log.
                 var severityLevel = logWithHighestSeverity.IsGreateThanOrEqualTo(LogSeverityLevel.Warning) ? LogSeverityLevel.Critical : LogSeverityLevel.Warning;
                 FallbackToSimpleLoggingFailSafe(severityLevel, totalMessage);
@@ -388,6 +408,7 @@ namespace Xlent.Lever.Libraries2.Core.Logging
                 {
                     FallbackToSimpleLoggingFailSafe(log.SeverityLevel, log.Message);
                 }
+                FallbackToSimpleLoggingFailSafe(severityLevel, $"End: {failSafeId}");
             }
             catch (Exception)
             {
