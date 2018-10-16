@@ -19,13 +19,9 @@ namespace Xlent.Lever.Libraries2.Core.NexusLink
         {
             // Logger
             Logger = new Logger();
-            // Assert
-            Assert.Critical = new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
-            Assert.Warning = new Guard(LogSeverityLevel.Warning);
             // Require
-            Require.Internal = new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
-            Require.Public = new Guard(LogSeverityLevel.Critical, typeof(FulcrumContractException));
-            Require.Api = new Guard(LogSeverityLevel.Critical, typeof(FulcrumServiceContractException));
+            Require.Public = new ContractGuard(LogSeverityLevel.Critical, typeof(FulcrumContractException));
+            Require.Api = new ContractGuard(LogSeverityLevel.Critical, typeof(FulcrumServiceContractException));
             // Expect
             Expect.Internal = new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
             Expect.Public = new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
@@ -42,18 +38,21 @@ namespace Xlent.Lever.Libraries2.Core.NexusLink
         /// </summary>
         public struct Assert
         {
+            private static readonly Lazy<IGuard> LazyCritical = new Lazy<IGuard>(() => new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException)));
 
             /// <summary>
             /// Unforgiving verification; logs as a critical error and trows an exception. 
             /// </summary>
             /// <remarks>If an assertion fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumAssertionFailedException"/> will be thrown.</remarks>
-            public static IGuard Critical { get; set; }
+            public static IGuard Critical => LazyCritical.Value;
+
+            private static readonly Lazy<IGuard> LazyWarning = new Lazy<IGuard>(() => new Guard(LogSeverityLevel.Warning));
 
             /// <summary>
-            /// A mild version of assertion verification. Will not throw any exception, it will only log a <see cref="LogSeverityLevel.Warning"/>
+            /// A mild version of assertion verification. Logs a warning and continues.
             /// </summary>
-            /// <remarks>If a requirement fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumServiceContractException"/> will be thrown.</remarks>
-            public static IGuard Warning { get; set; }
+            /// <remarks>If an assertion fails, it will be logged as <see cref="LogSeverityLevel.Warning"/> and no exception will be thrown.</remarks>
+            public static IGuard Warning => LazyWarning.Value;
         }
 
         /// <summary>
@@ -61,24 +60,26 @@ namespace Xlent.Lever.Libraries2.Core.NexusLink
         /// </summary>
         public struct Require
         {
+            private static readonly Lazy<IContractGuard> LazyInternal = new Lazy<IContractGuard>(() => new ContractGuard(LogSeverityLevel.Critical, typeof(FulcrumContractException)));
+
             /// <summary>
             /// Verify that a method contract is respected for method calls within the same ".DLL".
             /// </summary>
-            /// <remarks>If a requirement fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumAssertionFailedException"/> will be thrown.</remarks>
-            public static IGuard Internal { get; set; }
+            /// <remarks>If a requirement fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumContractException"/> will be thrown.</remarks>
+            public static IContractGuard Internal => LazyInternal.Value;
 
             /// <summary>
             /// Verify that a method contract is respected by the caller. Please note that this is used in truly "public" methods, i.e. calls that crosses ".DLL" boundaries. For methods within the same ".DLL", you should use <see cref="Internal"/>.
             /// </summary>
             /// <remarks>If a requirement fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumContractException"/> will be thrown.</remarks>
-            public static IGuard Public { get; set; }
+            public static IContractGuard Public { get; set; }
 
             /// <summary>
             /// Verify that a method contract is respected by the caller. Please note that this is only used for API:s,
             /// dealing with errors caused by someone outside our ".EXE". For methods within the same ".EXE", you should use <see cref="Public"/> or <see cref="Internal"/>.
             /// </summary>
             /// <remarks>If a requirement fails, it will be logged as <see cref="LogSeverityLevel.Critical"/> and the exception <see cref="FulcrumServiceContractException"/> will be thrown.</remarks>
-            public static IGuard Api { get; set; }
+            public static IContractGuard Api { get; set; }
         }
 
         /// <summary>

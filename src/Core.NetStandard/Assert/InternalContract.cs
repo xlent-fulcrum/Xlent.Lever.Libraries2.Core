@@ -16,12 +16,11 @@ namespace Xlent.Lever.Libraries2.Core.Assert
     /// </summary>
     public static class InternalContract
     {
-        private static readonly IGuard Guard;
+        private static readonly Lazy<IContractGuard> LazyGuard =
+            new Lazy<IContractGuard>(() => Nexus.Require.Internal);
 
-        static InternalContract()
-        {
-            Guard = Nexus.Require.Internal;  //new Guard(LogSeverityLevel.Critical, typeof(FulcrumAssertionFailedException));
-        }
+        private static IContractGuard Guard => LazyGuard.Value;
+
         /// <summary>
         /// Verify that <paramref name="expression"/> return true, when applied to <paramref name="parameterValue"/>.
         /// </summary>
@@ -35,8 +34,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             var isTrue = expression.Compile()(parameterValue);
             var condition = expression.Body.ToString();
             condition = condition.Replace(expression.Parameters.First().Name, parameterName);
-            var message = $"Contract violation: {parameterName} ({parameterValue}) is required to fulfil {condition}.";
-            Guard.IsTrue(isTrue, message, lineNumber, filePath, memberName);
+            var message = $"Contract violation: {parameterName} ({parameterValue}) is required to fulfill {condition}.";
+            Guard.IsTrue(isTrue, message, parameterName, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -48,8 +47,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            customMessage = customMessage ?? $"Contract violation: {parameterName} must not be null.";
-            Guard.IsNotNull(parameterValue, customMessage, lineNumber, filePath, memberName);
+            Guard.IsNotNull(parameterValue, parameterName, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -61,8 +59,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            customMessage = customMessage ?? $"Contract violation: {parameterName} must not be null.";
-            Guard.IsNotDefaultValue(parameterValue, customMessage, lineNumber, filePath, memberName);
+            Guard.IsNotDefaultValue(parameterValue, parameterName, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -74,8 +71,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            customMessage = customMessage ?? $"Contract violation: {parameterName} ({parameterValue}) must not be null, empty or whitespace.";
-            Guard.IsNotNullOrWhiteSpace(parameterValue, customMessage, lineNumber, filePath, memberName);
+            Guard.IsNotNullOrWhiteSpace(parameterValue, parameterName, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -87,8 +83,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            customMessage = customMessage ?? $"ContractViolation: Validation failed for {parameterName}.";
-            Guard.IsValid(parameterValue, customMessage, lineNumber, filePath, memberName);
+            Guard.IsValid(parameterValue, parameterName, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -100,10 +95,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            if (parameterValues == null) return;
-
-            customMessage = customMessage ?? $"ContractViolation: Validation failed for {parameterName}.";
-            Guard.IsValid(parameterValues, customMessage, lineNumber, filePath, memberName);
+            Guard.IsValid(parameterValues, parameterName, customMessage, lineNumber, filePath, memberName);
         }
 
         /// <summary>
@@ -115,9 +107,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "")
         {
-            Guard.IsTrue(mustBeTrue, message, lineNumber, filePath, memberName);
-            RequireNotNullOrWhitespace(message, nameof(message));
-            GenericContract<FulcrumContractException>.Require(mustBeTrue, message);
+            Nexus.Require.Public.IsNotNullOrWhiteSpace(message, nameof(message));
+            Guard.IsTrue(mustBeTrue, message, null, lineNumber, filePath, memberName);
         }
 
         /// <summary>

@@ -99,17 +99,17 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             [CallerMemberName] string memberName = "");
 
         /// <summary>
-        /// Verify that <paramref name="value"/> is null or implements <paramref name="expectedType"/>.
+        /// Verify that <paramref name="type"/> is null or implements <paramref name="expectedType"/>.
         /// </summary>
-        void IsAssignableTo(Type value, Type expectedType, string customMessage = null,
+        void IsAssignableTo(Type type, Type expectedType, string customMessage = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "");
 
         /// <summary>
-        /// Verify that <paramref name="value"/> is null or not implements <paramref name="unexpectedType"/>.
+        /// Verify that <paramref name="type"/> is null or not implements <paramref name="unexpectedType"/>.
         /// </summary>
-        void IsNotAssignableTo(Type value, Type unexpectedType, string customMessage = null,
+        void IsNotAssignableTo(Type type, Type unexpectedType, string customMessage = null,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
             [CallerMemberName] string memberName = "");

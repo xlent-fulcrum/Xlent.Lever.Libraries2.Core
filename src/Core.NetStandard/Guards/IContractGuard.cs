@@ -6,7 +6,7 @@ using Xlent.Lever.Libraries2.Core.Misc;
 namespace Xlent.Lever.Libraries2.Core.Guards
 {
     /// <summary>
-    /// A generic class for making sure that contracts are honoured. Generic in the meaning that a parameter says what exception that should be thrown when an assumption is false.
+    /// A generic class for making sure that contracts are honored. Generic in the meaning that a parameter says what exception that should be thrown when an assumption is false.
     /// </summary>
     public interface IContractGuard
     {
@@ -14,24 +14,6 @@ namespace Xlent.Lever.Libraries2.Core.Guards
         /// Will always fail. Used for instance as a default case in a switch statement where all cases should be covered, so we should never end up in the default case.
         /// </summary>
         void Fail(string parameterName,
-            string message,
-            [CallerLineNumber] int lineNumber = 0,
-            [CallerFilePath] string filePath = "",
-            [CallerMemberName] string memberName = "");
-
-        /// <summary>
-        /// Verify that <paramref name="value"/> is TRUE.
-        /// </summary>
-        void IsTrue(bool value,
-            string message,
-            [CallerLineNumber] int lineNumber = 0,
-            [CallerFilePath] string filePath = "",
-            [CallerMemberName] string memberName = "");
-
-        /// <summary>
-        /// Verify that <paramref name="value"/> is FALSE.
-        /// </summary>
-        void IsFalse(bool value,
             string message,
             [CallerLineNumber] int lineNumber = 0,
             [CallerFilePath] string filePath = "",
@@ -138,9 +120,9 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             [CallerMemberName] string memberName = "");
 
         /// <summary>
-        /// Verify that <paramref name="value"/> is null or implements <paramref name="expectedType"/>.
+        /// Verify that <paramref name="type"/> is null or implements <paramref name="expectedType"/>.
         /// </summary>
-        void IsAssignableTo(Type value, Type expectedType,
+        void IsAssignableTo(Type type, Type expectedType,
             string parameterName,
             string customMessage = null,
             [CallerLineNumber] int lineNumber = 0,
@@ -148,9 +130,9 @@ namespace Xlent.Lever.Libraries2.Core.Guards
             [CallerMemberName] string memberName = "");
 
         /// <summary>
-        /// Verify that <paramref name="value"/> is null or not implements <paramref name="unexpectedType"/>.
+        /// Verify that <paramref name="type"/> is null or not implements <paramref name="unexpectedType"/>.
         /// </summary>
-        void IsNotAssignableTo(Type value, Type unexpectedType,
+        void IsNotAssignableTo(Type type, Type unexpectedType,
             string parameterName,
             string customMessage = null,
             [CallerLineNumber] int lineNumber = 0,
