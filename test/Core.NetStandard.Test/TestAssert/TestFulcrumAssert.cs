@@ -109,13 +109,13 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
         }
 
         [TestMethod]
-        public void IsNotNullOrWhitespaceAssertionOk()
+        public void IsNotNullOrWhiteSpaceAssertionOk()
         {
             FulcrumAssert.IsNotNullOrWhiteSpace("NotEmpty", $"{Namespace}: 5CA88FE7-BD6D-4FC8-82CE-2EDBC6517F0C", "311F3E2E-748B-4EB1-8420-09938D8A8AA7");
         }
 
         [TestMethod]
-        public void IsNotNullOrWhitespaceAssertionFail()
+        public void IsNotNullOrWhiteSpaceAssertionFail()
         {
             const string message = "A random message";
             try

@@ -67,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.Queue.Logic
         /// </remarks>
         public MemoryQueue(string name, FailSafeQueueItemActionDelegate failSafeQueueItemAction, bool actionsCanExecuteInParallel)
         {
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            InternalContract.RequireNotNullOrWhiteSpace(name, nameof(name));
             Name = name;
             _queue = new ConcurrentQueue<MessageWithActivationTime<T>>();
             _failSafeQueueItemAction = failSafeQueueItemAction;

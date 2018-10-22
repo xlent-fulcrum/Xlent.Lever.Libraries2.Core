@@ -18,8 +18,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(errorLocation, nameof(errorLocation));
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(errorLocation, nameof(errorLocation));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericAssert<FulcrumAssertionFailedException>.Fail(errorLocation, message);
         }
         /// <summary>
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericAssert<FulcrumAssertionFailedException>.Fail(null, message);
         }
 
@@ -151,7 +151,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string value, string errorLocation = null, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             GenericAssert<FulcrumAssertionFailedException>.MatchesRegExp(regularExpression, value, errorLocation, customMessage);
         }
 
@@ -161,7 +161,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation = null, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             GenericAssert<FulcrumAssertionFailedException>.MatchesNotRegExp(regularExpression, value, errorLocation, customMessage);
         }
 

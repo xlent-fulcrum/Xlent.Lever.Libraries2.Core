@@ -14,8 +14,8 @@ namespace Xlent.Lever.Libraries2.Core.MultiTenant.Model
         /// </summary>
         public Tenant(string organization, string environment)
         {
-            InternalContract.RequireNotNullOrWhitespace(organization, nameof(organization));
-            InternalContract.RequireNotNullOrWhitespace(environment, nameof(environment));
+            InternalContract.RequireNotNullOrWhiteSpace(organization, nameof(organization));
+            InternalContract.RequireNotNullOrWhiteSpace(environment, nameof(environment));
             Organization = organization?.ToLower();
             Environment = environment?.ToLower();
             Validate($"{Namespace}: 80BAC4F7-6369-4ACD-A34F-413A20E24C27");

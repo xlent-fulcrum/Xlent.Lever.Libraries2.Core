@@ -24,7 +24,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <inheritdoc />
         public T GetValue<T>(string key)
         {
-            InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
+            InternalContract.RequireNotNullOrWhiteSpace(key, nameof(key));
             if (Holder?.Value?.ContainsKey(key) != true) return default(T);
             return (T) Holder.Value[key];
         }
@@ -32,7 +32,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <inheritdoc />
         public void SetValue<T>(string name, T data)
         {
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            InternalContract.RequireNotNullOrWhiteSpace(name, nameof(name));
             FulcrumAssert.IsNotNull(Holder, $"{Namespace}: 07B2EC29-9231-4DC1-82FF-09DCB6EC87FA");
             if (Holder.Value == null)
             {

@@ -40,7 +40,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void IsTrue(bool mustBeTrue, string errorLocation, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericAssert<ValidationException>.IsTrue(mustBeTrue, errorLocation, message);
         }
 
@@ -175,7 +175,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string propertyValue, string propertyName, string errorLocation, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to match ({regularExpression}).";
             GenericAssert<ValidationException>.MatchesRegExp(regularExpression, propertyValue, errorLocation, message);
         }
@@ -186,7 +186,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string propertyValue, string propertyName, string errorLocation, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected property {propertyName} ({propertyValue}) to not match ({regularExpression}).";
             GenericAssert<ValidationException>.MatchesNotRegExp(regularExpression, propertyValue, errorLocation, message);
         }

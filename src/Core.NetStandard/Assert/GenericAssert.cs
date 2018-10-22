@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericBase<TException>.ThrowException(message, errorLocation);
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericBase<TException>.ThrowException(message);
         }
 

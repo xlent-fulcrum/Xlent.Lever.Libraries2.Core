@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Xlent.Lever.Libraries2.Core.Misc
 {
+    /// <summary>
+    /// Helper class to use CallerMemberName, CallerFilePath and CallerLineNumber anywhere in the code.
+    /// </summary>
     public class CodeLocation
     {
         /// <summary>
