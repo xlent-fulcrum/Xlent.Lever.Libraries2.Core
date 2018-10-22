@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
@@ -194,13 +195,14 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             try
             {
                 var validatable = new Validatable();
-                FulcrumAssert.IsValidated(validatable, $"{Namespace}: ng");
+                FulcrumAssert.IsValidated(validatable, CodeLocation.AsString());
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
             catch (ValidationException fulcrumException)
             {
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Property Name"));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Property Validatable.Name"), 
+                    $"TechnicalMessage: '{fulcrumException.TechnicalMessage}'");
             }
             catch (Exception e)
             {

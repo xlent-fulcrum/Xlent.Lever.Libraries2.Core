@@ -207,7 +207,8 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
 
                 var validationFailed = "ContractViolation: Validation failed";
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith(validationFailed), $"Expected {nameof(fulcrumException.TechnicalMessage)}  to start with \"{validationFailed}\", but the message was \"{fulcrumException.TechnicalMessage}\".");
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.Contains("Property Name"));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.Contains("Property Validatable.Name"), 
+                    $"TechnicalMessage: '{fulcrumException.TechnicalMessage}'");
             }
             catch (Exception e)
             {
