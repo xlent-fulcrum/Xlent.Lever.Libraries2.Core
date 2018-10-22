@@ -48,9 +48,9 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
         /// </summary>
         [StackTraceHidden]
-        public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null)
+        public static void RequireNotNullOrWhiteSpace(string parameterValue, string parameterName, string customMessage = null)
         {
-            var message = GetErrorMessageIfNullOrWhitespace(parameterValue, parameterName, customMessage);
+            var message = GetErrorMessageIfNullOrWhiteSpace(parameterValue, parameterName, customMessage);
             MaybeThrowException(message);
         }
 
@@ -71,7 +71,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Require(bool mustBeTrue, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             var m = GetErrorMessageIfFalse(mustBeTrue, message);
             MaybeThrowException(m);
         }
@@ -82,7 +82,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericBase<TException>.ThrowException(message);
         }
 
@@ -178,7 +178,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             if (!(parameterValue is IValidatable validatable)) return;
             try
             {
-                validatable.Validate(null);
+                validatable.Validate(null, parameterValue.GetType().Name);
             }
             catch (ValidationException e)
             {
@@ -206,7 +206,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             return customMessage ?? $"Contract violation: {parameterName} must not be null.";
         }
 
-        private static string GetErrorMessageIfNullOrWhitespace(string parameterValue, string parameterName, string customMessage)
+        private static string GetErrorMessageIfNullOrWhiteSpace(string parameterValue, string parameterName, string customMessage)
         {
             if (!string.IsNullOrWhiteSpace(parameterValue)) return null;
             var value = parameterValue == null ? "null" : $"\"{parameterValue}\"";
@@ -224,7 +224,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
 
         private static string GetErrorMessageIfFalse(bool mustBeTrue, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             return mustBeTrue ? null : message;
         }
 

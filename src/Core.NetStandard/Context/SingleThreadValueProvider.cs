@@ -14,7 +14,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <inheritdoc />
         public T GetValue<T>(string key)
         {
-            InternalContract.RequireNotNullOrWhitespace(key, nameof(key));
+            InternalContract.RequireNotNullOrWhiteSpace(key, nameof(key));
             if (!Dictionary.ContainsKey(key)) return default(T);
             return (T)Dictionary[key];
         }
@@ -22,7 +22,7 @@ namespace Xlent.Lever.Libraries2.Core.Context
         /// <inheritdoc />
         public void SetValue<T>(string name, T data)
         {
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            InternalContract.RequireNotNullOrWhiteSpace(name, nameof(name));
             Dictionary[name] = data;
         }
     }

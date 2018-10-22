@@ -19,7 +19,14 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             if (exception is FulcrumAssertionFailedException ||
                 exception is FulcrumContractException)
             {
-                Log.LogError("An unexpected internal error resulted in an exception.", exception);
+                var logMessage = "An unexpected internal error resulted in an exception";
+                if (!string.IsNullOrWhiteSpace(errorLocation))
+                {
+                    logMessage += $" in {errorLocation}";
+                }
+
+                logMessage += ".";
+                Log.LogError(logMessage, exception);
             }
             throw exception;
         }

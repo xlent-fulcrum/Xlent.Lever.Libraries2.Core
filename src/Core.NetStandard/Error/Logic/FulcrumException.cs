@@ -116,7 +116,7 @@ namespace Xlent.Lever.Libraries2.Core.Error.Logic
         /// <param name="serverTechnicalName"></param>
         public static void Initialize(string serverTechnicalName)
         {
-            InternalContract.RequireNotNullOrWhitespace(serverTechnicalName, nameof(serverTechnicalName));
+            InternalContract.RequireNotNullOrWhiteSpace(serverTechnicalName, nameof(serverTechnicalName));
             serverTechnicalName = serverTechnicalName.ToLower();
             if (_serverTechnicalName != null) InternalContract.Require(serverTechnicalName == _serverTechnicalName, 
                 $"Once the server name has been set ({_serverTechnicalName}, it can't be changed ({serverTechnicalName}).");

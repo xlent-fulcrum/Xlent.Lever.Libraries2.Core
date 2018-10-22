@@ -8,7 +8,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support
 
         public void Validate(string errorLocation, string propertyPath = "")
         {
-            FulcrumValidate.IsNotNullOrWhiteSpace(Name, nameof(Name), errorLocation);
+            FulcrumValidate.IsNotNullOrWhiteSpace(Name, propertyPath + "." + nameof(Name), errorLocation);
         }
     }
 }

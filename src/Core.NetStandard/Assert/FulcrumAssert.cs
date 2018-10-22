@@ -18,8 +18,8 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(errorLocation, nameof(errorLocation));
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(errorLocation, nameof(errorLocation));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericAssert<FulcrumAssertionFailedException>.Fail(errorLocation, message);
         }
         /// <summary>
@@ -29,7 +29,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericAssert<FulcrumAssertionFailedException>.Fail(null, message);
         }
 
@@ -151,7 +151,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string value, string errorLocation = null, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             GenericAssert<FulcrumAssertionFailedException>.MatchesRegExp(regularExpression, value, errorLocation, customMessage);
         }
 
@@ -161,7 +161,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation = null, string customMessage = null)
         {
-            InternalContract.RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            InternalContract.RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             GenericAssert<FulcrumAssertionFailedException>.MatchesNotRegExp(regularExpression, value, errorLocation, customMessage);
         }
 
@@ -179,7 +179,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// If <paramref name="values"/> is not null, then call the Validate() method for every object in the collection.
         /// </summary>
-        [Obsolete("Use the IsValidated() method.")]
+        [Obsolete("Use the IsNotNull() and IsValidated() methods.")]
         [StackTraceHidden]
         public static void IsValidatedOrNull(IEnumerable<object> values, string errorLocation = null)
         {
@@ -193,7 +193,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="value"/> is not null and also call the Validate() method of that type.
         /// </summary>
-        [Obsolete("Use the IsValidated() method.")]
+        [Obsolete("Use the IsNotNull() and IsValidated() methods.")]
         [StackTraceHidden]
         public static void IsValidatedAndNotNull(object value, string errorLocation = null)
         {
@@ -204,7 +204,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// <summary>
         /// Verify that <paramref name="values"/> is not null and also call the Validate() method for every object in the collection.
         /// </summary>
-        [Obsolete("Use the IsValidated() method.")]
+        [Obsolete("Use the IsNotNull() and IsValidated() methods.")]
         [StackTraceHidden]
         public static void IsValidatedAndNotNull(IEnumerable<object> values, string errorLocation = null)
         {
@@ -218,8 +218,9 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void IsValidated(object value, string errorLocation = null)
         {
+            if (value == null) return;
             if (!(value is IValidatable validatable)) return;
-            validatable.Validate(errorLocation);
+            validatable.Validate(errorLocation, value.GetType().Name);
         }
 
         /// <summary>

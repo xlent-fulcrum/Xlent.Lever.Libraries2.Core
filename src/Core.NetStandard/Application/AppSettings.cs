@@ -31,7 +31,7 @@ namespace Xlent.Lever.Libraries2.Core.Application
         {
             // We must not have InternalContract and stuff here, since we may not have set up logging, etc.
             if (string.IsNullOrWhiteSpace(name)) throw new FulcrumContractException($"Parameter {nameof(name)} was empty.");
-            InternalContract.RequireNotNullOrWhitespace(name, nameof(name));
+            InternalContract.RequireNotNullOrWhiteSpace(name, nameof(name));
             var value = _appSettingGetter.GetAppSetting(name);
             if (isMandatory && string.IsNullOrWhiteSpace(value)) throw new FulcrumContractException($"Missing app setting: {name}");
             return value;
