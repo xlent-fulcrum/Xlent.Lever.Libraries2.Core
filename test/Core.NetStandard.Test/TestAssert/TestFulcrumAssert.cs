@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Misc;
 using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support;
 
 namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
@@ -149,6 +150,27 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             catch (FulcrumAssertionFailedException fulcrumException)
             {
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage.Contains(message));
+            }
+            catch (Exception e)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected a specific FulcrumException but got {e.GetType().FullName}.");
+            }
+        }
+
+        [TestMethod]
+        public void AreEqualAssertionFailWithCodeLocation()
+        {
+            const string message = "A random message";
+            var codeLocation = CodeLocation.AsString();
+            try
+            {
+                FulcrumAssert.AreEqual("Knoll", "Tott", codeLocation);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
+            }
+            catch (FulcrumAssertionFailedException fulcrumException)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage.Contains(message));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(codeLocation, fulcrumException.ErrorLocation);
             }
             catch (Exception e)
             {

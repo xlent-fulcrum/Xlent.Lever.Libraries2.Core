@@ -54,6 +54,21 @@ namespace Xlent.Lever.Libraries2.Core.Misc
             return new CodeLocation(memberName, filePath, lineNumber);
         }
 
+        /// <summary>
+        /// Create a string representation for the current location in the code.
+        /// </summary>
+        /// <param name="memberName">Method or property name of the caller</param>
+        /// <param name="filePath">Full path of the source file that contains the caller. This is the file path at compile time.</param>
+        /// <param name="lineNumber">Line number in the source file at which the method is called</param>
+        [SuppressMessage("ReSharper", "ExplicitCallerInfoArgument")]
+        public static string AsString(
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string filePath = "",
+            [CallerLineNumber] int lineNumber = 0)
+        {
+            return new CodeLocation(memberName, filePath, lineNumber).ToString();
+        }
+
         /// <inheritdoc />
         public override string ToString() => $"{MemberName} in {FilePath} at line {LineNumber}";
     }
