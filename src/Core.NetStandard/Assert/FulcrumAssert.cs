@@ -173,7 +173,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsValidatedOrNull(object value, string errorLocation = null)
         {
             if (!(value is IValidatable validatable)) return;
-            validatable.Validate(errorLocation);
+            IsValidated(value, errorLocation);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsValidatedAndNotNull(object value, string errorLocation = null)
         {
             IsNotNull(value, errorLocation);
-            IsValidatedOrNull(value, errorLocation);
+            IsValidated(value, errorLocation);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         public static void IsValidatedAndNotNull(IEnumerable<object> values, string errorLocation = null)
         {
             IsNotNull(values, errorLocation);
-            IsValidatedOrNull(values, errorLocation);
+            IsValidated(values, errorLocation);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         {
             if (value == null) return;
             if (!(value is IValidatable validatable)) return;
-            validatable.Validate(errorLocation, value.GetType().Name);
+            GenericAssert<FulcrumAssertionFailedException>.IsValidated(validatable, errorLocation);
         }
 
         /// <summary>

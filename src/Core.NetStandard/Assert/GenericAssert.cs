@@ -237,5 +237,23 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             var message = customMessage ?? $"Expected ({value}) to not match regular expression ({regularExpression}).";
             IsTrue(!Regex.IsMatch(value, regularExpression), errorLocation, message);
         }
+
+        /// <summary>
+        /// If <paramref name="value"/> is not null, then call the Validate() method of that type.
+        /// </summary>
+        [StackTraceHidden]
+        public static void IsValidated(object value, string customMessage = null)
+        {
+            if (value == null) return;
+            if (!(value is IValidatable validatable)) return;
+            try
+            {
+                validatable.Validate(null, value.GetType().Name);
+            }
+            catch (ValidationException e)
+            {
+                GenericBase<TException>.ThrowException($"Expected validation to pass ({e.Message}).");
+            }
+        }
     }
 }
