@@ -60,58 +60,43 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         }
 
         /// <inheritdoc />
-        public Note(TypeEnum type)
+        public Note(TypeEnum type, string description)
         {
             Type = type.ToString();
+            Description = description;
         }
 
         /// <summary>
         /// Convenience for creating a Change that is non-breaking, i.e. backwards compatible
         /// </summary>
-        public static Note Change(string description, string issueReference = null)
+        public static Note Change(string description)
         {
-            return new Note(TypeEnum.Change)
-            {
-                Description = description,
-                IssueReference = issueReference
-            };
+            return new Note(TypeEnum.Change, description);
         }
 
         /// <summary>
         /// Convenience for creating a Change that is not backwards compatible
         /// </summary>
-        public static Note BreakingChange(string description, string issueReference = null)
+        public static Note BreakingChange(string description)
         {
-            return new Note(TypeEnum.BreakingChange)
-            {
-                Description = description,
-                IssueReference = issueReference
-            };
+            return new Note(TypeEnum.BreakingChange, description);
         }
 
         /// <summary>
         /// Convenience for creating a Feature
         /// </summary>
-        public static Note Feature(string description, string issueReference = null)
+        public static Note Feature(string description)
         {
-            return new Note(TypeEnum.Feature)
-            {
-                Description = description,
-                IssueReference = issueReference
-            };
+            return new Note(TypeEnum.Feature, description);
         }
 
 
         /// <summary>
         /// Convenience for creating a Fix
         /// </summary>
-        public static Note Fix(string description, string issueReference = null)
+        public static Note Fix(string description)
         {
-            return new Note(TypeEnum.Fix)
-            {
-                Description = description,
-                IssueReference = issueReference
-            };
+            return new Note(TypeEnum.Fix, description);
         }
 
         /// <summary>
@@ -125,11 +110,5 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// </summary>
         [JsonProperty(Order = 1)]
         public string Description { get; set; }
-
-        /// <summary>
-        /// Optional reference for the change, preferrably an url
-        /// </summary>
-        [JsonProperty(Order = 2, NullValueHandling = NullValueHandling.Ignore)]
-        public string IssueReference { get; set; }
     }
 }
