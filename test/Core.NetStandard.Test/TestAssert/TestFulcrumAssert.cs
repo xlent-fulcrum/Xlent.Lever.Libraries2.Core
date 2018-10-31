@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xlent.Lever.Libraries2.Core.Application;
 using Xlent.Lever.Libraries2.Core.Assert;
 using Xlent.Lever.Libraries2.Core.Error.Logic;
+using Xlent.Lever.Libraries2.Core.Misc;
 using Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.Support;
 
 namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
@@ -107,13 +109,13 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
         }
 
         [TestMethod]
-        public void IsNotNullOrWhitespaceAssertionOk()
+        public void IsNotNullOrWhiteSpaceAssertionOk()
         {
             FulcrumAssert.IsNotNullOrWhiteSpace("NotEmpty", $"{Namespace}: 5CA88FE7-BD6D-4FC8-82CE-2EDBC6517F0C", "311F3E2E-748B-4EB1-8420-09938D8A8AA7");
         }
 
         [TestMethod]
-        public void IsNotNullOrWhitespaceAssertionFail()
+        public void IsNotNullOrWhiteSpaceAssertionFail()
         {
             const string message = "A random message";
             try
@@ -157,6 +159,27 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
         }
 
         [TestMethod]
+        public void AreEqualAssertionFailWithCodeLocation()
+        {
+            const string message = "A random message";
+            var codeLocation = CodeLocation.AsString();
+            try
+            {
+                FulcrumAssert.AreEqual("Knoll", "Tott", codeLocation);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
+            }
+            catch (FulcrumAssertionFailedException fulcrumException)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage.Contains(message));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(codeLocation, fulcrumException.ErrorLocation);
+            }
+            catch (Exception e)
+            {
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail($"Expected a specific FulcrumException but got {e.GetType().FullName}.");
+            }
+        }
+
+        [TestMethod]
         public void IsValidatedOk()
         {
             var validatable = new Validatable
@@ -172,13 +195,14 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             try
             {
                 var validatable = new Validatable();
-                FulcrumAssert.IsValidated(validatable, $"{Namespace}: ng");
+                FulcrumAssert.IsValidated(validatable, CodeLocation.AsString());
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
-            catch (ValidationException fulcrumException)
+            catch (FulcrumAssertionFailedException fulcrumException)
             {
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Property Name"));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith("Expected validation to pass (Property Validatable.Name"), 
+                    $"TechnicalMessage: '{fulcrumException.TechnicalMessage}'");
             }
             catch (Exception e)
             {

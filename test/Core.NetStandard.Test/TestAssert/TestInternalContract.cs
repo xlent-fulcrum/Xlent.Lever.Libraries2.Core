@@ -46,7 +46,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             {
                 string nullString = null;
                 // ReSharper disable once ExpressionIsAlwaysNull
-                InternalContract.RequireNotNullOrWhitespace(nullString, parameterName);
+                InternalContract.RequireNotNullOrWhiteSpace(nullString, parameterName);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
             catch (FulcrumContractException fulcrumException)
@@ -67,7 +67,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             {
                 string emptyString = "";
                 // ReSharper disable once ExpressionIsAlwaysNull
-                InternalContract.RequireNotNullOrWhitespace(emptyString, parameterName);
+                InternalContract.RequireNotNullOrWhiteSpace(emptyString, parameterName);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
             catch (FulcrumContractException fulcrumException)
@@ -88,7 +88,7 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
             {
                 string whitespaceString = "     \t";
                 // ReSharper disable once ExpressionIsAlwaysNull
-                InternalContract.RequireNotNullOrWhitespace(whitespaceString, parameterName);
+                InternalContract.RequireNotNullOrWhiteSpace(whitespaceString, parameterName);
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail("An exception should have been thrown");
             }
             catch (FulcrumContractException fulcrumException)
@@ -207,7 +207,8 @@ namespace Xlent.Lever.Libraries2.Core.NetFramework.Test.Core.TestAssert
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsNotNull(fulcrumException.TechnicalMessage);
                 var validationFailed = "ContractViolation: Validation failed";
                 Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.StartsWith(validationFailed), $"Expected {nameof(fulcrumException.TechnicalMessage)}  to start with \"{validationFailed}\", but the message was \"{fulcrumException.TechnicalMessage}\".");
-                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.Contains("Property Name"));
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(fulcrumException.TechnicalMessage.Contains("Property Validatable.Name"),
+                    $"TechnicalMessage: '{fulcrumException.TechnicalMessage}'");
             }
             catch (Exception e)
             {

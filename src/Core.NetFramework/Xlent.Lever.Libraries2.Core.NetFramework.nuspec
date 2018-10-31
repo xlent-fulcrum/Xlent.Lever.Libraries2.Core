@@ -12,6 +12,8 @@
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
       2.5.0 Added Authentication role PlatformService
+      2.4.1 FulcrumAssert.IsValidated() now throws FulcrumAssertionFailedException instead of ValidationException.
+      2.4.0 Added Misc.CodeLocation. Include location in assert error logs. Set the propertyPath for validations to the name of the type. Spelling Whitespace->WhiteSpace.
       2.3.5 Added timestamp when logging with TraceSourceLogger
       2.3.4 In fallback, only log single messages when on or above loglevel
       2.3.2 Minor refactoring of logging, corrected bug introduced in 2.3.1.

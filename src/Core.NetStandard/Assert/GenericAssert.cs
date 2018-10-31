@@ -20,7 +20,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string errorLocation, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericBase<TException>.ThrowException(message, errorLocation);
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Fail(string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericBase<TException>.ThrowException(message);
         }
 
@@ -236,6 +236,24 @@ namespace Xlent.Lever.Libraries2.Core.Assert
             InternalContract.RequireNotNull(regularExpression, nameof(regularExpression));
             var message = customMessage ?? $"Expected ({value}) to not match regular expression ({regularExpression}).";
             IsTrue(!Regex.IsMatch(value, regularExpression), errorLocation, message);
+        }
+
+        /// <summary>
+        /// If <paramref name="value"/> is not null, then call the Validate() method of that type.
+        /// </summary>
+        [StackTraceHidden]
+        public static void IsValidated(object value, string customMessage = null)
+        {
+            if (value == null) return;
+            if (!(value is IValidatable validatable)) return;
+            try
+            {
+                validatable.Validate(null, value.GetType().Name);
+            }
+            catch (ValidationException e)
+            {
+                GenericBase<TException>.ThrowException($"Expected validation to pass ({e.Message}).");
+            }
         }
     }
 }

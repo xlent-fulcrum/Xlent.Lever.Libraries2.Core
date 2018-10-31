@@ -43,9 +43,19 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
         /// </summary>
         [StackTraceHidden]
+        [Obsolete("Use RequireNotNullOrWhiteSpace(), note spelling of white space.")]
         public static void RequireNotNullOrWhitespace(string parameterValue, string parameterName, string customMessage = null)
         {
-            GenericContract<FulcrumServiceContractException>.RequireNotNullOrWhitespace(parameterValue, parameterName, customMessage);
+            GenericContract<FulcrumServiceContractException>.RequireNotNullOrWhiteSpace(parameterValue, parameterName, customMessage);
+        }
+
+        /// <summary>
+        /// Verify that <paramref name="parameterValue"/> is not null, not empty and contains other characters than white space.
+        /// </summary>
+        [StackTraceHidden]
+        public static void RequireNotNullOrWhiteSpace(string parameterValue, string parameterName, string customMessage = null)
+        {
+            GenericContract<FulcrumServiceContractException>.RequireNotNullOrWhiteSpace(parameterValue, parameterName, customMessage);
         }
 
         /// <summary>
@@ -126,7 +136,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Require(Expression<Func<bool>> expression, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericContract<FulcrumServiceContractException>.Require(expression, message);
         }
 
@@ -136,7 +146,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void Require(bool mustBeTrue, string message)
         {
-            InternalContract.RequireNotNullOrWhitespace(message, nameof(message));
+            InternalContract.RequireNotNullOrWhiteSpace(message, nameof(message));
             GenericContract<FulcrumServiceContractException>.Require(mustBeTrue, message);
         }
 
@@ -198,7 +208,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesRegExp(string regularExpression, string parameterValue, string parameterName, string customMessage = null)
         {
-            RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             RequireNotNull(parameterName, nameof(parameterName));
             GenericContract<FulcrumServiceContractException>.RequireMatchesRegExp(regularExpression, parameterValue, parameterName, customMessage);
         }
@@ -209,7 +219,7 @@ namespace Xlent.Lever.Libraries2.Core.Assert
         [StackTraceHidden]
         public static void MatchesNotRegExp(string regularExpression, string value, string errorLocation, string customMessage = null)
         {
-            RequireNotNullOrWhitespace(regularExpression, nameof(regularExpression));
+            RequireNotNullOrWhiteSpace(regularExpression, nameof(regularExpression));
             GenericContract<FulcrumServiceContractException>.RequireMatchesNotRegExp(regularExpression, value, errorLocation, customMessage);
         }
 
