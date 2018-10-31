@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Xlent.Lever.Libraries2.Core.NetFramework</id>
-    <version>2.5.1</version>
+    <version>2.5.2</version>
     <authors>XLENT Fulcrum</authors>
     <projectUrl>https://github.com/xlent-fulcrum/Xlent.Lever.Libraries2.Core</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     <summary>Fulcrum core library based on .NET Framework.</summary>
     <copyright>Copyright ©2017 Xlent Business Integration AB</copyright>
     <releaseNotes>
-      2.5.1 Added constructor for ReleaseNotes
+      2.5.2 Refactored ReleaseNotes
       2.5.0 Added Authentication role PlatformService
       2.4.1 FulcrumAssert.IsValidated() now throws FulcrumAssertionFailedException instead of ValidationException.
       2.4.0 Added Misc.CodeLocation. Include location in assert error logs. Set the propertyPath for validations to the name of the type. Spelling Whitespace->WhiteSpace.

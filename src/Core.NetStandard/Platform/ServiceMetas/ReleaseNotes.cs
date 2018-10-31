@@ -25,30 +25,63 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// The changes
         /// </summary>
         [JsonProperty(Order = 1)]
-        public Notes Notes { get; set; }
+        public List<Note> Notes { get; set; }
     }
 
     /// <summary>
-    /// Represents the actual changes
+    /// Represents a single note
     /// </summary>
-    public class Notes
+    public class Note
     {
         /// <summary>
-        /// New features in this release
+        /// 
         /// </summary>
-        [JsonProperty(Order = 0, NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Features { get; set; }
+        public enum TypeEnum
+        {
+            /// <summary>
+            /// Represents a new feature
+            /// </summary>
+            Feature,
+
+            /// <summary>
+            /// Represents a change in a current feature
+            /// </summary>
+            Change,
+
+            /// <summary>
+            /// Represents a fix, suchs a bug fix or cosmetic change
+            /// </summary>
+            Fix
+        }
+
+        /// <inheritdoc />
+        public Note(TypeEnum type, bool breakingChange = false)
+        {
+            Type = type;
+            BreakingChange = breakingChange;
+        }
 
         /// <summary>
-        /// Changes in this release
+        /// The type of change
         /// </summary>
-        [JsonProperty(Order = 1, NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Changes { get; set; }
+        [JsonProperty(Order = 0)]
+        public TypeEnum Type { get; set; }
 
         /// <summary>
-        /// Fixes in this release
+        /// The description of a change
+        /// </summary>
+        [JsonProperty(Order = 1)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Optional reference for the change, preferrably an url
         /// </summary>
         [JsonProperty(Order = 2, NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Fixes { get; set; }
+        public string IssueReference { get; set; }
+
+        /// <summary>
+        /// Tells if this change is a breaking change, i.e. not backwards compatible
+        /// </summary>
+        public bool BreakingChange { get; set; }
     }
 }
