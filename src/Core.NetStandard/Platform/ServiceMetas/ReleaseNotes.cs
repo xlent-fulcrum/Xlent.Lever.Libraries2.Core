@@ -57,7 +57,7 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// <inheritdoc />
         public Note(TypeEnum type, bool breakingChange = false)
         {
-            Type = type;
+            Type = type.ToString();
             BreakingChange = breakingChange;
         }
 
@@ -65,7 +65,7 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// The type of change
         /// </summary>
         [JsonProperty(Order = 0)]
-        public TypeEnum Type { get; set; }
+        public string Type { get; set; }
 
         /// <summary>
         /// The description of a change
