@@ -25,6 +25,10 @@
         /// <summary>
         /// A human administrator, having rights to make changes to whole organization
         /// </summary>
-        OrganizationAdmin
+        OrganizationAdmin,
+        /// <summary>
+        /// A platform service, such as Nexus Business Events or Nexus AsyncCaller
+        /// </summary>
+        PlatformService
     }
 }
