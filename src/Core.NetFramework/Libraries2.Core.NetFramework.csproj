@@ -99,7 +99,7 @@
     <Compile Include="Core\Misc\CodeLocation.cs" />
     <Compile Include="Core\Misc\Models\TryAgainLater.cs" />
     <Compile Include="Core\Platform\BusinessEvents\BusinessEventMetaData.cs" />
-    <Compile Include="Core\Platform\ServiceMetas\ReleaseNotes.cs" />
+    <Compile Include="Core\Platform\ServiceMetas\Release.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceDependency.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformationWithTenant.cs" />
     <Compile Include="Core\Platform\ServiceMetas\ServiceInformation.cs" />
