@@ -8,9 +8,16 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
     /// </summary>
     public class ReleaseNotes
     {
+        /// <inheritdoc />
+        public ReleaseNotes(string release)
+        {
+            Release = release;
+        }
+
         /// <summary>
-        /// The name of the release, e.g. "1.3.2 (2017-11-24)", "dev", "prj"
+        /// The name of the release, e.g. "1.3.2"
         /// </summary>
+        /// <remarks>Use semantic versioning: Major.Minor.Patch</remarks>
         [JsonProperty(Order = 0)]
         public string Release { get; set; }
 
@@ -30,18 +37,18 @@ namespace Xlent.Lever.Libraries2.Core.Platform.ServiceMetas
         /// New features in this release
         /// </summary>
         [JsonProperty(Order = 0, NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<string> Features { get; set; }
+        public List<string> Features { get; set; }
 
         /// <summary>
         /// Changes in this release
         /// </summary>
         [JsonProperty(Order = 1, NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<string> Changes { get; set; }
+        public List<string> Changes { get; set; }
 
         /// <summary>
         /// Fixes in this release
         /// </summary>
         [JsonProperty(Order = 2, NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<string> Fixes { get; set; }
+        public List<string> Fixes { get; set; }
     }
 }
